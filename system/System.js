@@ -15,6 +15,8 @@ class Battery {
 class Generator {
     constructor(size) {
         this.size = size;
+        this.fuelData; //backend-diesel d10:h35
+        this.fuelYAxis; //backend-diesel c10:c35
     }
 } 
 
@@ -39,5 +41,3 @@ class Mics {
         this.distribution_losses = 0.10
     }
 }
-
-module.exports = { Battery, Generator, PV, Inverter, Mics}
