@@ -181,6 +181,11 @@ for (let i = 0; i < powerProduction.length  ; i++) {
     //console.log(powerProduction[i])
     //console.log(load[i % 24])
     simulation(powerProduction[i], load[i % 24])
+    if (isNaN(total_available_solar_from_array)) {
+        console.log(`${i}, ${powerProduction[i]}, ${load[i % 24]}, ${total_available_solar_from_array}`);
+        break;
+    }
+    
 }
 
 console.log(total_available_solar_from_array)
