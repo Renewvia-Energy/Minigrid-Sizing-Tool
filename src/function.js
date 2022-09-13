@@ -26,17 +26,17 @@ var generator_loading;
 var generator_fuel_consumption;
 
 
-var total_available_solar_from_array = 0;
-var total_wasted_solar = 0;
+var total_available_solar_from_array = 0
+var total_wasted_solar = 0
 var demand;
 var total_yearly_demand = 159454
-var total_energy_sold;
-var total_load_unmet;
-var wasted_PV;
-var DC_after_all_loses;
-var capacity_factor;
-var available_PV_sold;
-var renewable_penetration;
+var total_load_shedding = 0
+var total_load_unmet
+var wasted_PV
+var DC_after_all_loses
+var capacity_factor
+var available_PV_sold
+var renewable_penetration
 
 
 // number of parameter needed so far that are assoicated with time: solar_irradiation, load
@@ -128,6 +128,7 @@ function f_generator_load() {
 
 function f_load_shedding() {
     load_shedding = (load_remain_after_battery - generator_load) * (1 - mics.distribution_losses)
+    total_load_shedding = total_load_shedding + load_shedding
     return load_shedding
 }
 //load_shedding()
@@ -181,12 +182,23 @@ for (let i = 0; i < powerProduction.length  ; i++) {
     //console.log(powerProduction[i])
     //console.log(load[i % 24])
     simulation(powerProduction[i], load[i % 24])
-    if (isNaN(total_available_solar_from_array)) {
-        console.log(`${i}, ${powerProduction[i]}, ${load[i % 24]}, ${total_available_solar_from_array}`);
-        break;
-    }
-    
 }
-
-console.log(total_available_solar_from_array)
-
+console.log('total_available_solar_from_array')
+console.log(total_available_solar_from_array - total_wasted_solar)
+console.log('Demand(corrected for losses')
+console.log(159454/(1-mics.distribution_losses))
+console.log('Total Yearly Demand')
+console.log(159454)
+console.log('Energy Sold to Customer')
+console.log(159454 - total_load_shedding)
+console.log('% of load kWh unmet')
+console.log(total_load_shedding/159454)
+console.log('wasted PV')
+console.log((total_wasted_solar/total_available_solar_from_array) * 100)
+console.log('kWh/kW DC (After All Losses)')
+console.log((159454 - total_load_shedding)/120.4)
+console.log('Capacity Factor (After All Losses)')
+console.log(((159454 - total_load_shedding)/(120.4*8760))*100)
+console.log('% of available PV kWh sold')
+console.log(((159454 - total_load_shedding)/(total_available_solar_from_array)) * 100)
+console.log('PV kWh/Total kWh (Renewable Penetration)')
