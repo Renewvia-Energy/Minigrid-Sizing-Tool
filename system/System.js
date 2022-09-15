@@ -15,8 +15,10 @@ class Battery {
 class Generator {
     constructor(size) {
         this.size = size;
-        this.fuelData; //backend-diesel d10:h35
-        this.fuelYAxis; //backend-diesel c10:c35
+        var table = {10: 0, 20:1, 30:2, 40:3, 60:4, 75:5, 100:6, 125:7, 135:8, 150:9,
+             175:10, 200:11, 230:12, 250:13, 300:14,350:15,400:16,500:17,600:18, 750:21, 1000:22, 1250:23,
+             1500:24, 1750:25, 2000:26, 2250:27}
+        this.index = table[size]
     }
 } 
 
