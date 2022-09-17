@@ -1,0 +1,56 @@
+
+-- Summary Sheet --
+The goal is to generate the original budget table in Summary sheet.
+This table is a presentation of the Expense List sheet
+
+1. Original Budget table is generated from the Budget Total column
+2. Running Budget is calculated from Running Budget Total column
+
+-- Expense List --
+
+Assume that the list of expenses is given includes category, type of item
+For anything that is classified as yes in auto-budgeted column, we can simply look it up in the quick inputs 
+
+1. For any items that are auto-budgeted, we can look up the price in data that we gound in quick-inputs
+ -> Data from quick inputs will be process into JSON format:
+    {Category: {Type: {Item:Price}}
+
+    For example:
+    {   
+        Batteries: {
+            Materials: {
+                Battery Cost: 22000, 
+                Number of Batter: 10},
+            Customs: {
+                VAT:  6375975
+                Inspection Fee:  20,550.00
+            } 
+        }
+        Fencing: {
+            Materials: {
+                Fencing materials: 35000,
+                Fencing materials transport: 350,
+                Generator foundation labor: 35000,
+            },
+            Transport: {
+                ...
+            },
+            Labor: {
+                ...
+            }
+        }
+    }
+
+    2. I'm still not sure how to calculate the budget for half and no auto-budgeted items
+
+    -- Quick Inputs Constants--
+
+    Since the data in this sheet is constant, we can create a look up table using JSON like above once and keep it in the system
+
+    -- Quick Inputs - Change Every Time --
+    Since the data in this sheet is changed every time, we should have a function that parse information from a file (maybe excel or .txt). Could be better if it's JSON
+    How we store information from this sheet will directly affect the calculation for Expense List. We create a table that has Category, Type and Item (these are the unique ket)
+    matches with the Category, Type and Item in Expense List sheet
+
+
+    
