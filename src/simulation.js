@@ -9,12 +9,12 @@ var mics = new Mics()
 
 /**
  * Helper function that calculates generator fuel consumption for each time interval using 2D interpolation
- * @param {Array} values 
- * @param {Double} x1 
- * @param {Double} y1 
- * @param {Double} x2 
- * @param {Double} y2 
- * @param {Double} x 
+ * @param {Array} values: generator look-up table
+ * @param {Double} x1
+ * @param {Double} y1
+ * @param {Double} x2
+ * @param {Double} y2
+ * @param {Double} x
  * @param {Double} y 
  * @param {Double} generator_load 
  * @returns 
