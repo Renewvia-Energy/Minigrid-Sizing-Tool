@@ -3,15 +3,15 @@ var costs = {
         Customs: {
             ClearingAgentFees: 71.67,
             InspectionFee: 50,
-            NonVAtCustoms: 5135.24,
+            NonVATCustoms: 5135.24,
             PortFees: 106.43,
             VAT: 155.13,
         },
         Materials: {
-            Batteries: 22000,
+            Batteries: 2200,
         },
         Transport: {
-            InternationalTransport: 444
+            InternationalTransport: 6,
         }
     },
     CommunityRelations: {
@@ -26,8 +26,8 @@ var costs = {
         Material: {
             MeteringBaseStation: 1050,
             SM200EMeters: 150,
-            SMRPIMeters: 17280,
-            SMRDSMeters: 486.62
+            SMRPIMeters: 100,
+            SMRDSMeters: 40
         },
         Transport: {
             CustomerDropWireTransportToSite: 486.62,
@@ -36,37 +36,37 @@ var costs = {
         Customs: {
             ClearingAgentFees:358.33,
             InspectionFee: 250,
-            NonVAtCustoms: 250,
-            PortFees: 9816.28,
-            VAT: 0
+            NonVATCustoms: 9816.28,
+            PortFees: 261.56,
+            VAT: 0,
         }
     },
     Distribution: {
         Contingency: {
-            DistributionContingency: 6618.68 
+            DistributionContingency: 1323.74
         },
         DirectJobCost: {
             DistributionSurveyor: 313.87 
         },
         Labor: {
-            DistributionLabor: 15439.09 
+            DistributionLabor: 3087.82
         },
         Materials: {
-            DistributionMaterials: 54927.01 
+            DistributionMaterials: 10985.40 
         },
         Transport: {
-            DistributionMaterialsRoadTransport: 729.93
+            DistributionMaterialsRoadTransport: 145.99
         }
     },
     Fencing: {
         Labor: {
-            FencingLabor:  425.79,
+            FencingLabor:  2.13,
         },
         Materials: {
-            FencingMaterials: 1830.90,
+            FencingMaterials: 9.15,
         },
         Transport: {
-            FencingMaterialsTransport: 183.09,
+            FencingMaterialsTransport: 0.92,
         }
     },
     Generator: {
@@ -74,23 +74,28 @@ var costs = {
         Materials: {},
         Transport: {}
     },
-    Intervers: {
+    InterversB: {
         Customs: {
-            ClearingAgentFees: {
-                NotSpecify : 358.33,
-                SGS : 250.00,
-                NCS :  209.69,
-                NPA : 532.13 ,
-            },
-            NonVAtCustoms: 403.39 ,
+            ClearingAgentFees: 358.33,
+            InspectionFee: 250,
+            NonVATCustoms: 209.69,
+            PortFees: 532.13,
             VAT: 0,
-            VictronSmartSolarMPPT25085ChargeController: 5888.80 
         },
         Materials: {
-            BatteryInverterVictronQuattro15kW:  2600.00 
+            BatteryInverterVictronQuattro15kW: 2600,
         },
         Transport: {
-            InternationalTransport: 540
+            InternationalTransport: 36
+        }
+    },
+    InterversPV: {
+        Customs: {
+            NonVATCustoms: 403.39,
+            VAT: 0
+        },
+        Materials: {
+            VictronSmartSolarMPPT25085ChargeController: 588.88
         }
     },
     Permits: {
@@ -122,13 +127,13 @@ var costs = {
             VAT:  23.45,
         },
         Materials: {
-            Racking:  2430.00 
+            Racking:  0.05
         },
         Transport: {
             TransportToSite: 243.31,
         },
         Labor: {
-            RackingLabor: 486
+            RackingLabor: 0.01
         }
     },
     SolarPanels: {
@@ -142,10 +147,10 @@ var costs = {
         Contingency: {},
         Labor: {},
         Material: {
-            SolarPanels: 13267.80 
+            SolarPanels: 147.42 
         },
         Transport: {
-            InternationalTransport: 580.65,
+            InternationalTransport: 6.45,
             TransportToSite: 486.62 
         },
     },

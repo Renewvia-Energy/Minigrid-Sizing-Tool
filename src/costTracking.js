@@ -33,48 +33,61 @@ var travel_lodging_meals = 3459.12
 
 
 var ipt = [['Batteries','Customs','ClearingAgentFees'],
-            ['Batteries','Customs','InspectionFee'], ['Batteries','Customs','NonVAtCustoms'],
-            ['Batteries','Customs','PortFees'],['Batteries','Customs','VAT'],['Batteries','Materials','Batteries'],
-            ['Batteries','Transport','InternationalTransport'], 
+            ['Batteries','Customs','InspectionFee'],
+            ['Batteries','Customs','NonVATCustoms'],
+            ['Batteries','Customs','PortFees'],
+            ['Batteries','Customs','VAT'],
+            ['Batteries','Materials','Batteries'],
+            ['Batteries','Transport','InternationalTransport'],
+            ['CusomerMeteringAndWiring','Customs', 'ClearingAgentFees'],
+            ['CusomerMeteringAndWiring','Customs', 'InspectionFee'], 
+            ['CusomerMeteringAndWiring','Customs', 'NonVATCustoms'],
+            ['CusomerMeteringAndWiring','Customs', 'PortFees'],
+            ['CusomerMeteringAndWiring','Customs', 'VAT'],
             ['CusomerMeteringAndWiring', 'Material', 'MeteringBaseStation'],
             ['CusomerMeteringAndWiring', 'Material', 'SM200EMeters'],
             ['CusomerMeteringAndWiring', 'Material', 'SMRPIMeters'],
             ['CusomerMeteringAndWiring', 'Material', 'SMRDSMeters'],
             ['CusomerMeteringAndWiring','Transport', 'CustomerDropWireTransportToSite'],
             ['CusomerMeteringAndWiring','Transport', 'InternationalTransport'],
-            ['CusomerMeteringAndWiring','Customs', 'ClearingAgentFees'],
-            ['CusomerMeteringAndWiring','Customs', 'InspectionFee'],
-            ['CusomerMeteringAndWiring','Customs', 'NonVAtCustoms'],
-            ['CusomerMeteringAndWiring','Customs', 'PortFees'],
-            ['CusomerMeteringAndWiring','Customs', 'VAT'],
             ['Distribution', 'Contingency', 'DistributionContingency'],
             ['Distribution', 'DirectJobCost', 'DistributionSurveyor'],
             ['Distribution', 'Labor', 'DistributionLabor'],
             ['Distribution', 'Materials', 'DistributionMaterials'],
             ['Distribution', 'Transport', 'DistributionMaterialsRoadTransport'],
-            ['Fencing', 'Labor', 'FencingLabor'], ['Fencing', 'Materials', 'FencingMaterials'], ['Fencing', 'Transport', 'FencingMaterialsTransport'],
-            ['Intervers', 'Customs', 'ClearingAgentFees', 'NotSpecify'],
-            ['Intervers', 'Customs', 'ClearingAgentFees', 'SGS'],
-            ['Intervers', 'Customs', 'ClearingAgentFees', 'NCS'],
-            ['Intervers', 'Customs', 'ClearingAgentFees', 'NPA'],
-            ['Intervers', 'Customs','NonVAtCustoms'],
-            ['Intervers', 'Customs','VAT'],['Intervers', 'Customs','VictronSmartSolarMPPT25085ChargeController'],
-            ['Intervers', 'Materials','BatteryInverterVictronQuattro15kW'], ['Intervers', 'Transport', 'InternationalTransport'],
+            ['Fencing', 'Labor', 'FencingLabor'], 
+            ['Fencing', 'Materials', 'FencingMaterials'], 
+            ['Fencing', 'Transport', 'FencingMaterialsTransport'],
+            ['InterversB', 'Customs', 'ClearingAgentFees'],
+            ['InterversB', 'Customs', 'InspectionFee'],
+            ['InterversB', 'Customs', 'NonVATCustoms'],
+            ['InterversB', 'Customs', 'PortFees'],
+            ['InterversB', 'Customs','VAT'],
+            ['InterversB', 'Materials','BatteryInverterVictronQuattro15kW'],
+            ['InterversB', 'Transport', 'InternationalTransport'],
+            ['InterversPV', 'Customs', 'NonVATCustoms'],
+            ['InterversPV', 'Customs','VAT'],
+            ['InterversPV', 'Materials','VictronSmartSolarMPPT25085ChargeController'],
+            ['PowerHouse', 'Transport', 'PowerHouseTransportByRoad'],
             ['RackingAndMounting', 'Customs', 'ClearingAgentFees'],
             ['RackingAndMounting', 'Customs', 'InspectionFee'],
             ['RackingAndMounting', 'Customs', 'NonVATCustoms'],
             ['RackingAndMounting', 'Customs', 'PortFees'],
             ['RackingAndMounting', 'Customs', 'VAT'],
+            ['RackingAndMounting', 'Labor', 'RackingLabor'],
             ['RackingAndMounting', 'Materials', 'Racking'],
             ['RackingAndMounting', 'Transport', 'TransportToSite'],
-            ['RackingAndMounting', 'Labor', 'RackingLabor'],
             ['SolarPanels', 'Customs', 'ClearingAgentFees'],
             ['SolarPanels', 'Customs', 'InspectionFee'],
             ['SolarPanels', 'Customs', 'NonVATCustoms'],
             ['SolarPanels', 'Customs', 'PortFees'],
+            ['SolarPanels', 'Customs', 'VAT'],
             ['SolarPanels', 'Material', 'SolarPanels'],
             ['SolarPanels', 'Transport', 'InternationalTransport'],
             ['SolarPanels', 'Transport', 'TransportToSite']]
+
+quantity = [1,1,1,1,1,10,74,1,1,1,1,1,1,1,0,432,1,1,5,1,5,5,5,200,200,200,1,1,1,
+        1,1,1,15,1,1,10,1,1,1,1,1,1,48600,48600,1,1,1,1,1,1,90,90, 1]
 
 var budget = batteries+community_relations+customer_metering_wiring+permits+plant_balance_of_system+plant_site + power_house+racking_and_mounting+ solar_panels+ temporary_facilities+ travel_lodging_meals
 
@@ -84,9 +97,11 @@ for (let i = 0; i < ipt.length; i++) {
     for (let j = 1; j < expenses.length; j ++) {
         curr = curr[expenses[j]]
     }
-    console.log(ipt[i])
+    console.log('--')
+    console.log(quantity[i])
     console.log(curr)
-    budget += curr
+    console.log(curr * quantity[i])
+    budget += (curr * quantity[i])
 }
 
 console.log('Final Budget:' + budget)

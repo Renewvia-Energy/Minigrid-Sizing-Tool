@@ -1,6 +1,6 @@
 class Battery {
-    constructor(capacity, min_SOC, SOC, efficiency) {
-        this.capacity = capacity;
+    constructor(batteryCount, min_SOC, SOC, efficiency) {
+        this.capacity = batteryCount * 14.3;
         this.min_SOC = min_SOC;
         this.SOC = SOC
         this.efficiency = efficiency
@@ -23,18 +23,18 @@ class Generator {
 } 
 
 class PV {
-    constructor(size, losses) {
-        this.size = size;
+    constructor(solarPanelCount, losses) {
+        this.size = solarPanelCount * (540/1000); //540W?
         this.losses = losses;
     }
 } 
 
 class Inverter {
-    constructor() {
+    constructor(chargeControllerCount, inverterCount) {
         this.efficiency = 0.95;
-        this.inverter_size = 168.2
+        this.inverter_size = chargeControllerCount * 4.7
         this.solar_to_load_limit = 60
-        this.solar_to_battery_limit = 168.2
+        this.solar_to_battery_limit = inverterCount * 15
     }
 }
 

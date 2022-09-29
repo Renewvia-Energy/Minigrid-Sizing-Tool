@@ -1,21 +1,26 @@
 /**
  * instantiate system variables. These are fixed variables
  */
-var battery = new Battery(300.3, 36.04, 300.3, 0.975)
+var solarPanelCount;
+var batteryCount;
+var inverterCount;
+var chargeControllerCount;
+
+var battery = new Battery(batteryCount, 36.04, 300.3, 0.975)
 var generator = new Generator(100)
-var PVArray = new PV(120.4, 0.11)
-var inverter = new Inverter()
+var PVArray = new PV(solarPanelCount, 0.11)
+var inverter = new Inverter(chargeControllerCount, inverterCount)
 var mics = new Mics()
 
 /**
  * Helper function that calculates generator fuel consumption for each time interval using 2D interpolation
  * @param {Array} values: generator look-up table
- * @param {Double} x1
- * @param {Double} y1
- * @param {Double} x2
- * @param {Double} y2
- * @param {Double} x
- * @param {Double} y 
+ * @param {Integer} x1: lower bound index of size of generator
+ * @param {Integer} y1: lower bound index of generator_load
+ * @param {Integer} x2: upper bound index of size of generator
+ * @param {Integer} y2: lower bound index of size of generator
+ * @param {Double} x: the index value of size of generator according to x1 and x2
+ * @param {Double} y: the index value of generator_load according to y1 and y2
  * @param {Double} generator_load 
  * @returns 
  */
@@ -44,10 +49,10 @@ function generator_fuel_consumption(values, x1,y1,x2,y2,x,y, generator_load) {
 
 /**
  * Helper function that calculates the index of value in sorted arr array. This function helps with finding x1,x2,y1,y2 in generator_fuel_consumption() function
- * @param {Array} arr 
- * @param {Double} value 
- * @param {Integer} lo 
- * @param {Integer} hi 
+ * @param {Array} arr : a sorted array that we want to find the index from
+ * @param {Double} value: the value that we want to find the index
+ * @param {Integer} lo: always 0
+ * @param {Integer} hi: the length of arr
  * @returns 
  */
 function bisectLeft(arr, value, lo, hi) {
