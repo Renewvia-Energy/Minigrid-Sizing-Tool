@@ -1,11 +1,18 @@
+// asume that project going to last for 20 years, C0 = cost tracking tools(original, same very years), 30 Shillance per kWh,
+// total kWH for one year, assume that only cost that happen every year is disel, assume that the cost of dieasal 100 per litter. make all of the money for every year at the end of the year,
+// pay for the disels at the end of the year -> calculate IRR assume NPV = 0
+
 /**
  * instantiate system variables. These are fixed variables
  */
-var solarPanelCount;
-var batteryCount;
-var inverterCount;
-var chargeControllerCount;
 
+// engineering input goes here
+var solarPanelCount = 223
+var batteryCount = 21
+var inverterCount = 11
+var chargeControllerCount = 36
+
+// size of diseal general 
 var battery = new Battery(batteryCount, 36.04, 300.3, 0.975)
 var generator = new Generator(100)
 var PVArray = new PV(solarPanelCount, 0.11)
@@ -21,9 +28,10 @@ var mics = new Mics()
  * @param {Integer} y2: lower bound index of size of generator
  * @param {Double} x: the index value of size of generator according to x1 and x2
  * @param {Double} y: the index value of generator_load according to y1 and y2
- * @param {Double} generator_load 
- * @returns 
+ * @param {Double} generator_load: the generator load input
+ * @returns: the estimate fuel consumption for the input generator load
  */
+
 function generator_fuel_consumption(values, x1,y1,x2,y2,x,y, generator_load) {
     // this is the case when we can simply look up the value in generator_table table
     if (x1 == x2 && y1 == y2){
@@ -53,7 +61,7 @@ function generator_fuel_consumption(values, x1,y1,x2,y2,x,y, generator_load) {
  * @param {Double} value: the value that we want to find the index
  * @param {Integer} lo: always 0
  * @param {Integer} hi: the length of arr
- * @returns 
+ * @returns: return the index that the value should be inserted to the sorted array
  */
 function bisectLeft(arr, value, lo, hi) {
     while (lo < hi) {
@@ -71,8 +79,13 @@ function bisectLeft(arr, value, lo, hi) {
  * This function contains all of the calculation in stimulation sheet
  * @param {Double} solar_irradiation DC Power Production for particular time interval
  * @param {Double} load amount of load needed for particular time interval
- * @returns 
+ * @returns: available_solar_from_array: available solar from array directly from PV
+ *           wasted_solar: wasted solar after account for load and battery
+ *           generator_load: the load that generator has to help
+ *           load_shedding: if we unable to satisfy the demand
+ *           generator_fuel: the amount of fuel needs from generator
  */
+
 function calculation(solar_irradiation, load) {
     // instantiate static variables for each time interval
     var available_solar_from_array;
@@ -167,7 +180,7 @@ function calculation(solar_irradiation, load) {
 
 
 /**
- * This function runs the simulation to calculate results
+ * This function runs the simulation to calculate results and print out to console
  */
 function simulation() {
     // instantiate results that we're interested in
@@ -195,6 +208,7 @@ function simulation() {
     }
 
     //print the results to console
+    /*
     console.log('Total Energy Produced from PV')
     console.log(total_available_solar_from_array - total_wasted_solar)
     console.log('Demand(corrected for losses')
@@ -202,7 +216,10 @@ function simulation() {
     console.log('Total Yearly Demand')
     console.log(159454)
     console.log('Energy Sold to Customer')
-    console.log(159454 - total_load_shedding)
+    */
+    var energySoldToCustomer = 159454 - total_load_shedding
+    /*
+    console.log(energySoldToCustomer)
     console.log('% of load kWh unmet')
     console.log(total_load_shedding/159454)
     console.log('wasted PV')
@@ -225,6 +242,9 @@ function simulation() {
     console.log(((0.01 * total_generator_load)/generator_running_hour) * 100)
     console.log('Total Fuel Consumption')
     console.log(total_fuel * 3.785)
+    */
+
+    return energySoldToCustomer
 }
 
 simulation()

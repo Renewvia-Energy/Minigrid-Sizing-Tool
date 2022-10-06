@@ -86,8 +86,9 @@ var ipt = [['Batteries','Customs','ClearingAgentFees'],
             ['SolarPanels', 'Transport', 'InternationalTransport'],
             ['SolarPanels', 'Transport', 'TransportToSite']]
 
+// engineering input goes here!
 quantity = [1,1,1,1,1,10,74,1,1,1,1,1,1,1,0,432,1,1,5,1,5,5,5,200,200,200,1,1,1,
-        1,1,1,15,1,1,10,1,1,1,1,1,1,48600,48600,1,1,1,1,1,1,90,90, 1]
+            1,1,1,15,1,1,10,1,1,1,1,1,1,48600,48600,1,1,1,1,1,1,90,90, 1]
 
 var budget = batteries+community_relations+customer_metering_wiring+permits+plant_balance_of_system+plant_site + power_house+racking_and_mounting+ solar_panels+ temporary_facilities+ travel_lodging_meals
 
@@ -97,11 +98,13 @@ for (let i = 0; i < ipt.length; i++) {
     for (let j = 1; j < expenses.length; j ++) {
         curr = curr[expenses[j]]
     }
+    /*
     console.log('--')
     console.log(quantity[i])
     console.log(curr)
     console.log(curr * quantity[i])
     budget += (curr * quantity[i])
+    */
 }
 
 console.log('Final Budget:' + budget)
