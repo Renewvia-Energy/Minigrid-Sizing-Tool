@@ -34,13 +34,179 @@ var powerProduction = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 88.0, 283.0, 485.0, 56
                         523.0, 662.0, 744.0, 770.0, 741.0, 658.0, 511.0, 323.0, 114.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 123.0, 355.0, 553.0, 690.0, 767.0, 790.0, 773.0, 691.0, 554.0, 356.0, 134.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 115.0, 344.0, 542.0, 685.0, 758.0, 776.0, 739.0, 650.0, 509.0, 322.0, 117.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 115.0, 337.0, 527.0, 660.0, 736.0, 757.0, 729.0, 640.0, 507.0, 325.0, 115.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 91.0, 277.0, 462.0, 612.0, 736.0, 783.0, 752.0, 668.0, 527.0, 333.0, 116.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 98.0, 307.0, 498.0, 620.0, 697.0, 719.0, 697.0, 610.0, 471.0, 284.0, 92.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 70.0, 248.0, 460.0, 607.0, 698.0, 724.0, 719.0, 621.0, 470.0, 268.0, 85.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 77.0, 250.0, 429.0, 566.0, 663.0, 687.0, 659.0, 591.0, 466.0, 281.0, 92.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 114.0, 339.0, 537.0, 669.0, 749.0, 774.0, 752.0, 671.0, 533.0, 344.0, 125.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 119.0, 343.0, 537.0, 650.0, 731.0, 757.0, 730.0, 648.0, 511.0, 321.0, 110.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
 
-var generator_table = [[0.0, 0.3, 0.5, 0.7], [0.0, 0.6,0.9,1.3,1.6], [0.0,1.3,1.8,2.4,2.9], [0.0 ,1.6,2.3, 3.2,4.0],
-            [0.0,1.8,2.9,3.8,4.8], [0.0,2.4,3.4,4.6,6.1],[0.0,2.6,4.1,5.8,7.4],[0.0,3.1,5.0,7.1,9.1], [0.0,3.3,5.4,7.6,9.8],
-            [0.0,3.6,5.9,8.4,10.9],[0.0,4.1,6.8,9.7,12.7],[0.0,4.7,7.7,11.0,14.4],[0.0,5.3,8.8,12.5,16.6],[0.0,5.7,9.5,13.6,18.0],
-            [0.0,6.8,11.3,16.1,21.5],[0.0,7.9,13.1,18.7,25.1],[0.0,8.9,14.9,21.3,28.6],[0.0,11.0,18.5,26.4,35.7],[0.0,13.2,22.0,31.5,42.8],
-            [0.0,16.3,27.4,39.3,53.4],[0.0,21.6,36.4,52.1,71.1],[0.0,26.9,45.3,65.0,88.8],[0.0,32.2,54.3,77.8,106.5],[0.0,37.5,63.2,90.7,124.2],
-            [0.0,42.8,72.2,103.5,141.9],[0.0,48.1,81.1,116.4,159.6]
-        ]
-
 var loading_percentage = [0, 25, 50, 75, 100]
 var generator_sizes = [10, 20, 30, 40, 60, 75, 100, 125, 135, 150, 175, 200, 230, 250, 300, 350, 400, 500, 600, 750, 1000, 125, 1500, 1750, 2000, 2250]
+
+var costs = {
+    Batteries: {
+        Customs: {
+            ClearingAgentFees: 71.67,
+            InspectionFee: 50,
+            NonVATCustoms: 5135.24,
+            PortFees: 106.43,
+            VAT: 155.13,
+        },
+        Materials: {
+            Batteries: 2200,
+        },
+        Transport: {
+            InternationalTransport: 6,
+        }
+    },
+    CommunityRelations: {
+        DirectJobCost: {},
+        EquipmentRentals: {},
+        Labor: {}
+    },
+    CusomerMeteringAndWiring: {
+        DirectJobCost: {},
+        EquipmentRentals: {},
+        Labor: {},
+        Material: {
+            MeteringBaseStation: 1050,
+            SM200EMeters: 150,
+            SMRPIMeters: 100,
+            SMRDSMeters: 40
+        },
+        Transport: {
+            CustomerDropWireTransportToSite: 486.62,
+            InternationalTransport: 2367.26
+        },
+        Customs: {
+            ClearingAgentFees:358.33,
+            InspectionFee: 250,
+            NonVATCustoms: 9816.28,
+            PortFees: 261.56,
+            VAT: 0,
+        }
+    },
+    Distribution: {
+        Contingency: {
+            DistributionContingency: 1323.74
+        },
+        DirectJobCost: {
+            DistributionSurveyor: 313.87 
+        },
+        Labor: {
+            DistributionLabor: 3087.82
+        },
+        Materials: {
+            DistributionMaterials: 10985.40 
+        },
+        Transport: {
+            DistributionMaterialsRoadTransport: 145.99
+        }
+    },
+    Fencing: {
+        Labor: {
+            FencingLabor:  2.13,
+        },
+        Materials: {
+            FencingMaterials: 9.15,
+        },
+        Transport: {
+            FencingMaterialsTransport: 0.92,
+        }
+    },
+    Generator: {
+        Labor: {},
+        Materials: {},
+        Transport: {}
+    },
+    InterversB: {
+        Customs: {
+            ClearingAgentFees: 358.33,
+            InspectionFee: 250,
+            NonVATCustoms: 209.69,
+            PortFees: 532.13,
+            VAT: 0,
+        },
+        Materials: {
+            BatteryInverterVictronQuattro15kW: 2600,
+        },
+        Transport: {
+            InternationalTransport: 36
+        }
+    },
+    InterversPV: {
+        Customs: {
+            NonVATCustoms: 403.39,
+            VAT: 0
+        },
+        Materials: {
+            VictronSmartSolarMPPT25085ChargeController: 588.88
+        }
+    },
+    Permits: {
+        Contingency: {},
+        DirectJobCost: {}
+    },
+    PlantBalanceOfSystem: {
+        Contingency: {},
+        Labor: {},
+        Materials: {},
+    },
+    PlantSite: {
+        Labor: {},
+        Materials: {},
+    },
+    PowerHouse: {
+        Labor: {},
+        Materials: {},
+        Transport: {
+            PowerHouseTransportByRoad: 486.62 
+        }
+    },
+    RackingAndMounting: {
+        Customs: {
+            ClearingAgentFees:  358.33,
+            InspectionFee: 250.00,
+            NonVATCustoms:  739.46,
+            PortFees:  532.13,
+            VAT:  23.45,
+        },
+        Materials: {
+            Racking:  0.05
+        },
+        Transport: {
+            TransportToSite: 243.31,
+        },
+        Labor: {
+            RackingLabor: 0.01
+        }
+    },
+    SolarPanels: {
+        Customs: {
+            ClearingAgentFees:  358.33,
+            InspectionFee: 36.29,
+            NonVATCustoms:  201.92,
+            PortFees:  77.24,
+            VAT:  0
+        },
+        Contingency: {},
+        Labor: {},
+        Material: {
+            SolarPanels: 147.42 
+        },
+        Transport: {
+            InternationalTransport: 6.45,
+            TransportToSite: 486.62 
+        },
+    },
+    TemporaryFacilities: {
+        Contingency: {},
+        EquipmentRentals: {}
+    },
+    Transmission: {
+        Contingency: {},
+        Labor: {},
+        Material: {},
+        Transport: {},
+    },
+    TravelLodgingandMeals: {
+        EquipmentRentals: {},
+        DirectJobCost: {},
+        ConstructionConsumables: {}
+    }
+}
+

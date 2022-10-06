@@ -4,14 +4,20 @@ Profit: 30 Shillance per kWh * total kWH for one year
 Cost: assume that only cost that happen every year is disel, assume that the cost of dieasal 100 Shillance per litter
 Make all of the money for every year at the end of the year - pay for the disels at the end of the year 
 -> calculate IRR assume NPV = 0
+
+#asume that there is 7.4kW for battery
 */
 var T = 20
 var Ct = 159454 * 30 - 22481 * 100
-var C0 = 212750
+var C0 = budget
 let EPSILON = 0.0000025
+var totalEnergySold
+var totalFuel
 function NPV(i) {
     running = 0
     for (let t = 1; t <= T; t++) {
+        //simulation()
+        //var Ct = energySoldToCustomer * 30 - totalFuelConsumption * 100
         running += (Ct/Math.pow(1 + i, t))
     }
     return running - C0
@@ -48,6 +54,6 @@ function bisection(a, b) {
 }
 
 console.log(bisection(0,64))
-console.log(NPV(11.917837142944336))
+console.log(NPV(62.16377830505371))
 
 

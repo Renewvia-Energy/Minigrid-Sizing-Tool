@@ -7,17 +7,28 @@
  */
 
 // engineering input goes here
+/*
 var solarPanelCount = 223
 var batteryCount = 21
 var inverterCount = 11
 var chargeControllerCount = 36
+*/
+
 
 // size of diseal general 
-var battery = new Battery(batteryCount, 36.04, 300.3, 0.975)
+var battery = new Battery(300.3, 36.04, 300.3, 0.975)
 var generator = new Generator(100)
-var PVArray = new PV(solarPanelCount, 0.11)
-var inverter = new Inverter(chargeControllerCount, inverterCount)
+var PVArray = new PV(120.4, 0.11)
+var inverter = new Inverter()
 var mics = new Mics()
+
+var generator_table = [[0.0, 0.3, 0.5, 0.7], [0.0, 0.6,0.9,1.3,1.6], [0.0,1.3,1.8,2.4,2.9], [0.0 ,1.6,2.3, 3.2,4.0],
+            [0.0,1.8,2.9,3.8,4.8], [0.0,2.4,3.4,4.6,6.1],[0.0,2.6,4.1,5.8,7.4],[0.0,3.1,5.0,7.1,9.1], [0.0,3.3,5.4,7.6,9.8],
+            [0.0,3.6,5.9,8.4,10.9],[0.0,4.1,6.8,9.7,12.7],[0.0,4.7,7.7,11.0,14.4],[0.0,5.3,8.8,12.5,16.6],[0.0,5.7,9.5,13.6,18.0],
+            [0.0,6.8,11.3,16.1,21.5],[0.0,7.9,13.1,18.7,25.1],[0.0,8.9,14.9,21.3,28.6],[0.0,11.0,18.5,26.4,35.7],[0.0,13.2,22.0,31.5,42.8],
+            [0.0,16.3,27.4,39.3,53.4],[0.0,21.6,36.4,52.1,71.1],[0.0,26.9,45.3,65.0,88.8],[0.0,32.2,54.3,77.8,106.5],[0.0,37.5,63.2,90.7,124.2],
+            [0.0,42.8,72.2,103.5,141.9],[0.0,48.1,81.1,116.4,159.6]
+        ]
 
 /**
  * Helper function that calculates generator fuel consumption for each time interval using 2D interpolation
@@ -46,11 +57,11 @@ function generator_fuel_consumption(values, x1,y1,x2,y2,x,y, generator_load) {
       return generator_table[x1][y1] + portion * (generator.size - generator_sizes[x1])
     // Bilinear interpolation
     } else {
-      let q11 = (((x2 - x) * (y2 - y)) / ((x2 - x1) * (y2 - y1))) * values[x1][y1]
-      let q21 = (((x - x1) * (y2 - y)) / ((x2 - x1) * (y2 - y1))) * values[x2][y1]
-      let q12 = (((x2 - x) * (y - y1)) / ((x2 - x1) * (y2 - y1))) * values[x1][y2]
-      let q22 = (((x - x1) * (y - y1)) / ((x2 - x1) * (y2 - y1))) * values[x2][y2]
-      return  q11 + q21 + q12 + q22
+        let q11 = (((x2 - x) * (y2 - y)) / ((x2 - x1) * (y2 - y1))) * generator_table[x1][y1]
+        let q21 = (((x - x1) * (y2 - y)) / ((x2 - x1) * (y2 - y1))) * generator_table[x2][y1]
+        let q12 = (((x2 - x) * (y - y1)) / ((x2 - x1) * (y2 - y1))) * generator_table[x1][y2]
+        let q22 = (((x - x1) * (y - y1)) / ((x2 - x1) * (y2 - y1))) * generator_table[x2][y2]
+        return  q11 + q21 + q12 + q22
     }
 }
 
@@ -150,7 +161,7 @@ function calculation(solar_irradiation, load) {
      */
     var row1, row2, col1, col2, x, y;
     // find the area that generator size belongs in in generator_table
-    var row = bisectLeft(generator_sizes,generator.size, 0, 26)
+    var row = bisectLeft(generator_sizes, generator.size, 0, 26)
     if (generator_sizes[row] == generator.size) {
         row1 = row2 = row
         x = row
@@ -208,7 +219,6 @@ function simulation() {
     }
 
     //print the results to console
-    /*
     console.log('Total Energy Produced from PV')
     console.log(total_available_solar_from_array - total_wasted_solar)
     console.log('Demand(corrected for losses')
@@ -216,9 +226,7 @@ function simulation() {
     console.log('Total Yearly Demand')
     console.log(159454)
     console.log('Energy Sold to Customer')
-    */
     var energySoldToCustomer = 159454 - total_load_shedding
-    /*
     console.log(energySoldToCustomer)
     console.log('% of load kWh unmet')
     console.log(total_load_shedding/159454)
@@ -241,10 +249,8 @@ function simulation() {
     console.log('Generator Average Loading')
     console.log(((0.01 * total_generator_load)/generator_running_hour) * 100)
     console.log('Total Fuel Consumption')
-    console.log(total_fuel * 3.785)
-    */
+    var totalFuelConsumption = total_fuel * 3.785
+    console.log(totalFuelConsumption)
 
-    return energySoldToCustomer
+    //return [energySoldToCustomer, total_fuel * 3.785]
 }
-
-simulation()
