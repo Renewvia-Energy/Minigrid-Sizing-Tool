@@ -6,21 +6,7 @@
  * instantiate system variables. These are fixed variables
  */
 
-// engineering input goes here
-/*
-var solarPanelCount = 223
-var batteryCount = 21
-var inverterCount = 11
-var chargeControllerCount = 36
-*/
-
-
 // size of diseal general 
-var battery = new Battery(300.3, 36.04, 300.3, 0.975)
-var generator = new Generator(100)
-var PVArray = new PV(120.4, 0.11)
-var inverter = new Inverter()
-var mics = new Mics()
 
 var generator_table = [[0.0, 0.3, 0.5, 0.7], [0.0, 0.6,0.9,1.3,1.6], [0.0,1.3,1.8,2.4,2.9], [0.0 ,1.6,2.3, 3.2,4.0],
             [0.0,1.8,2.9,3.8,4.8], [0.0,2.4,3.4,4.6,6.1],[0.0,2.6,4.1,5.8,7.4],[0.0,3.1,5.0,7.1,9.1], [0.0,3.3,5.4,7.6,9.8],
@@ -97,7 +83,7 @@ function bisectLeft(arr, value, lo, hi) {
  *           generator_fuel: the amount of fuel needs from generator
  */
 
-function calculation(solar_irradiation, load) {
+function calculation(solar_irradiation, load, battery, generator, PVArray, inverter, mics) {
     // instantiate static variables for each time interval
     var available_solar_from_array;
     var available_solar_from_inverters;
@@ -194,6 +180,19 @@ function calculation(solar_irradiation, load) {
  * This function runs the simulation to calculate results and print out to console
  */
 function simulation() {
+    // engineering input goes here
+    /*
+    var solarPanelCount = 223
+    var batteryCount = 21
+    var inverterCount = 11
+    var chargeControllerCount = 36
+    */
+   
+    var battery = new Battery(300.3, 36.04, 300.3, 0.975)
+    var generator = new Generator(100)
+    var PVArray = new PV(120.4, 0.11)
+    var inverter = new Inverter()
+    var mics = new Mics()
     // instantiate results that we're interested in
     var generator_running_hour = 0
     var total_available_solar_from_array = 0
@@ -207,7 +206,7 @@ function simulation() {
     //iterate through each time interval
     for (let i = 0; i < powerProduction.length ; i++) {
         [available_solar_from_array, wasted_solar, generator_load, load_shedding, generator_fuel] 
-            = calculation(powerProduction[i], load[i % 24])
+            = calculation(powerProduction[i], load[i % 24], battery, generator, PVArray, inverter, mics)
         total_fuel += Math.round(generator_fuel*10)/10
         if (generator_load > 0) {
             generator_running_hour += 1
@@ -219,6 +218,7 @@ function simulation() {
     }
 
     //print the results to console
+    /*
     console.log('Total Energy Produced from PV')
     console.log(total_available_solar_from_array - total_wasted_solar)
     console.log('Demand(corrected for losses')
@@ -226,7 +226,8 @@ function simulation() {
     console.log('Total Yearly Demand')
     console.log(159454)
     console.log('Energy Sold to Customer')
-    var energySoldToCustomer = 159454 - total_load_shedding
+    */
+    /*
     console.log(energySoldToCustomer)
     console.log('% of load kWh unmet')
     console.log(total_load_shedding/159454)
@@ -249,8 +250,8 @@ function simulation() {
     console.log('Generator Average Loading')
     console.log(((0.01 * total_generator_load)/generator_running_hour) * 100)
     console.log('Total Fuel Consumption')
-    var totalFuelConsumption = total_fuel * 3.785
-    console.log(totalFuelConsumption)
+    */
+    //console.log(total_fuel * 3.785)
 
-    //return [energySoldToCustomer, total_fuel * 3.785]
+    return [159454 - total_load_shedding, total_fuel * 3.785]
 }

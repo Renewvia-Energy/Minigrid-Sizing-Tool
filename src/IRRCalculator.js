@@ -11,13 +11,11 @@ var T = 20
 var Ct = 159454 * 30 - 22481 * 100
 var C0 = budget
 let EPSILON = 0.0000025
-var totalEnergySold
-var totalFuel
 function NPV(i) {
     running = 0
     for (let t = 1; t <= T; t++) {
-        //simulation()
-        //var Ct = energySoldToCustomer * 30 - totalFuelConsumption * 100
+        result = simulation()
+        var Ct = result[0] * 30 - result[1] * 100
         running += (Ct/Math.pow(1 + i, t))
     }
     return running - C0
@@ -52,8 +50,8 @@ function bisection(a, b) {
     return c
 
 }
-
+console.log('bisection')
 console.log(bisection(0,64))
-console.log(NPV(62.16377830505371))
+console.log(NPV(12.93840217590332))
 
 
