@@ -16,6 +16,11 @@ var generator_table = [[0.0, 0.3, 0.5, 0.7], [0.0, 0.6,0.9,1.3,1.6], [0.0,1.3,1.
             [0.0,42.8,72.2,103.5,141.9],[0.0,48.1,81.1,116.4,159.6]
         ]
 
+var solarPanelCount = 223
+var batteryCount = 21
+var inverterCount = 3
+var chargeControllerCount = 20
+
 /**
  * Helper function that calculates generator fuel consumption for each time interval using 2D interpolation
  * @param {Array} values: generator look-up table
@@ -181,18 +186,19 @@ function calculation(solar_irradiation, load, battery, generator, PVArray, inver
  */
 function simulation() {
     // engineering input goes here
-    /*
-    var solarPanelCount = 223
-    var batteryCount = 21
-    var inverterCount = 11
-    var chargeControllerCount = 36
-    */
-   
+
+    var battery = new Battery(batteryCount, 36.04, 0.975)
+    var generator = new Generator(100)
+    var PVArray = new PV(solarPanelCount, 0.11)
+    var inverter = new Inverter(chargeControllerCount, inverterCount)
+    var mics = new Mics()
+   /*
     var battery = new Battery(300.3, 36.04, 300.3, 0.975)
     var generator = new Generator(100)
     var PVArray = new PV(120.4, 0.11)
     var inverter = new Inverter()
     var mics = new Mics()
+    */
     // instantiate results that we're interested in
     var generator_running_hour = 0
     var total_available_solar_from_array = 0

@@ -1,15 +1,16 @@
 /*
 assume that project going to last for 20 years, C0 = cost tracking tools(original, same very years), 
-Profit: 30 Shillance per kWh * total kWH for one year
-Cost: assume that only cost that happen every year is disel, assume that the cost of dieasal 100 Shillance per litter
+Profit: 30 Shilling per kWh * total kWH for one year
+Cost: assume that only cost that happen every year is disel, assume that the cost of dieasal 100 Shilling per litter
 Make all of the money for every year at the end of the year - pay for the disels at the end of the year 
 -> calculate IRR assume NPV = 0
 
 #asume that there is 7.4kW for battery
 */
 var T = 20
-var Ct = 159454 * 30 - 22481 * 100
-var C0 = budget
+//var Ct = 159454 * 30 - 22481 * 100
+var C0 = budget * 120
+
 let EPSILON = 0.0000025
 function NPV(i) {
     running = 0
@@ -29,7 +30,7 @@ function bisection(a, b) {
         console.print('Try with different a and b')
         return
     }
-    let c = a;
+    let c;
     while ((b - a) >= EPSILON) {
         c = (a+b)/2
         /*
@@ -51,7 +52,8 @@ function bisection(a, b) {
 
 }
 console.log('bisection')
-console.log(bisection(0,64))
-console.log(NPV(12.93840217590332))
+console.log(bisection(0,.64))
+console.log(NPV(0.08778076171874999))
+console.log(NPV(0))
 
 
