@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Minigrid Sizing Tool</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- Fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Open+Sans+Condensed:wght@300&display=swap" rel="stylesheet">
+
+	<!-- Custom CSS -->
+	<link rel="stylesheet" type="text/css" href="color_scheme.css">
+	<link rel="stylesheet" type="text/css" href="form.css">
+</head>
+
+<body>
+    <header>
+        <h1>Minigrid Sizing Tool</h1>
+    </header>
+    <main>
+        <p class="intro">Text introducing the form</p>
+        <form>
+            <section>
+                <h2>Site Parameters</h2>
+                <label for="name">Project Name:</label>
+                <input type="text" name="name" id="name" required><br>
+                
+                <!-- TODO: Add site parameters, e.g. coordinates, load profile, distribution/transmission length -->
+            </section>
+            
+            <section>
+                <h2>Engineering Inputs</h2>
+                <label for="num-cc">Number of Charge Controllers:</label>
+                <input type="number" name="num-cc" id="num-cc" required><br>
+
+                <label for="num-batteries">Number of Batteries:</label>
+                <input type="number" name="num-batteries" id="num-batteries" required><br>
+
+                <label for="num-battery-inverters">Number of Battery Inverters:</label>
+                <input type="number" name="num-battery-inverters" id="num-battery-inverters" required><br>
+
+                <!-- TODO: Add other engineering inputs, e.g. number of PV inverters, size of generator, inverter settings -->
+            </section>
+
+            <section>
+                <h2>Engineering Constants</h2>
+                <!-- TODO: Add constants, e.g. array losses, distribution losses,  -->
+            </section>
+
+            <section>
+                <h2>Procurement Parameters</h2>
+                <!-- TODO: Add procurement parameters from Cost Tracking Tool -->
+            </section>
+            
+            <input type="button" name="simulate" id="simulate" value="Simulate">
+        </form>
+    </main>
+</body>
+
+</html>
