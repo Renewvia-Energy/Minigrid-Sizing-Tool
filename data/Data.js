@@ -42,9 +42,9 @@ var costs = {
         Customs: {
             ClearingAgentFees: 71.67,
             InspectionFee: 50,
-            NonVATCustoms: 5135.24,
+            NonVATCustoms: 1,
             PortFees: 106.43,
-            VAT: 155.13,
+            VAT: 1,
         },
         Materials: {
             Batteries: 2200,
@@ -117,7 +117,7 @@ var costs = {
         Customs: {
             ClearingAgentFees: 358.33,
             InspectionFee: 250,
-            NonVATCustoms: 209.69,
+            NonVATCustoms: 1,
             PortFees: 532.13,
             VAT: 0,
         },
@@ -130,7 +130,7 @@ var costs = {
     },
     InterversPV: {
         Customs: {
-            NonVATCustoms: 403.39,
+            NonVATCustoms: 1,
             VAT: 0
         },
         Materials: {
@@ -161,9 +161,9 @@ var costs = {
         Customs: {
             ClearingAgentFees:  358.33,
             InspectionFee: 250.00,
-            NonVATCustoms:  739.46,
+            NonVATCustoms:  1,
             PortFees:  532.13,
-            VAT:  23.45,
+            VAT:  1,
         },
         Materials: {
             Racking:  0.05
@@ -178,9 +178,9 @@ var costs = {
     SolarPanels: {
         Customs: {
             ClearingAgentFees:  358.33,
-            InspectionFee: 36.29,
-            NonVATCustoms:  201.92,
-            PortFees:  77.24,
+            InspectionFee: 1,
+            NonVATCustoms:  1,
+            PortFees:  1,
             VAT:  0
         },
         Contingency: {},

@@ -1,7 +1,7 @@
 class Battery {
-    constructor(batteryCount, min_SOC, efficiency) {
+    constructor(batteryCount, efficiency) {
         this.capacity = batteryCount * 14.3; //14.3kWh number of battery
-        this.min_SOC = min_SOC;
+        this.min_SOC = this.capacity * .12;
         this.SOC = batteryCount * 14.3
         this.efficiency = efficiency
     }
@@ -30,7 +30,7 @@ class PV {
 } 
 
 class Inverter {
-    constructor(chargeControllerCount,inverterCount) {
+    constructor(chargeControllerCount, inverterCount) {
         this.efficiency = 0.95;
         this.inverter_size = inverterCount * 15 //inverterCount
         this.solar_to_load_limit = 60

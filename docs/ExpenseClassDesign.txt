@@ -53,4 +53,12 @@ For anything that is classified as yes in auto-budgeted column, we can simply lo
     matches with the Category, Type and Item in Expense List sheet
 
 
+    <script src="system/System.js"></script>
+    <script src="data/Data.js"></script>
+    <script src="src/simulation.js"></script>
+    <script src="src/costTracking.js"></script>
+    <script src="src/IRRCalculator.js"></script>
+    <script src="src/gradientOptimization.js"></script>
+
+
     

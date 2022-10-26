@@ -7,42 +7,40 @@ Make all of the money for every year at the end of the year - pay for the disels
 
 #asume that there is 7.4kW for battery
 */
-var T = 20
-//var Ct = 159454 * 30 - 22481 * 100
-var C0 = budget * 120
 
-let EPSILON = 0.0000025
-function NPV(i) {
+var T = 20
+let EPSILON = 0.000025
+//C0 =  318980.70 * 120
+
+function NPV(i, Ct, C0) {
     running = 0
     for (let t = 1; t <= T; t++) {
-        result = simulation()
-        var Ct = result[0] * 30 - result[1] * 100
         running += (Ct/Math.pow(1 + i, t))
     }
     return running - C0
 }
 
-function bisection(a, b) {
-    //console.log('---')
-    //console.log(NPV(a))
-    //console.log(NPV(b))
-    if (NPV(a) * NPV(b) >= 0) {
-        console.print('Try with different a and b')
+function bisection(a, b, solarPanelCount, batteryCount, chargeControllerCount, inverterCount) {
+    var C0 = calculateC0(solarPanelCount, batteryCount, chargeControllerCount, inverterCount)
+    //*120
+    console.log(C0)
+    result = simulation(solarPanelCount, batteryCount, chargeControllerCount, inverterCount)
+    console.log(result[0])
+    console.log(result[1])
+    var Ct = result[0] * 30 - result[1] * 100
+
+    if (NPV(a, Ct, C0) * NPV(b, Ct, C0) >= 0) {
+        console.log(NPV(a, Ct, C0))
+        console.log(NPV(b, Ct, C0))
+        console.log('Try with different a and b')
         return
     }
     let c;
     while ((b - a) >= EPSILON) {
         c = (a+b)/2
-        /*
-        console.log('***')
-        console.log('b - a')
-        console.log(b - a)
-        console.log('c')
-        console.log(c)
-        */
-        if (NPV(c) == 0) {
+        if (NPV(c, Ct, C0) == 0) {
             break
-        } else if (NPV(c) * NPV(a) < 0) {
+        } else if (NPV(c, Ct, C0) * NPV(a, Ct, C0) < 0) {
             b = c
         } else {
             a = c
@@ -51,9 +49,3 @@ function bisection(a, b) {
     return c
 
 }
-console.log('bisection')
-console.log(bisection(0,.64))
-console.log(NPV(0.08778076171874999))
-console.log(NPV(0))
-
-

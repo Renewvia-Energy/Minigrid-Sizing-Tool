@@ -1,0 +1,37 @@
+---------NOTES---------
+constrains: 
+number of solar panels, batteries, charge controllers, and battery inverters must be positive
+
+stopping criteria: 
+1. when we loop back to (x,y,z,h) that we visited before
+
+
+x = number of solar panels
+y = batteries
+z = charge controllers
+h = battery
+f(x,y,z,h) = IRR function
+maxmimize f(x,y,z,h) 4 dimensionals 
+
+we can compute f(x,y,z,h) by pluging x,y,z,h in NPV and call IRRcalculator
+steepest ascent
+//how to calculate the derivative of IRR?
+func derivativeIRR():
+ - find the partial derivative for each of df/dx,df/dy,df/dz,df/dh
+ - compute the gradient(direction fo greatest increase) using the inital guess
+ 
+ discrete derivative
+
+---------STEPS---------
+1. have an inital guess for x,y,z,h
+2. apply the func derivativeIRR() procedure
+3. adjust number of solar panels, batteries, charge controllers, and battery inverters accordingly based on the return value of derivativeNPV()
+  - initial point is x0, previous point is xi, a new step is x(i+1) = xi + s*di where s is the step and di = gradient of f(x) for ascent
+    - how to choose h? Either choosing h as a small number (one in this case) or doing line minimzation
+4. repeat the above steps until met the stopping criteria
+
+
+---------SOURCES---------
+https://www.opentextbooks.org.hk/ditatopic/12416
+https://www.youtube.com/watch?v=qOeU9GCnU3w
+
