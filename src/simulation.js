@@ -129,7 +129,7 @@ function calculation(solar_irradiation, load, battery, generator, PVArray, inver
     battery_available_to_load = (battery.SOC - battery.min_SOC) * inverter.efficiency * battery.efficiency
     
     // if solar cannot satisfy current needed load, energy from battery will be use
-    battery_to_load = Math.min(battery_available_to_load,load_remaining_after_solar)
+    battery_to_load = Math.min(battery_available_to_load,load_remaining_after_solar, inverter.battery_to_load_limit)
     
     // updayte battery state of charge since we might use it if there is not enough solar from array
     battery.SOC = battery.SOC - (battery_to_load/(inverter.efficiency * battery.efficiency))
@@ -228,9 +228,7 @@ function simulation(solarPanelCount, batteryCount, chargeControllerCount, invert
     console.log('Total Yearly Demand')
     console.log(159454)
     console.log('Energy Sold to Customer')
-    */
-    /*
-    console.log(energySoldToCustomer)
+    console.log(159454 - total_load_shedding)
     console.log('% of load kWh unmet')
     console.log(total_load_shedding/159454)
     console.log('wasted PV')
@@ -252,8 +250,9 @@ function simulation(solarPanelCount, batteryCount, chargeControllerCount, invert
     console.log('Generator Average Loading')
     console.log(((0.01 * total_generator_load)/generator_running_hour) * 100)
     console.log('Total Fuel Consumption')
+    console.log(total_fuel * 3.785)
     */
-    //console.log(total_fuel * 3.785)
-
     return [159454 - total_load_shedding, total_fuel * 3.785]
 }
+
+//simulation(90, 10, 10, 2)

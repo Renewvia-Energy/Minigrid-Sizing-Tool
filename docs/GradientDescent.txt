@@ -35,3 +35,11 @@ func derivativeIRR():
 https://www.opentextbooks.org.hk/ditatopic/12416
 https://www.youtube.com/watch?v=qOeU9GCnU3w
 
+
+    <script src="system/System.js"></script>
+    <script src="data/Data.js"></script>
+    <script src="src/simulation.js"></script>
+    <script src="src/costTracking.js"></script>
+    <script src="src/IRRCalculator.js"></script>
+    <script src="src/gradientOptimization.js"></script>
+

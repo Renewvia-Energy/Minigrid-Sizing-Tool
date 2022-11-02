@@ -43,7 +43,7 @@ var ETLLevy = 0.005
 
 
 function batteryCost(bCount) {
-    var BatterySitesCount = 5
+    var BatterySitesCount = bCount
     var BatteryShippingPerkWh = 6
     var BatterykWhPerUnit = 7.4
     var BatteryPricePerUnit = 2200
@@ -213,10 +213,17 @@ function calculateC0(solarPanelCount, batteryCount, chargeControllerCount, inver
     var iC = inverterCost(inverterCount)
     var CCNonVAT = ccCost(chargeControllerCount)
     var PV = PVCost(solarPanelCount)
+
+    var PVStringCount = solarPanelCount / 3
+    var plant_balance_of_system_half_inverter = (inverterCount*2000 + 3*inverterCount*2000 + inverterCount*700 + (2+inverterCount)*1000)*ExchangeRateUSDNG*(1+VATRate)
+    var plant_balance_of_system_half_battery = (batteryCount*4*1000 + 4*batteryCount*400)*ExchangeRateUSDNG*(1+VATRate)
+    var plant_balance_of_system_half_CC = (chargeControllerCount*15000 + chargeControllerCount*400 + 2*chargeControllerCount*1200 + chargeControllerCount*10*2*700)*ExchangeRateUSDNG*(1+VATRate)
+    var plant_balance_of_system_half_PV = (PVStringCount*1500 + (1/3)*PVStringCount*(3+6+9+1+1)*1.2*300)*ExchangeRateUSDNG*(1+VATRate) + PV[0]*4*ExchangeRateUSDNG
+
     quantity = [1,1,bC[1],1,bC[2],batteryCount,bC[0],1,1,1,1,1,1,1,0,432,1,1,5,1,5,5,5,200,200,200,1,1,iC[0],1,1,inverterCount,iC[1],CCNonVAT,1,chargeControllerCount,1,1,1,PV[1],1,PV[2],PV[0],PV[0],1,1,PV[3],PV[5],PV[4],1,solarPanelCount,solarPanelCount, 1]
 
     //quantity = [1,1,1,1,1,10,74,1,1,1,1,1,1,1,0,432,1,1,5,1,5,5,5,200,200,200,1,1,1,1,1,1,15,1,1,10,1,1,1,1,1,1,48600,48600,1,1,1,1,1,1,90,90, 1]
-    let budget = batteries+community_relations+customer_metering_wiring+permits+plant_balance_of_system+plant_site + power_house+racking_and_mounting+ solar_panels+ temporary_facilities+ travel_lodging_meals
+    let budget =  27072.05 +  12098.19 + plant_balance_of_system_half_inverter + plant_balance_of_system_half_battery + plant_balance_of_system_half_CC + plant_balance_of_system_half_PV
 
     for (let i = 0; i < ipt.length; i++) {
         let expenses = ipt[i]
@@ -227,15 +234,15 @@ function calculateC0(solarPanelCount, batteryCount, chargeControllerCount, inver
         //console.log('--')
         //console.log(curr)
         //console.log(quantity[i])
-        console.log(curr * quantity[i])
+        //console.log(curr * quantity[i])
         budget += (curr * quantity[i])
     }
 
-    console.log('Final Budget:' + budget)
+    //console.log('Final Budget:' + budget)
     return budget
 }
 
-calculateC0(40,20,5,2)
+//calculateC0(40,20,5,2)
 
 
 

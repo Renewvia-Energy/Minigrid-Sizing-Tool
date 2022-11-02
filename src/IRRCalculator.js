@@ -9,7 +9,7 @@ Make all of the money for every year at the end of the year - pay for the disels
 */
 
 var T = 20
-let EPSILON = 0.000025
+let EPSILON = 0.025
 //C0 =  318980.70 * 120
 
 function NPV(i, Ct, C0) {
@@ -21,13 +21,14 @@ function NPV(i, Ct, C0) {
 }
 
 function bisection(a, b, solarPanelCount, batteryCount, chargeControllerCount, inverterCount) {
-    var C0 = calculateC0(solarPanelCount, batteryCount, chargeControllerCount, inverterCount)
-    //*120
-    console.log(C0)
+    var C0 = calculateC0(solarPanelCount, batteryCount, chargeControllerCount, inverterCount)*120
+    //var C0 =  216124.60*120 
     result = simulation(solarPanelCount, batteryCount, chargeControllerCount, inverterCount)
+    console.log(C0)
     console.log(result[0])
     console.log(result[1])
     var Ct = result[0] * 30 - result[1] * 100
+    console.log(Ct)
 
     if (NPV(a, Ct, C0) * NPV(b, Ct, C0) >= 0) {
         console.log(NPV(a, Ct, C0))
