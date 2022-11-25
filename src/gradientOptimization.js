@@ -1,7 +1,7 @@
 // initial guess
-function optimizer(initY,initZ,initH) {
+function optimizer(initY,initZ) {
     var initX = 9 * initZ
-    let ipt = [initX,initY,initZ,initH]
+    let ipt = [initX,initY,initZ]
     let visited = new Set()
     let irr = 0
     // change the condition
@@ -11,12 +11,11 @@ function optimizer(initY,initZ,initH) {
         var x = ipt[0]
         var y = ipt[1]
         var z = ipt[2]
-        var h = ipt[3]
-        let irr = bisection(-0.64,.64,x,y,z,h)
+        let irr = bisection(-0.64,.64,y,z)
         console.log(`irr=${irr}`)
         //let dx = bisection(-0.64,.64,x + 1,y,z,h) - irr // (-.64,.64)
-        let dy = bisection(-0.64,.64,x,y + 1,z,h) - irr
-        let dz = bisection(-0.64,.64,x + 9,y,z + 1,h) - irr
+        let dy = bisection(-0.64,.64,y + 1,z) - irr
+        let dz = bisection(-0.64,.64,y,z + 1) - irr
         //let dh = bisection(-0.64,.64,x,y,z,h + 1) - irr
 
         let gradM = [ Math.abs(dy), Math.abs(dz)] //check this?
@@ -60,9 +59,12 @@ function optimizer(initY,initZ,initH) {
     return irr
 }
 
-
-var res = optimizer(25,25,4) //PV, battery, CC, inverter
+var res = optimizer(25,25) //battery, CC
 // (load * 2)/15 round up
 console.log(`inputs=[${res[0]}]`)
 console.log(`irr=${res[1]}`)
+//console.log(bisection(-.64, .64, 22, 45))
+//console.log(bisection(-.64, .64, 23, 45))
+//console.log(bisection(-.64, .64, 23, 50))
+//console.log(bisection(-.64, .64, 24, 45))
 

@@ -43,3 +43,7 @@ https://www.youtube.com/watch?v=qOeU9GCnU3w
     <script src="src/IRRCalculator.js"></script>
     <script src="src/gradientOptimization.js"></script>
 
+
+
+    https://pvwatts.nrel.gov/pvwatts.php
+    https://www.renewables.ninja/documentation

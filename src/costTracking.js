@@ -208,7 +208,9 @@ var ipt = [['Batteries','Customs','ClearingAgentFees'],
             ['SolarPanels', 'Transport', 'TransportToSite']]
 
 // engineering input goes here!
-function calculateC0(solarPanelCount, batteryCount, chargeControllerCount, inverterCount) {
+function calculateC0(solarPanelCount, batteryCount, chargeControllerCount) {
+    var inverter = new Inverter(chargeControllerCount)
+    var inverterCount = inverter.count
     var bC = batteryCost(batteryCount)
     var iC = inverterCost(inverterCount)
     var CCNonVAT = ccCost(chargeControllerCount)

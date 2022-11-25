@@ -30,12 +30,13 @@ class PV {
 } 
 
 class Inverter {
-    constructor(chargeControllerCount, inverterCount) {
+    constructor(chargeControllerCount) {
         this.efficiency = 0.95;
+        this.count = 4 //(max load * 2)/15
         this.inverter_size = chargeControllerCount * 4.7 //inverterCount
         this.solar_to_load_limit = chargeControllerCount * 4.7
         this.solar_to_battery_limit = chargeControllerCount * 4.7 //CC 4726W
-        this.battery_to_load_limit = inverterCount * 15
+        this.battery_to_load_limit = this.count * 15
     }
 }
 

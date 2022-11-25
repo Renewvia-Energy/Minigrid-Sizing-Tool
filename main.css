@@ -1,4 +1,74 @@
-.space {
-    width: 3em;
-    display: inline-block;
+:root {
+	--main-font-size: 1.4em;
+	--textarea-padding: 0.2em;
+	--main-lr-padding: 6%;
+}
+* {
+	box-sizing: border-box;
+}
+
+body {
+	background-color: rgb(250, 239, 198);
+}
+main {
+    padding: 3em;
+	width: 60%;
+	margin-left: auto;
+	margin-right: auto;
+    background-color: rgb(242, 236, 217);
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+input {
+    background-color: rgb(242, 236, 217);
+}
+
+.intro {
+	margin-top: 0;
+}
+
+header {
+	background-color: var(--accent-bg-color);
+	color: var(--accent-text-color);
+	font-family: var(--accent-font-family);
+	font-weight: bold;
+	padding: 2% var(--main-lr-padding);
+	white-space: nowrap;
+}
+h1 {
+	display: inline-block;
+}
+input, textarea {
+	padding: var(--textarea-padding);
+}
+label {
+    font-size: large;
+}
+
+.spacer {
+	height: 2em;
+}
+.h-spacer {
+	height: 2em;
+	width: 2em;
+	float: left;
+}
+
+.showcase-area {
+    display: flex;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: center;
+    justify-content: center;
+}
+.project_name {
+    padding: 5%;
+}  
+
+#simulate {
+    margin-top: 3%;
+    font-size: 20px;
+    text-align:center;
+    letter-spacing: 1px;
+    position: relative;
+    background-color: white;
 }

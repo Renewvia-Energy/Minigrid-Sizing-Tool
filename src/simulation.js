@@ -180,14 +180,14 @@ function calculation(solar_irradiation, load, battery, generator, PVArray, inver
 /**
  * This function runs the simulation to calculate results and print out to console
  */
-function simulation(solarPanelCount, batteryCount, chargeControllerCount, inverterCount) {
+function simulation(solarPanelCount, batteryCount, chargeControllerCount) {
     // engineering input goes here
-
     var battery = new Battery(batteryCount, 0.975)
     var generator = new Generator(100)
     var PVArray = new PV(solarPanelCount, 0.11)
-    var inverter = new Inverter(chargeControllerCount, inverterCount)
+    var inverter = new Inverter(chargeControllerCount)
     var mics = new Mics()
+    var inverterCount = Inverter.count
    /*
     var battery = new Battery(300.3, 36.04, 300.3, 0.975)
     var generator = new Generator(100)

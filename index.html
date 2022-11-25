@@ -1,12 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
-<body>
-    <script src="system/System.js"></script>
-    <script src="data/Data.js"></script>
-    <script src="src/simulation.js"></script>
-    <script src="src/costTracking.js"></script>
-    <script src="src/IRRCalculator.js"></script>
-    <script src="src/gradientOptimization.js"></script>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="main.css">
+        <title>Minigrid Design Tool</title>
+    </head>
+    <body>
+        <div class="showcase-area">
+                <div class="logo">
+                    <img src="./images/logo.png" alt="logo" class="logo" />
+                </div>
+                <div class="project_name">
+                    <h1>MINIGRID DESIGN TOOL</h1>
+                </div>
+        </div>
 
-</body>
+        <main> 
+            <p class="intro">Project Description</p>
+            <form>
+                <section>
+                    <h2>Engineering Inputs</h2>
+                    <label for="num-cc">Number of Charge Controllers:</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+    
+                    <label for="num-batteries">Number of Batteries:</label>
+                    <input type="number" name="num-batteries" id="num-batteries" required><br>
+    
+                    <label for="num-battery-inverters">Number of Battery Inverters:</label>
+                    <input type="number" name="num-battery-inverters" id="num-battery-inverters" required><br>
+    
+                    <!-- TODO: Add other engineering inputs, e.g. number of PV inverters, size of generator, inverter settings -->
+                </section>
+    
+                <section>
+                    <h2>Engineering Constants</h2>
+                    <!-- TODO: Add constants, e.g. array losses, distribution losses,  -->
+                    <label for="num-cc">Battery Efficiency:</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Generator Size:</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">PV losses:</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Distribution losses:</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Total Yearly Demand:</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                </section>
+
+                <section>
+                    <h2>Load Require</h2>
+                    <!-- TODO: Add constants, e.g. array losses, distribution losses,  -->
+                    <label for="num-cc">00:00 - 01:00:</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">01:00 - 02:00:</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">02:00 - 03:00</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">03:00 - 04:00</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">04:00 - 05:00</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">05:00 - 06:00:</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">06:00 - 07:00:</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">07:00 - 08:00</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">08:00 - 09:00</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">09:00 - 10:00</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">10:00 - 11:00</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">11:00 - 12:00</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">12:00 - 13:00:</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">13:00 - 14:00:</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">14:00 - 15:00</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">15:00 - 16:00</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">16:00 - 17:00</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">17:00 - 18:00:</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">18:00 - 19:00:</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">19:00 - 20:00</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">20:00 - 21:00</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">21:00 - 22:00</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">22:00 - 23:00</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">23:00 - 24:00</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                </section>
+    
+                <section>
+                    <h2>Procurement Parameters</h2>
+                    <!-- TODO: Add procurement parameters from Cost Tracking Tool -->
+                    <label for="num-cc">Communative Non-AutoBudget</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Exchange Rate NGNUSD</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Exchange Rate USDNG</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Exchange Rate KshsUSD</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Inspection Fees</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">VAT Rate</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Import Charge</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">ETL Levy</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <!-- TODO: Add individual costs for each section also -->
+                    <label for="num-cc">Time Interval for IRR</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Epsilon</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                </section>
+                
+                <input type="button" name="simulate" id="simulate" value="Simulate">
+            </form>
+        </main>
+
+
+
+        <script src="system/System.js"></script>
+        <script src="data/Data.js"></script>
+        <script src="src/simulation.js"></script>
+        <script src="src/costTracking.js"></script>
+        <script src="src/IRRCalculator.js"></script>
+        <script src="src/gradientOptimization.js"></script>
+    </body>
 </html>
