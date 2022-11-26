@@ -220,7 +220,6 @@ function simulation(solarPanelCount, batteryCount, chargeControllerCount) {
     }
 
     //print the results to console
-    /*
     console.log('Total Energy Produced from PV')
     console.log(total_available_solar_from_array - total_wasted_solar)
     console.log('Demand(corrected for losses')
@@ -251,8 +250,10 @@ function simulation(solarPanelCount, batteryCount, chargeControllerCount) {
     console.log(((0.01 * total_generator_load)/generator_running_hour) * 100)
     console.log('Total Fuel Consumption')
     console.log(total_fuel * 3.785)
-    */
     return [159454 - total_load_shedding, total_fuel * 3.785]
 }
+var Sbutton = document.getElementById('simulate');
 
-//simulation(90, 10, 10, 2)
+Sbutton.onclick = () => {
+    simulation(90, 10, 10)
+}

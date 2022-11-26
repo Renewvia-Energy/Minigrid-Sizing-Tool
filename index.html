@@ -20,6 +20,26 @@
             <p class="intro">Project Description</p>
             <form>
                 <section>
+                    <h2>Project Location</h2>
+                    <label for="num-cc">Longitude</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Latitude</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">System Capacity(kWh) </label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Module Type (0: Standard, 1: Premium, 2: Thin film)</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Losses</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Array Type(0: Fixed - Open Rack, 1: Fixed - Roof Mounted, 2: 1-Axis, 3: 1-Axis Backtracking, 4: 2-Axis)</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Tilt</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Azimuth</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Timeframe</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <input type="button" name="location" id="location" value="Load Solar Irridation">
                     <h2>Engineering Inputs</h2>
                     <label for="num-cc">Number of Charge Controllers:</label>
                     <input type="number" name="num-cc" id="num-cc" required><br>
@@ -104,8 +124,6 @@
                 <section>
                     <h2>Procurement Parameters</h2>
                     <!-- TODO: Add procurement parameters from Cost Tracking Tool -->
-                    <label for="num-cc">Communative Non-AutoBudget</label>
-                    <input type="number" name="num-cc" id="num-cc" required><br>
                     <label for="num-cc">Exchange Rate NGNUSD</label>
                     <input type="number" name="num-cc" id="num-cc" required><br>
                     <label for="num-cc">Exchange Rate USDNG</label>
@@ -120,24 +138,298 @@
                     <input type="number" name="num-cc" id="num-cc" required><br>
                     <label for="num-cc">ETL Levy</label>
                     <input type="number" name="num-cc" id="num-cc" required><br>
-                    <!-- TODO: Add individual costs for each section also -->
                     <label for="num-cc">Time Interval for IRR</label>
                     <input type="number" name="num-cc" id="num-cc" required><br>
                     <label for="num-cc">Epsilon</label>
                     <input type="number" name="num-cc" id="num-cc" required><br>
+                    <!--BATTERY-->
+                    <label for="num-cc">BatteryShippingPerkWh</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">BatterykWhPerUnit</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">BatteryPricePerUnit</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">BatteryLugsPerUnit</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">DutyOnBatteries</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">LevyOnBatteries</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Solar MD Smart Logger</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <!-- Inverter -->
+                    <label for="num-cc">BatteryInverterPricePerUnit</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">BatteryInverterkWPerUnit</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">BatteryInverterShippingPricePerkW </label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">VATonBatteryInverters</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">DutyOnBatteryInverters</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">LevyOnBatteryInverters</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <!-- Charge Controller -->
+                    <label for="num-cc">PVCCPricePerUnit</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">VATonPVInverters</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">DutyOnPVInverters</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">LevyOnPVInverters</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">LevyOnBatteryInverters</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <!-- Community Relations -->                    
+                    <label for="num-cc">Pre-construction visits: lodging</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Pre-construction visits: per diem</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Pre-construction visits: rental boda bodas (or, rental cars + fuel)</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Pre-construction visits: travel (flight)</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Chair rental and drinks for meetings</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Salaries for community representatives</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Security during construction</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <!-- Customer Metering and Wiring-->
+                    <label for="num-cc">SparkMeter pre-shipment fees</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">SparkMeter SaaS Term Licenses</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Loading of meters and customer wiring materials</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Offloading of meters and customer wiring materials</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Meter transport to site</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <!-- Distribution (LV) -->
+                    <label for="num-cc">Distribution materials boat transport</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <!-- GENERATOR -->
+                    <label for="num-cc">Generator foundation labor</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Generator</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Generator cabling</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Generator foundation and shade materials</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <!-- Inverters/Chargers (PV) -->
+                    <label for="num-cc">PVPanelsInShipment</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">PortFeesTwentyFoot</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">PVPricePerWatt</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">PVTransportTotal</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">VATonPV</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">DutyOnPV</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">LevyOnPV</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Extras (like surge protectors)</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <!-- Permits -->
+                    <label for="num-cc">All other permits (estimating for the unknown permit costs)</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Building Permit</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">ESMP</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Land Lease Processing</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Land Purchase</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">NERC Application Fee</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <!-- Plant Balance of System -->
+                    <label for="num-cc">Contingency</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Earthing pit for site - labor</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Loading of various BOS materials</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Offloading of various BOS materials</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">AC DB MCBs</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">AC Distribution Board</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Battery racking</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Conduit for outside cable runs</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">DC bus bars</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Earthing pits for site</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Frame for mounting inverters and switchgear</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Hardware for frame for mounting inverters and switchgear</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Inverter monitoring device power supply</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Lightning arrestor cabling</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Lightning arrestor kit for site</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Racking earthing cables</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Victron GX device and accessories</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Wiring from output breaker to grid</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <!-- Plant Site -->
+                    <label for="num-cc">Gate house labor</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Site preparation</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Toilets labor</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Trenching</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">External lighting</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">External lighting wiring</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Gate house</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Padlocks</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Site tools kit</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Toilets</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <!-- Power House -->
+                    <label for="num-cc">Construction labor</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Foundation labor</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Air conditioner</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Chairs</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Desk</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Fire extinguisher</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">First aid kit</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Foundation</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Internal lights</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Internal wiring</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Power house</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Roofing and paint for power house</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Trash bin</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Visitors book</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Power house cabinet transport by boat</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <!-- Racking and Mounting -->
+                    <label for="num-cc">PVWattsPerPanel</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">RackingPricePerW</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">RackingShippingCost</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">LevyOnRacking</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">DutyOnRacking</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">VATonRacking</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+
+                    <label for="num-cc">Loading of racking materials</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Offloading of racking materials</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Racking foundations materials transport</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Racking international transport</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <!-- Solar Panels -->
+                    <label for="num-cc">Importing contingency</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Loading of solar panels</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Offloading of solar panels</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <!-- Temporary Facilities -->
+                    <label for="num-cc">Boat rental contingency (for materials transport)</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Storage space rental</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <!-- Transmission (MV) -->
+                    <label for="num-cc">Transmission contingency</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Pole offloading</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Step-down transformer(s) earthing labor</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Step-up transformer base labor</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Step-up transformer earthing labor</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Transmission labor</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Step-down transformer(s)</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Step-down transformer(s) earthing</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Step-down transformer(s) mounting</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Step-up transformer</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Step-up transformer base</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Step-up transformer earthing</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Transmission materials</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Balance of transmission transport</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Conductor transport</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Poles transport</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Transformer transport</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <!-- Travel, Lodging, and Meals -->
+                    <label for="num-cc">Fuel for rentals</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Lodging</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Per diem</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Staff flights from home cities</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Rental motorcycles/cars</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
+                    <label for="num-cc">Rental pickup truck</label>
+                    <input type="number" name="num-cc" id="num-cc" required><br>
                 </section>
-                
+                <input type="button" name="optimizer" id="optimizer" value="Optimizer">
                 <input type="button" name="simulate" id="simulate" value="Simulate">
             </form>
         </main>
 
-
-
         <script src="system/System.js"></script>
         <script src="data/Data.js"></script>
         <script src="src/simulation.js"></script>
-        <script src="src/costTracking.js"></script>
-        <script src="src/IRRCalculator.js"></script>
-        <script src="src/gradientOptimization.js"></script>
+
+
     </body>
 </html>
