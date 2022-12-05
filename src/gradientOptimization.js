@@ -59,12 +59,24 @@ function optimizer(initY,initZ) {
     return irr
 }
 
-var res = optimizer(25,25) //battery, CC
+//var res = optimizer(25,25) //battery, CC
 // (load * 2)/15 round up
-console.log(`inputs=[${res[0]}]`)
-console.log(`irr=${res[1]}`)
+//console.log(`inputs=[${res[0]}]`)
+//console.log(`irr=${res[1]}`)
 //console.log(bisection(-.64, .64, 22, 45))
 //console.log(bisection(-.64, .64, 23, 45))
 //console.log(bisection(-.64, .64, 23, 50))
 //console.log(bisection(-.64, .64, 24, 45))
+var Obutton = document.getElementById('optimizer');
 
+Obutton.onclick = () => {
+
+    var pvCount = parseInt(document.getElementById('num-pv').value)
+    var batteryCount = parseInt(document.getElementById('num-batteries').value)
+    var ccCount = parseInt(document.getElementById('num-cc').value)
+    var result = optimizer(batteryCount,ccCount)
+    document.getElementById('oPV').innerHTML = result[0][0];
+    document.getElementById('oB').innerHTML = result[0][1];
+    document.getElementById('oCC').innerHTML = result[0][2];
+    document.getElementById('oIRR').innerHTML = result[1];
+}

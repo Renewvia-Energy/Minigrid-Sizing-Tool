@@ -208,6 +208,17 @@ var ipt = [['Batteries','Customs','ClearingAgentFees'],
             ['SolarPanels', 'Transport', 'TransportToSite']]
 
 // engineering input goes here!
+
+let preBudget = 12098.19 //39170.24
+var Cbutton = document.getElementById('cost');
+
+Cbutton.onclick = () => {
+    for (let i = 0; i < 100; i++) {
+        let val = parseFloat(document.getElementById(`c${i+1}`).value)
+        //console.log(val)
+        preBudget += val
+    } 
+}
 function calculateC0(solarPanelCount, batteryCount, chargeControllerCount) {
     var inverter = new Inverter(chargeControllerCount)
     var inverterCount = inverter.count
@@ -224,9 +235,11 @@ function calculateC0(solarPanelCount, batteryCount, chargeControllerCount) {
 
     quantity = [1,1,bC[1],1,bC[2],batteryCount,bC[0],1,1,1,1,1,1,1,0,432,1,1,5,1,5,5,5,200,200,200,1,1,iC[0],1,1,inverterCount,iC[1],CCNonVAT,1,chargeControllerCount,1,1,1,PV[1],1,PV[2],PV[0],PV[0],1,1,PV[3],PV[5],PV[4],1,solarPanelCount,solarPanelCount, 1]
 
-    //quantity = [1,1,1,1,1,10,74,1,1,1,1,1,1,1,0,432,1,1,5,1,5,5,5,200,200,200,1,1,1,1,1,1,15,1,1,10,1,1,1,1,1,1,48600,48600,1,1,1,1,1,1,90,90, 1]
-    let budget =  27072.05 +  12098.19 + plant_balance_of_system_half_inverter + plant_balance_of_system_half_battery + plant_balance_of_system_half_CC + plant_balance_of_system_half_PV
-
+    //let budget =  27072.05 +  12098.19 + plant_balance_of_system_half_inverter + plant_balance_of_system_half_battery + plant_balance_of_system_half_CC + plant_balance_of_system_half_PV
+    //console.log(budget + plant_balance_of_system_half_inverter + plant_balance_of_system_half_battery + plant_balance_of_system_half_CC + plant_balance_of_system_half_PV)
+    //console.log(budget)
+    //console.log(27072.05 +  12098.19)
+    let budget = preBudget + plant_balance_of_system_half_inverter + plant_balance_of_system_half_battery + plant_balance_of_system_half_CC + plant_balance_of_system_half_PV
     for (let i = 0; i < ipt.length; i++) {
         let expenses = ipt[i]
         var curr = costs[expenses[0]]
@@ -244,9 +257,7 @@ function calculateC0(solarPanelCount, batteryCount, chargeControllerCount) {
     return budget
 }
 
-//calculateC0(40,20,5,2)
-
-
+//console.log(calculateC0(40,20,5,2))
 
 
 

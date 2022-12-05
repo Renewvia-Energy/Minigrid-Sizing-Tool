@@ -41,7 +41,7 @@ class Inverter {
 }
 
 class Mics {
-    constructor() {
-        this.distribution_losses = 0.10
+    constructor(distributionLoss) {
+        this.distribution_losses = distributionLoss
     }
 }

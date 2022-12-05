@@ -14,7 +14,7 @@ var generator_table = [[0.0, 0.3, 0.5, 0.7], [0.0, 0.6,0.9,1.3,1.6], [0.0,1.3,1.
             [0.0,6.8,11.3,16.1,21.5],[0.0,7.9,13.1,18.7,25.1],[0.0,8.9,14.9,21.3,28.6],[0.0,11.0,18.5,26.4,35.7],[0.0,13.2,22.0,31.5,42.8],
             [0.0,16.3,27.4,39.3,53.4],[0.0,21.6,36.4,52.1,71.1],[0.0,26.9,45.3,65.0,88.8],[0.0,32.2,54.3,77.8,106.5],[0.0,37.5,63.2,90.7,124.2],
             [0.0,42.8,72.2,103.5,141.9],[0.0,48.1,81.1,116.4,159.6]
-        ]
+]
 
 
 /**
@@ -182,11 +182,11 @@ function calculation(solar_irradiation, load, battery, generator, PVArray, inver
  */
 function simulation(solarPanelCount, batteryCount, chargeControllerCount) {
     // engineering input goes here
-    var battery = new Battery(batteryCount, 0.975)
-    var generator = new Generator(100)
-    var PVArray = new PV(solarPanelCount, 0.11)
+    var battery = new Battery(batteryCount, batteryEfficiency)
+    var generator = new Generator(generatorSize)
+    var PVArray = new PV(solarPanelCount, PVlosses/100)
     var inverter = new Inverter(chargeControllerCount)
-    var mics = new Mics()
+    var mics = new Mics(distributionLoss)
     var inverterCount = Inverter.count
    /*
     var battery = new Battery(300.3, 36.04, 300.3, 0.975)
@@ -218,26 +218,26 @@ function simulation(solarPanelCount, batteryCount, chargeControllerCount) {
         total_wasted_solar = total_wasted_solar + wasted_solar
         total_load_shedding = total_load_shedding + load_shedding
     }
-
+    /*
     //print the results to console
     console.log('Total Energy Produced from PV')
     console.log(total_available_solar_from_array - total_wasted_solar)
-    console.log('Demand(corrected for losses')
-    console.log(159454/(1-mics.distribution_losses))
+    console.log('Demand(corrected for losses)')
+    console.log(totalYearlyDemand/(1-mics.distribution_losses))
     console.log('Total Yearly Demand')
-    console.log(159454)
+    console.log(totalYearlyDemand)
     console.log('Energy Sold to Customer')
-    console.log(159454 - total_load_shedding)
+    console.log(totalYearlyDemand - total_load_shedding)
     console.log('% of load kWh unmet')
-    console.log(total_load_shedding/159454)
+    console.log(total_load_shedding/totalYearlyDemand)
     console.log('wasted PV')
     console.log((total_wasted_solar/total_available_solar_from_array) * 100)
     console.log('kWh/kW DC (After All Losses)')
-    console.log((159454 - total_load_shedding)/120.4)
+    console.log((totalYearlyDemand - total_load_shedding)/120.4)
     console.log('Capacity Factor (After All Losses)')
-    console.log(((159454 - total_load_shedding)/(120.4*8760))*100)
+    console.log(((totalYearlyDemand - total_load_shedding)/(120.4*8760))*100)
     console.log('% of available PV kWh sold')
-    console.log(((159454 - total_load_shedding)/(total_available_solar_from_array)) * 100)
+    console.log(((totalYearlyDemand - total_load_shedding)/(total_available_solar_from_array)) * 100)
     console.log('PV kWh/Total kWh (Renewable Penetration)')
     console.log((total_available_solar_from_array/( total_available_solar_from_array + total_generator_load))*100)
     console.log('Generator Energy Production')
@@ -250,10 +250,29 @@ function simulation(solarPanelCount, batteryCount, chargeControllerCount) {
     console.log(((0.01 * total_generator_load)/generator_running_hour) * 100)
     console.log('Total Fuel Consumption')
     console.log(total_fuel * 3.785)
-    return [159454 - total_load_shedding, total_fuel * 3.785]
+    */
+
+    return [totalYearlyDemand - total_load_shedding, total_fuel * 3.785,total_available_solar_from_array - total_wasted_solar,totalYearlyDemand/(1-mics.distribution_losses),totalYearlyDemand,totalYearlyDemand - total_load_shedding,total_load_shedding/totalYearlyDemand,(total_wasted_solar/total_available_solar_from_array) * 100,(totalYearlyDemand - total_load_shedding)/120.4,((totalYearlyDemand - total_load_shedding)/(120.4*8760))*100,((totalYearlyDemand - total_load_shedding)/(total_available_solar_from_array)) * 100,(total_available_solar_from_array/( total_available_solar_from_array + total_generator_load))*100,total_generator_load,(total_generator_load/(total_generator_load+total_available_solar_from_array)) * 100, generator_running_hour,((0.01 * total_generator_load)/generator_running_hour) * 100]
 }
 var Sbutton = document.getElementById('simulate');
 
 Sbutton.onclick = () => {
-    simulation(90, 10, 10)
+    var pvCount = parseInt(document.getElementById('num-pv').value)
+    var batteryCount = parseInt(document.getElementById('num-batteries').value)
+    var ccCount = parseInt(document.getElementById('num-cc').value)
+    var res = simulation(pvCount, batteryCount, ccCount)
+    document.getElementById('total-energy-from-PV').innerHTML = res[2];
+    document.getElementById('demand').innerHTML = res[3];
+    document.getElementById('total-yearly-demand').innerHTML = res[4];
+    document.getElementById('energy-sold-to-customer').innerHTML = res[0];
+    document.getElementById('load-unmet').innerHTML = res[5];
+    document.getElementById('wastedPV').innerHTML = res[6];
+    document.getElementById('kWh/kW-DC').innerHTML = res[7];
+    document.getElementById('capacity-factor').innerHTML = res[8];
+    document.getElementById('available-PV-kWh-sold').innerHTML = res[9];
+    document.getElementById('PV-kWh/Total-kWh').innerHTML = res[10];
+    document.getElementById('generator-energy-production').innerHTML = res[11];
+    document.getElementById('generator-running-hours').innerHTML = res[12];
+    document.getElementById('generator-average-loading').innerHTML = res[13];
+    document.getElementById('total-fuel-consumption').innerHTML = res[1];
 }
