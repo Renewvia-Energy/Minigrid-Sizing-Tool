@@ -1,10 +1,17 @@
-// initial guess
+/**
+ * optimizer function returns the optimized engineering parameters from the inital guesses
+ * @param {Integer} initY: inital guess for battery count
+ * @param {Integer} initZ: inital guess for charge controller
+ * @returns the optimized engineering parameters
+ */
 function optimizer(initY,initZ) {
+    //set up all the parameters in array
     var initX = 9 * initZ
     let ipt = [initX,initY,initZ]
     let visited = new Set()
     let irr = 0
-    // change the condition
+
+    // run the while loop until found optimized parameters
     while (!visited.has(ipt)) {
         temp = [...ipt]
         visited.add(temp)
@@ -12,13 +19,10 @@ function optimizer(initY,initZ) {
         var y = ipt[1]
         var z = ipt[2]
         let irr = bisection(-0.64,.64,y,z)
-        console.log(`irr=${irr}`)
-        //let dx = bisection(-0.64,.64,x + 1,y,z,h) - irr // (-.64,.64)
         let dy = bisection(-0.64,.64,y + 1,z) - irr
         let dz = bisection(-0.64,.64,y,z + 1) - irr
-        //let dh = bisection(-0.64,.64,x,y,z,h + 1) - irr
 
-        let gradM = [ Math.abs(dy), Math.abs(dz)] //check this?
+        let gradM = [Math.abs(dy), Math.abs(dz)] //check this?
         let gradD = [dy,dz]
         let i = -1
         console.log(`gradM=${gradM}`)
@@ -27,9 +31,6 @@ function optimizer(initY,initZ) {
         } else {
             i = 0
         }
-        console.log(i)
-        console.log(`gradD=${gradM}`)
-        console.log(ipt)
         // note that we only add more engineering inputs, so if adding more materials but the rate of change in IRR stays the same
         //then we would not want to add that and terminate
         if (gradM[1] == 0 && gradM[0] == 0) {
@@ -51,26 +52,15 @@ function optimizer(initY,initZ) {
                 ipt[1] += 1
             }
         }
-
-        console.log(ipt)
-        console.log(visited)
-        //console.log(!visited.has(ipt))
     }
     return irr
 }
 
-//var res = optimizer(25,25) //battery, CC
-// (load * 2)/15 round up
-//console.log(`inputs=[${res[0]}]`)
-//console.log(`irr=${res[1]}`)
-//console.log(bisection(-.64, .64, 22, 45))
-//console.log(bisection(-.64, .64, 23, 45))
-//console.log(bisection(-.64, .64, 23, 50))
-//console.log(bisection(-.64, .64, 24, 45))
+/**
+ * parse button, run optimizer function and displays result in web
+ */
 var Obutton = document.getElementById('optimizer');
-
 Obutton.onclick = () => {
-
     var pvCount = parseInt(document.getElementById('num-pv').value)
     var batteryCount = parseInt(document.getElementById('num-batteries').value)
     var ccCount = parseInt(document.getElementById('num-cc').value)

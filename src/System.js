@@ -1,3 +1,6 @@
+/**
+ * Battery class for project system
+ */
 class Battery {
     constructor(batteryCount, efficiency) {
         this.capacity = batteryCount * 14.3; //14.3kWh number of battery
@@ -11,7 +14,9 @@ class Battery {
         return this.SOC;
     }
 } 
-
+/**
+ * Generator class for project system
+ */
 class Generator {
     constructor(size) {
         this.size = size;
@@ -21,14 +26,18 @@ class Generator {
         this.index = table[size]
     }
 } 
-
+/**
+ * PV class for project system
+ */
 class PV {
     constructor(solarPanelCount, losses) {
         this.size = solarPanelCount * .54; //fix this. 540 is W, solarPanelCount is kWh
         this.losses = losses;
     }
 } 
-
+/**
+ * Inverter class for project system
+ */
 class Inverter {
     constructor(chargeControllerCount) {
         this.efficiency = 0.95;
@@ -39,7 +48,9 @@ class Inverter {
         this.battery_to_load_limit = this.count * 15
     }
 }
-
+/**
+ * Mics class for project system
+ */
 class Mics {
     constructor(distributionLoss) {
         this.distribution_losses = distributionLoss

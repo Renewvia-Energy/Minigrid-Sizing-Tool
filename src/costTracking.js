@@ -1,37 +1,4 @@
-/*
-var batteries_materials_solarMDSmartLogger = 170.53
-
-var communityRelations_directJobCost_preConstructionVisitLodging = 313.87
-var communityRelations_directJobCost_preConstructionVisitPerDiem = 97.32
-var communityRelations_directJobCost_preConstructionVisitRentalBodaBodas = 121.65
-var communityRelations_directJobCost_preConstructionVisitTravel = 418.49
-var communityRelations_EquipmentRentals_ChairRentalAndDrinksForMeetings = 48.66
-var communityRelations_Labor_SalariesForCommunityRepresentatives = 19.46
-var communityRelations_Labor_SecurityDuringConstruction = 170.32
-
-var CustomerMeteringAndWiring_Customs_SparkMeterPreShipmentFees = 500
-var CustomerMeteringAndWiring_DirectJobCost_SparkMeterSaaSTermLicenses = 0
-var CustomerMeteringAndWiring_Labor_LoadingOfMetersAndCustomerWiringMaterials = 43.80
-*/
-
-var batteries = 170.53
-var community_relations = 1019.46
-var customer_metering_wiring = 13367.05
-var distribution = 0
-var fencing = 0
-var generator = 0
-var inverter = 0
-var permits = 4082.82
-var plant_balance_of_system = 4338.38
-var plant_site = 2396.65
-var power_house = 4348.75
-var racking_and_mounting = 4977.25
-var solar_panels = 2506.08
-var temporary_facilities = 121.65
-var transmission = 0
-var travel_lodging_meals = 3459.12
-
-
+//  instantiate globals variables for rate and fee. These are fixed variables
 var ExchangeRateNGNUSD = 411
 var ExchangeRateUSDNG = 1/411
 var ExchangeRateKshsUSD = 117
@@ -41,7 +8,11 @@ var ImportCharge = 0.01
 var PortSurcharge = 0.07
 var ETLLevy = 0.005
 
-
+/**
+ * helper function to calculate for all the Half auto-budgets for battery
+ * @param {Integer} bCount: battery count
+ * @returns return batterykWhAtSite, BatteryNonVAT, BatteryVAT
+ */
 function batteryCost(bCount) {
     var BatterySitesCount = bCount
     var BatteryShippingPerkWh = 6
@@ -67,9 +38,13 @@ function batteryCost(bCount) {
     return [BatterykWhAtSite, BatteryNonVAT*ExchangeRateUSDNG, BatteryVAT*ExchangeRateUSDNG]
 
 }
-
-function inverterCost(iC) {
-    var BatteryInverterCount = iC
+/**
+ * helper function to calculate for all the Half auto-budgets for inverter
+ * @param {Integer} iV:  inverter count
+ * @returns return all the Half auto-budgets for inverter
+ */
+function inverterCost(iV) {
+    var BatteryInverterCount = iV
     var BatteryInverterPricePerUnit = 2600
     var BatteryInverterkWPerUnit = 15 //(kW)
     var BatteryInverterCost = BatteryInverterCount*BatteryInverterPricePerUnit
@@ -87,6 +62,11 @@ function inverterCost(iC) {
     
     return [BatteryInverterNonVAT*ExchangeRateUSDNG, BatteryInverterkWPerUnit*BatteryInverterCount]
 }
+/**
+ * helper function to calculate for all the Half auto-budgets for charge controller
+ * @param {Integer} ccC: number of charge controller
+ * @returns all the Half cost for charge controller
+ */
 
 function ccCost(ccC) {
     var PVCCCount = ccC
@@ -106,6 +86,11 @@ function ccCost(ccC) {
     return PVCCNonVAT*ExchangeRateUSDNG
 }
 
+/**
+ * helper function to calculate for all the Half auto-budgets for PV
+ * @param {Integer} pvC: number of PV
+ * @returns all the Half cost for PV
+ */
 function PVCost(pvC) {
     var PVPanelCount = pvC
     var PVWattsPerPanel = 540
@@ -113,7 +98,7 @@ function PVCost(pvC) {
     var RackingPricePerW = 0.05
     var RackingCost = RackingPricePerW*PVSiteWattage
     var RackingShippingCost = 1000
-
+    //calculation on Rack category
     var LevyOnRacking = 0.15
     var DutyOnRacking = 0.05
     var VATonRacking = 0.075
@@ -123,7 +108,7 @@ function PVCost(pvC) {
         +Math.ceil(ExchangeRateNGNUSD*(PortSurcharge*(RackingCost+RackingShippingCost)*DutyOnRacking))
         +Math.ceil(ExchangeRateNGNUSD*(ETLLevy*(RackingCost+RackingShippingCost)))
     var RackingVAT = VATRate*VATonRacking*(RackingNonVAT+ExchangeRateNGNUSD*(RackingCost+RackingShippingCost))
-
+    // calculation on PV
     var PVPanelsInShipment = 620
     var PVkWInShipment = PVPanelsInShipment*PVWattsPerPanel/1000
     var C138 = PVSiteWattage/(PVkWInShipment*1000)
@@ -149,10 +134,7 @@ function PVCost(pvC) {
 
 }
 
-
-
-
-
+// list of input for YES auto-budget items
 var ipt = [['Batteries','Customs','ClearingAgentFees'],
             ['Batteries','Customs','InspectionFee'],
             ['Batteries','Customs','NonVATCustoms'],
@@ -206,12 +188,12 @@ var ipt = [['Batteries','Customs','ClearingAgentFees'],
             ['SolarPanels', 'Material', 'SolarPanels'],
             ['SolarPanels', 'Transport', 'InternationalTransport'],
             ['SolarPanels', 'Transport', 'TransportToSite']]
+let preBudget = 12098.19
 
-// engineering input goes here!
-
-let preBudget = 12098.19 //39170.24
+/**
+ * button function to load all the cost and carry out calculations
+ */
 var Cbutton = document.getElementById('cost');
-
 Cbutton.onclick = () => {
     for (let i = 0; i < 100; i++) {
         let val = parseFloat(document.getElementById(`c${i+1}`).value)
@@ -219,6 +201,14 @@ Cbutton.onclick = () => {
         preBudget += val
     } 
 }
+
+/**
+ * calculate cummulative cost for the whole cost tracking template
+ * @param {Integer} solarPanelCount: solar panel count
+ * @param {Integer} batteryCount: battery count
+ * @param {Integer} chargeControllerCount: charge controller count
+ * @returns the cummulative cost for the project
+ */
 function calculateC0(solarPanelCount, batteryCount, chargeControllerCount) {
     var inverter = new Inverter(chargeControllerCount)
     var inverterCount = inverter.count
@@ -235,10 +225,6 @@ function calculateC0(solarPanelCount, batteryCount, chargeControllerCount) {
 
     quantity = [1,1,bC[1],1,bC[2],batteryCount,bC[0],1,1,1,1,1,1,1,0,432,1,1,5,1,5,5,5,200,200,200,1,1,iC[0],1,1,inverterCount,iC[1],CCNonVAT,1,chargeControllerCount,1,1,1,PV[1],1,PV[2],PV[0],PV[0],1,1,PV[3],PV[5],PV[4],1,solarPanelCount,solarPanelCount, 1]
 
-    //let budget =  27072.05 +  12098.19 + plant_balance_of_system_half_inverter + plant_balance_of_system_half_battery + plant_balance_of_system_half_CC + plant_balance_of_system_half_PV
-    //console.log(budget + plant_balance_of_system_half_inverter + plant_balance_of_system_half_battery + plant_balance_of_system_half_CC + plant_balance_of_system_half_PV)
-    //console.log(budget)
-    //console.log(27072.05 +  12098.19)
     let budget = preBudget + plant_balance_of_system_half_inverter + plant_balance_of_system_half_battery + plant_balance_of_system_half_CC + plant_balance_of_system_half_PV
     for (let i = 0; i < ipt.length; i++) {
         let expenses = ipt[i]
@@ -246,14 +232,8 @@ function calculateC0(solarPanelCount, batteryCount, chargeControllerCount) {
         for (let j = 1; j < expenses.length; j ++) {
             curr = curr[expenses[j]]
         }
-        //console.log('--')
-        //console.log(curr)
-        //console.log(quantity[i])
-        //console.log(curr * quantity[i])
         budget += (curr * quantity[i])
     }
-
-    //console.log('Final Budget:' + budget)
     return budget
 }
 

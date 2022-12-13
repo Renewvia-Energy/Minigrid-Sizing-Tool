@@ -179,6 +179,9 @@ function calculation(solar_irradiation, load, battery, generator, PVArray, inver
 
 /**
  * This function runs the simulation to calculate results and print out to console
+ * @param {Integer} solarPanelCount: number of solar panel in system
+ * @param {Integer} batteryCount: number of battery in system
+ * @param {Integer} chargeControllerCount: number of charge controller in system
  */
 function simulation(solarPanelCount, batteryCount, chargeControllerCount) {
     // engineering input goes here
@@ -188,13 +191,6 @@ function simulation(solarPanelCount, batteryCount, chargeControllerCount) {
     var inverter = new Inverter(chargeControllerCount)
     var mics = new Mics(distributionLoss)
     var inverterCount = Inverter.count
-   /*
-    var battery = new Battery(300.3, 36.04, 300.3, 0.975)
-    var generator = new Generator(100)
-    var PVArray = new PV(120.4, 0.11)
-    var inverter = new Inverter()
-    var mics = new Mics()
-    */
     // instantiate results that we're interested in
     var generator_running_hour = 0
     var total_available_solar_from_array = 0
@@ -218,49 +214,22 @@ function simulation(solarPanelCount, batteryCount, chargeControllerCount) {
         total_wasted_solar = total_wasted_solar + wasted_solar
         total_load_shedding = total_load_shedding + load_shedding
     }
-    /*
-    //print the results to console
-    console.log('Total Energy Produced from PV')
-    console.log(total_available_solar_from_array - total_wasted_solar)
-    console.log('Demand(corrected for losses)')
-    console.log(totalYearlyDemand/(1-mics.distribution_losses))
-    console.log('Total Yearly Demand')
-    console.log(totalYearlyDemand)
-    console.log('Energy Sold to Customer')
-    console.log(totalYearlyDemand - total_load_shedding)
-    console.log('% of load kWh unmet')
-    console.log(total_load_shedding/totalYearlyDemand)
-    console.log('wasted PV')
-    console.log((total_wasted_solar/total_available_solar_from_array) * 100)
-    console.log('kWh/kW DC (After All Losses)')
-    console.log((totalYearlyDemand - total_load_shedding)/120.4)
-    console.log('Capacity Factor (After All Losses)')
-    console.log(((totalYearlyDemand - total_load_shedding)/(120.4*8760))*100)
-    console.log('% of available PV kWh sold')
-    console.log(((totalYearlyDemand - total_load_shedding)/(total_available_solar_from_array)) * 100)
-    console.log('PV kWh/Total kWh (Renewable Penetration)')
-    console.log((total_available_solar_from_array/( total_available_solar_from_array + total_generator_load))*100)
-    console.log('Generator Energy Production')
-    console.log(total_generator_load)
-    console.log('Generator kWh/Total kWh')
-    console.log((total_generator_load/(total_generator_load+total_available_solar_from_array)) * 100)
-    console.log('Generator Running Hours')
-    console.log(generator_running_hour)
-    console.log('Generator Average Loading')
-    console.log(((0.01 * total_generator_load)/generator_running_hour) * 100)
-    console.log('Total Fuel Consumption')
-    console.log(total_fuel * 3.785)
-    */
 
     return [totalYearlyDemand - total_load_shedding, total_fuel * 3.785,total_available_solar_from_array - total_wasted_solar,totalYearlyDemand/(1-mics.distribution_losses),totalYearlyDemand,totalYearlyDemand - total_load_shedding,total_load_shedding/totalYearlyDemand,(total_wasted_solar/total_available_solar_from_array) * 100,(totalYearlyDemand - total_load_shedding)/120.4,((totalYearlyDemand - total_load_shedding)/(120.4*8760))*100,((totalYearlyDemand - total_load_shedding)/(total_available_solar_from_array)) * 100,(total_available_solar_from_array/( total_available_solar_from_array + total_generator_load))*100,total_generator_load,(total_generator_load/(total_generator_load+total_available_solar_from_array)) * 100, generator_running_hour,((0.01 * total_generator_load)/generator_running_hour) * 100]
 }
+// using Sbutton for simulation function
 var Sbutton = document.getElementById('simulate');
 
+/**
+ * parse PV Count, Battery Count,CC count, run simulation and display output in web
+ */
 Sbutton.onclick = () => {
     var pvCount = parseInt(document.getElementById('num-pv').value)
     var batteryCount = parseInt(document.getElementById('num-batteries').value)
     var ccCount = parseInt(document.getElementById('num-cc').value)
     var res = simulation(pvCount, batteryCount, ccCount)
+    console.log(res)
+    //display output in web
     document.getElementById('total-energy-from-PV').innerHTML = res[2];
     document.getElementById('demand').innerHTML = res[3];
     document.getElementById('total-yearly-demand').innerHTML = res[4];

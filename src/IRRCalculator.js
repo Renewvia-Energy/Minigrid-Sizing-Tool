@@ -8,10 +8,17 @@ Make all of the money for every year at the end of the year - pay for the disels
 #asume that there is 7.4kW for battery
 */
 
+// instantiate time interval and epsilon
 var T = 20
 let EPSILON = 0.000025
-//C0 =  318980.70 * 120
 
+/**
+ * calulcate NPV given parameters
+ * @param {*} i: discount rate
+ * @param {*} Ct: cost incremented by the year
+ * @param {*} C0: fixed initial cost
+ * @returns 
+ */
 function NPV(i, Ct, C0) {
     running = 0
     for (let t = 1; t <= T; t++) {
@@ -20,18 +27,19 @@ function NPV(i, Ct, C0) {
     return running - C0
 }
 
+/**
+ * Calculate IRR given bounds and battery count, charge controller count
+ * @param {c} a: lower bound
+ * @param {*} b: upper bound
+ * @param {*} batteryCount: battery count
+ * @param {*} chargeControllerCount: charge controller count
+ * @returns return the IRR
+ */
 function bisection(a, b, batteryCount, chargeControllerCount) {
-    
     var solarPanelCount = chargeControllerCount * 9
     var C0 = calculateC0(solarPanelCount, batteryCount, chargeControllerCount)*120
-    //var C0 =  216124.60*120 
     result = simulation(solarPanelCount, batteryCount, chargeControllerCount)
-    //console.log(C0)
-    //console.log(result[0])
-    //console.log(result[1])
     var Ct = result[0] * 30 - result[1] * 100
-    //console.log(Ct)
-
     if (NPV(a, Ct, C0) * NPV(b, Ct, C0) >= 0) {
         console.log(NPV(a, Ct, C0))
         console.log(NPV(b, Ct, C0))
