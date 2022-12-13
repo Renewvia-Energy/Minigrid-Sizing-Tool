@@ -1,13 +1,16 @@
-var button = document.getElementById('location');
-//var string = `https://developer.nrel.gov/api/pvwatts/v8.json?api_key=Briy4bp8imL6tXQnBtfciedtG81I0uDOerZye4m3&lat=21.01&lon=105.86&system_capacity=${system_capacity}&module_type=${module_type}&losses=${losses}&array_type=${array_type}&tilt=${tilt}&azimuth=${azimuth}&timeframe=hourly`
+/**
+ * instantiate globals variables. These are fixed variables
+ */
+var systemButton = document.getElementById('location');
 var powerProduction;
 var load = []
 var totalYearlyDemand;
 var batteryEfficiency;
 var generatorSize;
 var distributionLoss;
-
-var powerProduction = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 88.0, 283.0, 485.0, 563.0, 639.0, 639.0, 592.0, 487.0, 343.0, 188.0, 73.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 85.0, 274.0, 428.0, 506.0, 525.0, 520.0, 507.0, 478.0, 379.0, 228.0, 76.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 47.0, 176.0, 330.0, 487.0, 585.0, 626.0, 620.0, 556.0, 443.0, 274.0, 92.0, 0.0, 0.0,
+var loading_percentage = [0, 25, 50, 75, 100]
+var generator_sizes = [10, 20, 30, 40, 60, 75, 100, 125, 135, 150, 175, 200, 230, 250, 300, 350, 400, 500, 600, 750, 1000, 125, 1500, 1750, 2000, 2250]
+powerProduction = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 88.0, 283.0, 485.0, 563.0, 639.0, 639.0, 592.0, 487.0, 343.0, 188.0, 73.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 85.0, 274.0, 428.0, 506.0, 525.0, 520.0, 507.0, 478.0, 379.0, 228.0, 76.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 47.0, 176.0, 330.0, 487.0, 585.0, 626.0, 620.0, 556.0, 443.0, 274.0, 92.0, 0.0, 0.0,
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 51.0, 155.0, 293.0, 437.0, 594.0, 668.0, 647.0, 566.0, 431.0, 253.0, 83.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 74.0, 240.0, 415.0, 555.0, 637.0, 669.0, 676.0, 600.0, 469.0, 297.0, 102.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 100.0, 309.0, 504.0, 614.0, 693.0, 724.0, 681.0, 577.0, 443.0, 272.0, 91.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 74.0, 242.0, 423.0, 566.0, 648.0, 671.0, 625.0, 529.0, 391.0, 212.0, 66.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 64.0, 235.0, 421.0, 490.0, 578.0, 618.0, 629.0, 550.0, 418.0, 246.0, 78.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 73.0, 251.0, 440.0, 567.0, 651.0, 679.0, 611.0, 525.0, 386.0, 216.0, 64.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 63.0, 230.0, 412.0, 535.0, 607.0, 624.0, 658.0, 581.0, 430.0, 245.0, 79.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 64.0, 220.0, 396.0, 446.0, 523.0, 539.0, 509.0, 444.0, 329.0, 179.0, 48.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 64.0, 203.0, 338.0, 444.0, 487.0, 521.0, 525.0, 465.0, 355.0, 217.0, 61.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 57.0, 181.0, 304.0, 407.0, 514.0, 562.0, 524.0, 405.0, 284.0, 140.0, 37.0, 0.0, 0.0, 0.0, 0.0, 0.0,
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 63.0, 180.0, 279.0, 401.0, 486.0, 550.0, 496.0, 485.0, 371.0, 235.0, 72.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 54.0, 186.0, 315.0, 400.0, 456.0, 498.0, 538.0, 496.0, 380.0, 224.0, 72.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 37.0, 130.0, 238.0, 342.0, 409.0, 445.0, 436.0, 409.0, 327.0, 204.0, 72.0,
     0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 57.0, 194.0, 342.0, 401.0, 441.0, 435.0, 418.0, 350.0, 259.0, 148.0, 46.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 43.0, 134.0, 217.0, 280.0, 330.0, 345.0, 338.0, 287.0, 205.0, 103.0, 30.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 69.0, 217.0, 331.0, 429.0, 490.0, 517.0, 511.0, 456.0, 331.0, 196.0, 58.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 62.0, 215.0, 331.0, 357.0, 396.0, 456.0, 422.0, 361.0, 253.0, 119.0, 34.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 75.0, 245.0, 414.0, 545.0, 634.0, 652.0, 610.0, 512.0, 388.0, 228.0, 64.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 49.0, 169.0, 284.0, 368.0, 435.0, 430.0, 416.0, 348.0, 254.0, 137.0, 45.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 78.0, 226.0, 342.0, 451.0, 521.0, 526.0, 475.0, 402.0, 297.0, 154.0, 50.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 90.0, 270.0, 408.0, 387.0, 467.0, 496.0, 410.0, 306.0, 198.0, 90.0, 22.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 63.0, 195.0, 298.0, 350.0, 404.0, 419.0, 391.0, 322.0, 239.0, 157.0, 49.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 81.0, 296.0, 489.0, 620.0, 695.0, 707.0, 669.0, 587.0, 456.0, 284.0, 79.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 83.0, 234.0, 366.0, 422.0, 433.0, 408.0, 415.0, 378.0, 293.0, 185.0, 61.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 68.0, 213.0, 361.0, 463.0, 500.0, 530.0, 472.0, 400.0, 296.0, 167.0, 59.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 47.0, 149.0, 256.0, 312.0, 385.0, 418.0, 397.0, 330.0, 254.0, 162.0,
@@ -39,43 +42,10 @@ var powerProduction = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 88.0, 283.0, 485.0, 56
     523.0, 662.0, 744.0, 770.0, 741.0, 658.0, 511.0, 323.0, 114.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 123.0, 355.0, 553.0, 690.0, 767.0, 790.0, 773.0, 691.0, 554.0, 356.0, 134.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 115.0, 344.0, 542.0, 685.0, 758.0, 776.0, 739.0, 650.0, 509.0, 322.0, 117.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 115.0, 337.0, 527.0, 660.0, 736.0, 757.0, 729.0, 640.0, 507.0, 325.0, 115.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 91.0, 277.0, 462.0, 612.0, 736.0, 783.0, 752.0, 668.0, 527.0, 333.0, 116.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 98.0, 307.0, 498.0, 620.0, 697.0, 719.0, 697.0, 610.0, 471.0, 284.0, 92.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 70.0, 248.0, 460.0, 607.0, 698.0, 724.0, 719.0, 621.0, 470.0, 268.0, 85.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 77.0, 250.0, 429.0, 566.0, 663.0, 687.0, 659.0, 591.0, 466.0, 281.0, 92.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 114.0, 339.0, 537.0, 669.0, 749.0, 774.0, 752.0, 671.0, 533.0, 344.0, 125.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 119.0, 343.0, 537.0, 650.0, 731.0, 757.0, 730.0, 648.0, 511.0, 321.0, 110.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 var PVlosses;
 
-button.onclick = () => {
-    var lon = parseFloat(document.getElementById('lon').value)
-    var lat = parseFloat(document.getElementById('lat').value)
-    var system_capacity = parseInt(document.getElementById('system-capacity').value)
-    var module_type = parseInt(document.getElementById('module-type').value)
-    PVlosses = parseFloat(document.getElementById('losses').value)
-    var array_type = parseInt(document.getElementById('array-type').value)
-    var tilt = parseFloat(document.getElementById('tilt').value)
-    var azimuth = parseFloat(document.getElementById('azimuth').value)
-    var timeframe = document.getElementById('timeframe').value
-    fetch(`https://developer.nrel.gov/api/pvwatts/v8.json?api_key=Briy4bp8imL6tXQnBtfciedtG81I0uDOerZye4m3&lat=${lat}&lon=${lon}&system_capacity=${system_capacity}&module_type=${module_type}&losses=${PVlosses}&array_type=${array_type}&tilt=${tilt}&azimuth=${azimuth}&timeframe=${timeframe}`)
-    .then(response => {
-        // indicates whether the response is successful (status code 200-299) or not
-        if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`)
-        }
-        return response.json()
-    })
-    .then(data => {
-        batteryEfficiency = parseFloat(document.getElementById("battery-efficiency").value)
-        generatorSize = parseInt(document.getElementById("generator-size").value)
-        distributionLoss = parseFloat(document.getElementById("distribution-losses").value)
-        //powerProduction = data.outputs.dc
-        var total = 0
-        for (let i = 0; i < 24; i++) {
-            load.push(parseFloat(document.getElementById(`load${i+1}`).value))
-            total += load[i]
-        }
-        totalYearlyDemand = Math.ceil(total) * 365
-    })
-    .catch(error => console.log(error))
-}
-
-var loading_percentage = [0, 25, 50, 75, 100]
-var generator_sizes = [10, 20, 30, 40, 60, 75, 100, 125, 135, 150, 175, 200, 230, 250, 300, 350, 400, 500, 600, 750, 1000, 125, 1500, 1750, 2000, 2250]
-
-var costs = {
+/**
+ * Price for items in JSON format
+ */
+ var costs = {
     Batteries: {
         Customs: {
             ClearingAgentFees: 71.67,
@@ -247,4 +217,44 @@ var costs = {
         ConstructionConsumables: {}
     }
 }
+
+/**
+ *  Helper function that load input from web browser to variables
+ */
+systemButton.onclick = () => {
+    //parse input from browser
+    var lon = parseFloat(document.getElementById('lon').value)
+    var lat = parseFloat(document.getElementById('lat').value)
+    var system_capacity = parseInt(document.getElementById('system-capacity').value)
+    var module_type = parseInt(document.getElementById('module-type').value)
+    PVlosses = parseFloat(document.getElementById('losses').value)
+    var array_type = parseInt(document.getElementById('array-type').value)
+    var tilt = parseFloat(document.getElementById('tilt').value)
+    var azimuth = parseFloat(document.getElementById('azimuth').value)
+    var timeframe = document.getElementById('timeframe').value
+    fetch(`https://developer.nrel.gov/api/pvwatts/v8.json?api_key=Briy4bp8imL6tXQnBtfciedtG81I0uDOerZye4m3&lat=${lat}&lon=${lon}&system_capacity=${system_capacity}&module_type=${module_type}&losses=${PVlosses}&array_type=${array_type}&tilt=${tilt}&azimuth=${azimuth}&timeframe=${timeframe}`)
+    .then(response => {
+        // indicates whether the response is successful (status code 200-299) or not
+        if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`)
+        }
+        return response.json()
+    })
+    .then(data => {
+        batteryEfficiency = parseFloat(document.getElementById("battery-efficiency").value)
+        generatorSize = parseInt(document.getElementById("generator-size").value)
+        distributionLoss = parseFloat(document.getElementById("distribution-losses").value)
+        // uncomment this to parse data from API instead of hardcoded
+        //powerProduction = data.outputs.dc
+        var total = 0
+        for (let i = 0; i < 24; i++) {
+            load.push(parseFloat(document.getElementById(`load${i+1}`).value))
+            total += load[i]
+        }
+        totalYearlyDemand = Math.ceil(total) * 365
+    })
+    .catch(error => console.log(error))
+}
+
+
 
