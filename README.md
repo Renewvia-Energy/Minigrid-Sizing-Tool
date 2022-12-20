@@ -1,14 +1,15 @@
 # Minigrid Design Tool. 
 The goal of this project is to optimize two engineering input battery count and charger controller count so that we can arrive at the most profitable IRR while still provide sufficient electricity to customer. In order to do that, we splitted the project into three part. 
-### Simulation:  
+## Simulation:  
 This part of the project concerns the Minigrid Design Tool spreadsheet. Given the project inputs (for example: generator size, load, battery count, charge controller count, interver count) we want to arrive at a final results display the amount of electricity we sell to customer, cost for turning on the generator, yealy demands, etc. 
 
 The backbone of system data is found in data.js and src/System.js. 
-#### data.js 
+##### data.js 
 Contains price for auto-generated cost,loading percentage, generator size and DC power production for the project. 
-#### System.js contains constructor for Battery, PV, Interver and Generator classes. 
+##### System.js 
+Contains constructor for Battery, PV, Interver and Generator classes. 
 
-#### Simulation.js
+##### Simulation.js
 Calculation function contains formulas to calculate the following for every hour
 ```
     var available_solar_from_array
