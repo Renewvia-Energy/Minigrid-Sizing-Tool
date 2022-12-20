@@ -4,7 +4,6 @@
 ```
 |
 |   +-- docs
-|       +-- src
 |           +-- ExpenseClassDesign.txt      Throughout plan to generate the original budget table in Cost Tracking Tool spreadsheet
 |           +-- GradientDescent.txt         Throughout plan to optimize the engineering inputs
 |
