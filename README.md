@@ -30,6 +30,16 @@ Calculation function contains formulas to calculate the following for every hour
 ```
 Simulation function use a while loop to call calulation iteratively to gather data throughout the 24 hours for a year and return all the above information to displays for users and/or use it for optimizer function
 
+## Cost Tracking Tool
+This part of the project concerns the Cost Tracking Template spreadsheet. Given the project inputs battery count, charge controller count, interver count, PV counts, site size and non auto-generated costs we want to arrive at a final cummulative cost for the total project
+
+##### costTracking.js 
+Helper functions batteryCost(bCount), inverterCost(iV), ccCost(ccC), PVCost(pvC) calculates all the half auto-generated budget.
+CalculateC0 calculates the cumulative cost by adding all the non auto-generated, auto-generated and half auto-generated
+
+##### optimizer.js
+
+
 ## Project Overview. 
 
 ```
