@@ -37,8 +37,38 @@ This part of the project concerns the Cost Tracking Template spreadsheet. Given 
 Helper functions batteryCost(bCount), inverterCost(iV), ccCost(ccC), PVCost(pvC) calculates all the half auto-generated budget.
 CalculateC0 calculates the cumulative cost by adding all the non auto-generated, auto-generated and half auto-generated
 
-##### optimizer.js
+## Optimizer
+This part of the project concerns the optimizing engineering inputs using Gradient Descent optimizer. Given the constrains 
+number of batteries (y) and charge controllers (z), we would want to maximize IRR function f(y,z) in 2 dimensions.
 
+The algorithm for the optimization function is as follow 
+* stopping criteria: when we loop back to (x,y,z) that we visited before where x is the PV count 
+1. have an inital guess for y (battery count) and z (charge controller count)
+2. find the discrete derivative of increasing the number of battery count by 1 - dy
+3. find the discrete derivative of increasing the number of battery count by 1 - dz
+4. adjust the number of battery count and charge controller count based on the maximum of dy and dz
+5. continue the algorithm until meets the stopping criteria
+
+## DC Power Production API
+After finishing with the logic and calculations of the project, we proceeded with loading the DC power production dynamically based on the input of user by calling https://pvwatts.nrel.gov/pvwatts.php API. We call the API using longitude, latitude, system capacity, module type, PV losses, array type, titl and azimuth input from users. The code for API handler can be found in Data.js
+```
+fetch(`https://developer.nrel.gov/api/pvwatts/v8.json?api_key=Briy4bp8imL6tXQnBtfciedtG81I0uDOerZye4m3&lat=${lat}&lon=${lon}&system_capacity=${system_capacity}&module_type=${module_type}&losses=${PVlosses}&array_type=${array_type}&tilt=${tilt}&azimuth=${azimuth}&timeframe=${timeframe}`)
+    .then(response => {
+        // indicates whether the response is successful (status code 200-299) or not
+        if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`)
+        }
+        return response.json()
+    })
+    .then(data => {
+        powerProduction = data.outputs.dc
+```
+## User Interface
+The last part of the project is to create a user interface for users to input system input and get a visualization of outputs. The code can be found in index.html. The UI is splitted into 3 parts. 
+ 1: Concerns system data input (required for both Simulate and Optimizer button)
+ 2: inputs to simulate the Minigrid Design Tool result
+ 3: inputs for Cost Tracking Template and inital guesses (required for Optimizer button)
+ 
 
 ## Project Overview. 
 
