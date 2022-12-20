@@ -1,5 +1,5 @@
-#Minigrid Design Tool
-#Project Overview
+# Minigrid Design Tool. 
+## Project Overview. 
 
 ```
 |
