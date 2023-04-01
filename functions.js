@@ -1,6 +1,7 @@
 const L_PER_GAL = 4.54609;
 const HR_PER_DAY = 24;
 const DAYS_PER_YR = 365;
+const PVWATTS_API_KEY = 'Briy4bp8imL6tXQnBtfciedtG81I0uDOerZye4m3';
 
 class Panel {
 	constructor(Pmp, Voc, Vmp, Isc, Imp, price) {
@@ -10,6 +11,10 @@ class Panel {
 		this.Isc = Isc;
 		this.Imp = Imp;
 		this.price = price;
+	}
+
+	copy() {
+		return new Panel(this.Pmp, this.Voc, this.Vmp, this.Isc, this.Imp, this.price);
 	}
 
 	getPmp() {
@@ -41,7 +46,7 @@ class Panel {
 	}
 }
 
-class String {
+class PVString {
 	constructor(panels) {
 		this.panels = panels;
 		// TODO: check all panels equal
@@ -60,6 +65,11 @@ class String {
 		// NOTE: if you allow different panels in one string, this breaks.
 		this.Isc = this.panels[0].Isc;
 		this.Imp = this.panels[0].Imp;
+	}
+
+	copy() {
+		var copiedPanels = this.panels.map(panel => panel.copy());
+		return new PVString(copiedPanels);
 	}
 
 	getPanels() {
@@ -100,29 +110,34 @@ class String {
 }
 
 class Subarray {
-	constructor(strings, arrayLosses) {
-		this.strings = strings;
+	constructor(pvStrings, arrayLosses) {
+		this.pvStrings = pvStrings;
 		// TODO: confirm all strings same
 		this.arrayLosses = arrayLosses;
 
 		// NOTE: this breaks if strings have different voltages
-		this.Voc = this.strings[0].getVoc();
-		this.Vmp = this.strings[0].getVmp();
+		this.Voc = this.pvStrings[0].getVoc();
+		this.Vmp = this.pvStrings[0].getVmp();
 
 		this.Pmp = 0;
 		this.Isc = 0;
 		this.Imp = 0;
 		this.price = 0;
-		this.strings.forEach(string => {
-			this.Pmp+= string.getPmp();
-			this.Isc+= string.getIsc();
-			this.Imp+= string.getImp();
-			this.price+= string.getPrice();
+		this.pvStrings.forEach(pvString => {
+			this.Pmp+= pvString.getPmp();
+			this.Isc+= pvString.getIsc();
+			this.Imp+= pvString.getImp();
+			this.price+= pvString.getPrice();
 		});
 	}
 
-	getStrings() {
-		return this.strings;
+	copy() {
+		var copiedPVStrings = this.pvStrings.map(pvString => pvString.copy());
+		return new Subarray(copiedPVStrings, this.arrayLosses);
+	}
+
+	getPVStrings() {
+		return this.pvStrings;
 	}
 
 	getVoc() {
@@ -151,8 +166,8 @@ class Subarray {
 
 	getEnergy(dcArrayOutputkWhPerkWp) {
 		var energy = 0;
-		this.strings.forEach(string => {
-			energy+= string.getEnergy(dcArrayOutputkWhPerkWp);
+		this.pvStrings.forEach(pvString => {
+			energy+= pvString.getEnergy(dcArrayOutputkWhPerkWp);
 		});
 		return energy*(1-this.arrayLosses);
 	}
@@ -168,6 +183,7 @@ class PVInput {
 		this.Imp_max = Imp_max;
 		this.PVPowerMax = PVPowerMax;
 		this.price = 0;
+		this.subarray = null;
 	}
 
 	connectSubarray(subarray) {
@@ -192,6 +208,13 @@ class PVInput {
 		this.price = this.subarray.getPrice();
 	}
 
+	copy() {
+		var copiedSubarray = this.subarray.copy();
+		var copiedPVInput = new PVInput(this.Voc_min, this.Voc_max, this.Vmp_min, this.Vmp_max, this.Isc_max, this.Imp_max, this.PVPowerMax);
+		copiedPVInput.connectSubarray(copiedSubarray);
+		return copiedPVInput;
+	}
+
 	getPrice() {
 		return this.price;
 	}
@@ -202,18 +225,29 @@ class PVInput {
 }
 
 class PVInverterCC {
-	constructor(PVInputs, price) {
-		this.PVInputs = PVInputs;
+	/**
+	 * A customer archetype and quantity.
+	 *
+	 * @param {Array<PVInput>} pvInputs - Array of PVInputs of device.
+	 * @param {number} price - Price of device.
+	 * @constructor
+	 */
+	constructor(pvInputs, price) {
+		this.pvInputs = pvInputs;
 		this.price = price;
 
 		this.subarrayPrice = 0;
-		this.PVInputs.forEach(pvinput => {
+		this.pvInputs.forEach(pvinput => {
 			this.subarrayPrice+= pvinput.getPrice();
 		});
 	}
 
+	copy() {
+		throw new Error('Must implement');
+	}
+
 	getPVInputs() {
-		return this.PVInputs;
+		return this.pvInputs;
 	}
 
 	getPrice() {
@@ -226,17 +260,30 @@ class PVInverterCC {
 
 	getUnlimitedEnergy(dcArrayOutputkWhPerkWp) {
 		var energy = 0;
-		this.PVInputs.forEach(pvinput => {
+		this.pvInputs.forEach(pvinput => {
 			energy+= pvinput.getEnergy(dcArrayOutputkWhPerkWp);
 		});
 		return energy;
 	}
+
+	getEnergy(dcArrayOutputkWhPerkWp, outputVoltage, dt) {
+		throw new Error('Need to implement.');
+	}
+
+	getEnergy(dcArrayOutputkWhPerkWp, dt) {
+		throw new Error('Need to implement');
+	}
 }
 
 class ChargeController extends PVInverterCC {
-	constructor(batteryChargeCurrent, PVInputs, price) {
+	constructor(batteryChargeCurrent, pvInputs, price) {
+		super(pvInputs, price);
 		this.batteryChargeCurrent = batteryChargeCurrent;
-		super(PVInputs, price);
+	}
+
+	copy() {
+		var copiedPVInputs = this.pvInputs.map(pvInput => pvInput.copy());
+		return new ChargeController(this.batteryChargeCurrent, copiedPVInputs, this.price);
 	}
 
 	getBatteryChargeCurrent() {
@@ -250,8 +297,13 @@ class ChargeController extends PVInverterCC {
 
 class PVInverter extends PVInverterCC {
 	constructor(ratedPower, PVInputs, price) {
-		this.ratedPower = ratedPower;
 		super(PVInputs, price);
+		this.ratedPower = ratedPower;
+	}
+
+	copy() {
+		var copiedPVInputs = this.PVInputs.map(pvInput => pvInput.copy());
+		return new PVInverter(copiedPVInputs, this.price);
 	}
 
 	getRatedPower() {
@@ -264,8 +316,12 @@ class PVInverter extends PVInverterCC {
 }
 
 class ACDCCoupledEquipmentGroup {
-	constructor (equipmentGroup) {
+	constructor(equipmentGroup) {
 		this.equipmentGroup = equipmentGroup;
+	}
+
+	copy() {
+		throw new Error('Must implement');
 	}
 
 	getPrice() {
@@ -282,6 +338,11 @@ class DCCoupledPVGenerationEquipment extends ACDCCoupledEquipmentGroup {
 		super(chargeControllers);
 	}
 
+	copy() {
+		var copiedEquipmentGroup = this.equipmentGroup.map(equipment => equipment.copy());
+		return new DCCoupledPVGenerationEquipment(copiedEquipmentGroup);
+	}
+
 	getEnergy(dcArrayOutputkWhPerkWp, outputVoltage, dt) {
 		var energy = 0;
 		this.equipmentGroup.forEach(cc => {
@@ -291,9 +352,14 @@ class DCCoupledPVGenerationEquipment extends ACDCCoupledEquipmentGroup {
 	}
 }
 
-class ACCoupledGenerationEquipment extends ACDCCoupledEquipmentGroup {
+class ACCoupledPVGenerationEquipment extends ACDCCoupledEquipmentGroup {
 	constructor(pvInverters) {
 		super(pvInverters);
+	}
+
+	copy() {
+		var copiedEquipmentGroup = this.equipmentGroup.map(equipment => equipment.copy());
+		return new ACCoupledPVGenerationEquipment(copiedEquipmentGroup);
 	}
 
 	getEnergy(dcArrayOutputkWhPerkWp, dt) {
@@ -312,6 +378,10 @@ class Battery {
 		this.cRate = cRate;
 		this.dRate = dRate;
 		this.price = price;
+	}
+
+	copy() {
+		return new Battery(this.capacity, this.minSOC, this.cRate, this.dRate, this.price);
 	}
 
 	getCapacity() {
@@ -621,7 +691,9 @@ class DieselGenerator {
 	 *
 	 * @param {number} power - Amount of power requested from the generator.
 	 * @param {number} dt - Amount of time to run.
-	 * @returns {number} - Amount of energy supplied during the time frame.
+	 * @returns {Object} - An object with two keys:
+	 * - energy {number} Amount of energy supplied during dt.
+	 * - diesel {number} Amount of diesel consumed during dt.
 	 */
 	supply(power, dt) {
 		var loadingFrac = power/this.ratedPower;
@@ -645,50 +717,50 @@ class DieselGenerator {
 		this.dieselConsumed+= lPerHr*dt;
 		this.runHours+= dt;
 		this.currentOutput = power;
-		return power*dt;
+		return {
+			energy: power*dt,
+			diesel: lPerHr*dt
+		};
 	}
 }
 
 class Customer {
+	/**
+	 * A customer archetype and quantity.
+	 *
+	 * @param {(tariff: number, t: number) => number} loadProfile - Energy needs of a single customer [kWh/hr] given the tariff and time since commissioning [hr].
+	 * @param {(t: number) => number} - Tariff [¤/kWh] charged given the time since commissioning [hr].
+	 * @param {number} qty - Quantity of customers of that archetype.
+	 * @constructor
+	 */
 	constructor(loadProfile, tariff, qty) {
-		// TODO: check length of loadProfile and tariff
 		this.loadProfile = loadProfile;
-		if (loadProfile.length === 24) {
-			for (let d=1; d<DAYS_PER_YEAR; d++) {
-				this.loadProfile = this.loadProfile.concat(loadProfile)
-			}
-		}
-
 		this.tariff = tariff;
-		if (!Array.isArray(this.tariff)) {
-			this.tariff = Array(HR_PER_DAY).fill(this.tariff);
-		}
-
 		this.qty = qty;
 	}
 
-	getYearLoadProfile() {
+	getLoadProfile() {
 		return this.loadProfile;
 	}
 
-	getYearTotalLoadProfile() {
-		return this.loadProfile.map(load => load*this.qty);
+	getTotalLoadProfile() {
+		return (tariff, t) => this.loadProfile(tariff, t)*qty;
 	}
 
 	getTariff(t) {
-		return this.tariff[t % HR_PER_DAY];
+		return this.tariff;
 	}
 
 	getQty() {
-		return qty;
+		return this.qty;
 	}
 
-	getLoad(t) {
-		return this.loadProfile[t];
+	getLoad(tariff, t) {
+		return this.loadProfile(tariff, t);
 	}
 
-	getTotalLoad(t) {
-		return this.loadProfile*this.qty;
+	getTotalLoad(tariff, t) {
+		return this.loadProfile(tariff, t)*this.qty;
 	}
 }
 
@@ -698,11 +770,11 @@ class GenerationSite {
 	 *
 	 * @param {BatteryInverter} batteryInverter - The total battery inverter.
 	 * @param {BatteryBank} batteryBank - The battery bank.
-	 * @param {ACCoupledGenerationEquipment} pvInverters - All of the PV inverters and their connected solar panels.
+	 * @param {ACCoupledPVGenerationEquipment} pvInverters - All of the PV inverters and their connected solar panels.
 	 * @param {DCCoupledPVGenerationEquipment} chargeControllers - All of the charge controllers and their connected solar panels
 	 * @param {Generator} generator - The diesel generator
-	 * @param {function(soc: number, t: Date) => boolean} shouldTurnOnGenerator - A function to decide when to turn the generator on given battery SOC and the current time
-	 * @param {function(soc: number, t: Date) => boolean} shouldTurnOffGenerator - A function to decide when to turn the generator off given battery SOC and the current time
+	 * @param {function(soc: number, t: number) => boolean} shouldTurnOnGenerator - A function to decide when to turn the generator on given battery SOC and the current time since commissioning [hr]
+	 * @param {function(soc: number, t: number) => boolean} shouldTurnOffGenerator - A function to decide when to turn the generator off given battery SOC and the current time since commissioning [hr]
 	 * @constructor
 	 */
 	constructor(batteryInverter, batteryBank, pvInverters, chargeControllers, generator, shouldTurnGeneratorOn, shouldTurnGeneratorOff) {
@@ -741,54 +813,217 @@ class GenerationSite {
 	/**
 	 * Runs the generation site for one unit of time
 	 *
-	 * @param {Date} t - Current date
+	 * @param {number} t - Time since commissioning [hr]
 	 * @param {number} dt - The amount of time that passes [hr].
 	 * @param {number} dcArrayOutputkWhPerkWp - From irradiance data [kWh].
 	 * @param {number} load - Total load, including distribution losses [kWh].
+	 * @returns {Object} - An object with 13 keys:
+	 * - availableACFromPVInverters {number} Energy generated by PV inverters [kWh].
+	 * - availableDCFromCCs {number} Energy generated by charge controllers [kWh].
+	 * - loadWithDxLosses {number} The load, given as an input parameter [kWh].
+	 * - batterySOCkWh {number} Amount of energy remaining in the battery bank [kWh].
+	 * - batterySOC {number} SOC of the battery bank at the end of dt.
+	 * - totalSolarToLoad {number} Energy sent from the PV inverters to the load [kWh].
+	 * - totalSolarToBattery {number} Energy sent from the PV to the batteries [kWh].
+	 * - totalBatteryToLoad {number} Energy sent from the batteries to the load [kWh].
+	 * - totalEnergyToLoad {number} Energy sent from the generation site to the load [kWh].
+	 * - generatorLoad {number} Energy supplied by the generator [kWh].
+	 * - generatorFuelConsumption {number} Fuel consumed by the generator [L].
+	 * - remainingLoad {number} Unmet load [kWh].
+	 * - wastedSolar {number} Solar energy not used due to inefficiencies [kWh].
 	 */
 	operate(t, dt, dcArrayOutputkWhPerkWp, load) {
 		var wastedSolar = 0;
 		var energySentToLoad = 0;
+		var generatorLoad = 0;
+		var generatorFuelConsumption = 0;
 
 		// Charge the batteries from the charge controllers
 		var availableDCFromCCs = this.chargeControllers.getEnergy(dcArrayOutputkWhPerkWp, this.batteryBank.getOutputVoltage(), dt);
-		wastedSolar+= availableDCFromCCs - this.batteryBank.requestCharge(availableDCFromCCs);
+		var ccSolarToBattery = this.batteryBank.requestCharge(availableDCFromCCs);
+		wastedSolar+= availableDCFromCCs - ccSolarToBattery;
 
-		// If the generator is on but should be off, turn it off.
-		if (this.generator.isOn() && this.shouldTurnGeneratorOff(this.batteryBank.getSOC(), t)) {
-			this.generator.turnOff();
-		}
-		// If the generator is off but should be on, turn it on.
-		if (this.generator.isOff() && this.shouldTurnGeneratorOn(this.batteryBank.getSOC(), t)) {
-			this.generator.turnOn();
-		}
-		// If the generator is still on, use it to charge the batteries.
-		// Note: this commands the generator to charge the batteries at 100% generator loading fraction.
-		if (this.generator.isOn()) {
-			this.batteryBank.requestChargeBatteries(this.generator.supply(this.generator.getRatedPower(), dt), dt);
+		if (this.generator !== null) {
+			// If the generator is on but should be off, turn it off.
+			if (this.generator.isOn() && this.shouldTurnGeneratorOff(this.batteryBank.getSOC(), t)) {
+				this.generator.turnOff();
+			}
+			// If the generator is off but should be on, turn it on.
+			if (this.generator.isOff() && this.shouldTurnGeneratorOn(this.batteryBank.getSOC(), t)) {
+				this.generator.turnOn();
+			}
+			// If the generator is still on, use it to charge the batteries.
+			// Note: this commands the generator to charge the batteries at 100% generator loading fraction.
+			if (this.generator.isOn()) {
+				generatorResponse = this.generator.supply(this.generator.getRatedPower(), dt);
+				generatorLoad = generatorResponse.energy;
+				generatorFuelConsumption = generatorResponse.diesel;
+				this.batteryBank.requestChargeBatteries(generatorLoad, dt);
+			}
 		}
 
 		var availableACFromPVInverters = this.pvInverters.getEnergy(dcArrayOutputkWhPerkWp, dt);
+
+		var totalSolarToLoad = 0;
+		var totalBatteryToLoad = 0;
+		var totalSolarToBattery = ccSolarToBattery;
 		
 		// If the PV inverters can supply the load
 		if (load <= availableACFromPVInverters) {
 			// Fulfill entire load
-			energySentToLoad+= load;
+			totalSolarToLoad+= load;
+			energySentToLoad+= totalSolarToLoad;
 
 			// Send the excess to the batteries
 			var extraACFromPVInverters = load - availableACFromPVInverters;
-			var energyStored = this.batteryInverter.requestChargeBatteries(extraACFromPVInverters, dt) + this.batteryBank.requestCharge(availableDCFromCCs);
+			var energyStored = this.batteryInverter.requestChargeBatteries(extraACFromPVInverters, dt);
+			totalSolarToBattery+= energyStored;
 			wastedSolar+= extraACFromPVInverters - energyStored;	// Note: this counts energy lost due to battery inverter inefficiency as wasted solar. As of now, I don't count losses due to inverting battery DC as wasted energy.
 
 		// If the PV inverters can't supply the load, request the remainder from the batteries
 		} else {
-			energySentToLoad+= availableACFromPVInverters;
-			energySentToLoad+= this.batteryInverter.requestAC(load-energySentToLoad, dt);
+			totalSolarToLoad+= availableACFromPVInverters;
+			energySentToLoad+= totalSolarToLoad;
+			totalBatteryToLoad = this.batteryInverter.requestAC(load-energySentToLoad, dt)
+			energySentToLoad+= totalBatteryToLoad;
 		}
 
 		return {
-			wastedSolar: wastedSolar,
-			energySentToLoad: energySentToLoad
+			availableACFromPVInverters: availableACFromPVInverters,
+			availableDCFromCCs: availableDCFromCCs,
+			loadWithDxLosses: load,
+			batterySOCkWh: this.batteryBank.getEnergy(),
+			batterySOC: this.batteryBank.getSOC(),
+			totalSolarToLoad: totalSolarToLoad,
+			totalSolarToBattery: totalSolarToBattery,
+			totalBatteryToLoad: totalBatteryToLoad,
+			totalEnergyToLoad: energySentToLoad,
+			generatorLoad: generatorLoad,
+			generatorFuelConsumption: generatorFuelConsumption,
+			remainingLoad: load-energySentToLoad,
+			wastedSolar: wastedSolar
 		};
 	}
 }
+
+class MiniGrid {
+	constructor(customers, dxLosses) {
+		this.customers = customers;
+		this.dxLosses = dxLosses;
+		
+		this.dcArrayOutputkWhPerkWpFn = null;
+		this.generationSite = null;
+	}
+
+	place(latitude, longitude, roofMounted=false) {
+		const url = `https://developer.nrel.gov/api/pvwatts/v8.json?api_key=${PVWATTS_API_KEY}&lat=${latitude}&lon=${longitude}&system_capacity=1&module_type=0&losses=0&array_type=${roofMounted ? 1 : 0}&tilt=10&azimuth=180&timeframe=hourly&dataset=intl`;
+
+		return new Promise((resolve, reject) => {
+			const request = new XMLHttpRequest();
+			request.open('GET', url);
+			request.onload = () => {
+				if (request.status === 200) {
+					var dcArrayOutputkWhPerkWpArr = [...JSON.parse(request.response).outputs.dc];
+					this.dcArrayOutputkWhPerkWpFn = t => dcArrayOutputkWhPerkWpArr[Math.round(t) % (HR_PER_DAY*DAYS_PER_YR)];
+					resolve(JSON.parse(request.response));
+				} else {
+					reject(Error(request.statusText));
+				}
+			};
+			request.onerror = () => {
+				reject(Error('Network Error'));
+			};
+			request.send();
+		});
+	}
+
+	buildGenerationSite(generationSite) {
+		this.generationSite = generationSite;
+	}
+
+	getDCArrayOutputkWhPerkWp(t) {
+		return this.dcArrayOutputkWhPerkWpFn(t);
+	}
+
+	operate(t, dt) {
+		var dcArrayOutputkWhPerkWp = this.getDCArrayOutputkWhPerkWp(t);
+
+		var load = 0;
+		this.customers.forEach(customer => {
+			load+= customer.getTotalLoad();
+		});
+
+		var result = this.generationSite.operate(t, dt, dcArrayOutputkWhPerkWp, load/(1-this.dxLosses));
+		result.load = load;
+		result.remainingLoadWithDxLosses = result.remainingLoad;
+		result.remainingLoad = load-result.totalEnergyToLoad*(1-this.dxLosses);
+
+		return result;
+	}
+}
+
+/**
+ * Simulate mini-grid performance over time.
+ *
+ * @param {number} t - The total amount of time to simulate [hr].
+ * @param {number} dt - The time interval between simulation steps [hr].
+ * @param {number} latitude - The latitude of the generation site.
+ * @param {number} longitude - The longitude of the generation site.
+ */
+async function simulate(t, dt, latitude, longitude, panelsPerStringCC, stringsPerSubarrayCC, numChargeControllers, numBatteries) {
+	var genericCustomer = new Customer(
+		(tariff, t) => 1,
+		t => 30,
+		2
+	);
+	var customers = [genericCustomer];
+
+	var minigrid = new MiniGrid(customers, 0.1);
+
+	await minigrid.place(latitude, longitude);
+
+	var jkm445m = new Panel(0.445, 49.07, 41.17, 11.46, 10.81, 445*0.2630);
+	var panels = [];
+	for (let p=0; p<panelsPerStringCC; p++) {
+		panels.push(jkm445m.copy());
+	}
+
+	var pvString = new PVString(panels);
+	var pvStrings = [];
+	for (let s=0; s<stringsPerSubarrayCC; s++) {
+		pvStrings.push(pvString.copy());
+	}
+
+	var subarray = new Subarray(pvStrings, 0.1);
+	var pvInput = new PVInput(60, 245, 60, 245, 70, 70, 4.9);
+	pvInput.connectSubarray(subarray);
+
+	var cc = new ChargeController(85, [pvInput], 588.88);
+	var ccs = [];
+	for (let c=0; c<numChargeControllers; c++) {
+		ccs.push(cc.copy());
+	}
+
+	var ccGroup = new DCCoupledPVGenerationEquipment(ccs);
+
+	var pvInvGroup = new ACCoupledPVGenerationEquipment([]);
+
+	var smd143 = new Battery(14.3, 0.1, 0, 0, 1000);
+	var batteries = [];
+	for (let b=0; b<numBatteries; b++) {
+		batteries.push(smd143.copy());
+	}
+
+	var batteryBank = new BatteryBank(batteries, 48);
+
+	var batteryInv = new BatteryInverter(15, .95, .95, 1000);
+
+	var site = new GenerationSite(batteryInv, batteryBank, pvInvGroup, ccGroup, null, null, null);
+	minigrid.buildGenerationSite(site);
+	
+	for (let t=0; t<12; t++){
+		console.log(minigrid.operate(t, 1));
+	}
+}
+
+simulate(HR_PER_DAY*DAYS_PER_YR, 1, 3.1166662, 35.5999976, 3, 3, 2, 2);
