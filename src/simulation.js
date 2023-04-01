@@ -17,41 +17,6 @@ var generator_table = [[0.0, 0.3, 0.5, 0.7], [0.0, 0.6,0.9,1.3,1.6], [0.0,1.3,1.
 ]
 
 
-/**
- * Helper function that calculates generator fuel consumption for each time interval using 2D interpolation
- * @param {Array} values: generator look-up table
- * @param {Integer} x1: lower bound index of size of generator
- * @param {Integer} y1: lower bound index of generator_load
- * @param {Integer} x2: upper bound index of size of generator
- * @param {Integer} y2: lower bound index of size of generator
- * @param {Double} x: the index value of size of generator according to x1 and x2
- * @param {Double} y: the index value of generator_load according to y1 and y2
- * @param {Double} generator_load: the generator load input
- * @returns: the estimate fuel consumption for the input generator load
- */
-
-function generator_fuel_consumption(values, x1,y1,x2,y2,x,y, generator_load) {
-    // this is the case when we can simply look up the value in generator_table table
-    if (x1 == x2 && y1 == y2){
-        return generator_table[x1][y1]
-    // linear interpolation
-    } else if (x1 == x2) {
-      let portion = (generator_table[x2][y2] - generator_table[x2][y1])/(loading_percentage[y2] - loading_percentage[y1])
-      return generator_table[x2][y1] + portion * (generator_load - loading_percentage[y1])
-    }
-    else if (y1 == y2) {
-      let portion = (generator_table[x2][y1] - generator_table[x1][y1])/(generator_sizes[x2] - generator_sizes[x1])
-      return generator_table[x1][y1] + portion * (generator.size - generator_sizes[x1])
-    // Bilinear interpolation
-    } else {
-        let q11 = (((x2 - x) * (y2 - y)) / ((x2 - x1) * (y2 - y1))) * generator_table[x1][y1]
-        let q21 = (((x - x1) * (y2 - y)) / ((x2 - x1) * (y2 - y1))) * generator_table[x2][y1]
-        let q12 = (((x2 - x) * (y - y1)) / ((x2 - x1) * (y2 - y1))) * generator_table[x1][y2]
-        let q22 = (((x - x1) * (y - y1)) / ((x2 - x1) * (y2 - y1))) * generator_table[x2][y2]
-        return  q11 + q21 + q12 + q22
-    }
-}
-
 
 /**
  * Helper function that calculates the index of value in sorted arr array. This function helps with finding x1,x2,y1,y2 in generator_fuel_consumption() function

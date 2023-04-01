@@ -1,3 +1,5 @@
+const L_PER_GAL = 4.54609;
+
 class Panel {
 	constructor(Pmp, Voc, Vmp, Isc, Imp, price) {
 		this.Pmp = Pmp;
@@ -337,6 +339,7 @@ class BatteryBank {
 		});
 		
 		this.energy = this.capacity;
+		this.cumE = 0;
 	}
 
 	getBatteries() {
@@ -369,6 +372,7 @@ class BatteryBank {
 
 	discharge(energy) {
 		this.energy-= energy;
+		this.cumE+= Math.abs(energy)/2;
 	}
 }
 
@@ -398,6 +402,23 @@ class DieselGenerator {
 
 		this.runHours = 0;
 		this.dieselConsumed = 0;
+
+		if (this.ratedPower < Math.min(DieselGenerator.genSizeHeaders) || this.ratedPower>Math.max(DieselGenerator.genSizeHeaders)) {
+			throw new Error(`Diesel genset power ${this.ratedPower} is outside the range [${Math.min(DieselGenerator.genSizeHeaders),Math.max(DieselGenerator.getSizeHeaders)}].`);
+		}
+		this.generatorRow = [];
+		for (let p=0; p<DieselGenerator.genSizeHeaders.length; p++) {
+			if (this.ratedPower === DieselGenerator.genSizeHeaders[p]) {
+				this.generatorRow = DieselGenerator.generatorTable[p];
+				break;
+			} else if (this.ratedPower < DieselGenerator.genSizeHeaders[p+1]) {
+				var p_frac = (this.ratedPower-DieselGenerator.genSizeHeaders[p])/(DieselGenerator.genSizeHeaders[p+1]-DieselGenerator.genSizeHeaders[p]);
+				for (let l=0; l<DieselGenerator.loadingFracHeaders.length; l++) {
+					this.generatorRow.push(DieselGenerator.generatorTable[p,l] + p_frac*(DieselGenerator.generatorTable[p+1,l]-DieselGenerator.generatorTable[p,l]));
+				}
+				break;
+			}
+		}
 	}
 
 	getRatedPower() {
@@ -416,12 +437,71 @@ class DieselGenerator {
 		return this.dieselConsumed;
 	}
 
+	static get generatorTable() {
+		return [
+			[0.0,  0.3,  0.5,   0.7,   0.8],
+			[0.0,  0.6,  0.9,   1.3,   1.6],
+			[0.0,  1.3,  1.8,   2.4,   2.9],
+			[0.0,  1.6,  2.3,   3.2,   4.0],
+			[0.0,  1.8,  2.9,   3.8,   4.8],
+			[0.0,  2.4,  3.4,   4.6,   6.1],
+			[0.0,  2.6,  4.1,   5.8,   7.4],
+			[0.0,  3.1,  5.0,   7.1,   9.1],
+			[0.0,  3.3,  5.4,   7.6,   9.8],
+			[0.0,  3.6,  5.9,   8.4,  10.9],
+			[0.0,  4.1,  6.8,   9.7,  12.7],
+			[0.0,  4.7,  7.7,  11.0,  14.4],
+			[0.0,  5.3,  8.8,  12.5,  16.6],
+			[0.0,  5.7,  9.5,  13.6,  18.0],
+			[0.0,  6.8, 11.3,  16.1,  21.5],
+			[0.0,  7.9, 13.1,  18.7,  25.1],
+			[0.0,  8.9, 14.9,  21.3,  28.6],
+			[0.0, 11.0, 18.5,  26.4,  35.7],
+			[0.0, 13.2, 22.0,  31.5,  42.8],
+			[0.0, 16.3, 27.4,  39.3,  53.4],
+			[0.0, 21.6, 36.4,  52.1,  71.1],
+			[0.0, 26.9, 45.3,  65.0,  88.8],
+			[0.0, 32.2, 54.3,  77.8, 106.5],
+			[0.0, 37.5, 63.2,  90.7, 124.2],
+			[0.0, 42.8, 72.2, 103.5, 141.9],
+			[0.0, 48.1, 81.1, 116.4, 159.6]
+		];
+	}
+
+	static get loadingFracHeaders() {
+		return [0, 0.25, 0.5, 0.75, 1.0];
+	}
+
+	static get genSizeHeaders() {
+		return [10, 20, 30, 40, 60, 75, 100, 125, 135, 150, 175, 200, 230, 250, 300, 350, 400, 500, 600, 750, 1000, 125, 1500, 1750, 2000, 2250];
+	}
+
 	canSupply(energy, time) {
 		return energy/time<=this.ratedPower;
 	}
 
-	supply(energy, time) {
-		var power = energy/time;
+	supply(power, time) {
+		var loadingFrac = power/self.ratedPower;
+		if (loadingFrac > Math.max(DieselGenerator.loadingFracHeaders)) {
+			console.warn(`Generator asked to supply ${power}, but can only supply ${self.ratedPower}`);
+			power = self.ratedPower;
+			loadingFrac = 1.0;
+		}
+
+		var galPerHr = undefined;
+		for (let l=0; l<DieselGenerator.loadingFracHeaders.length; l++) {
+			if (loadingFrac === DieselGenerator.loadingFracHeaders[l]) {
+				galPerHr = this.generatorRow[l];
+			} else if (loadingFrac < DieselGenerator.loadingFracHeaders[l+1]) {
+				var l_frac = (loadingFrac - DieselGenerator.loadingFracHeaders[l]) / (DieselGenerator.loadingFracHeaders[l+1] - DieselGenerator.loadingFracHeaders[l]);
+				galPerHr = this.generatorRow[l] + l_frac*(this.generatorRow[l+1] - this.generatorRow[l]);
+			}
+		}
+		var lPerHr = galPerHr*L_PER_GAL;
+
+		self.dieselConsumed+= lPerHr*time;
+		self.runHours+= time;
+		return power;
 	}
 }
 
