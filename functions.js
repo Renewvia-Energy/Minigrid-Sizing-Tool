@@ -1,4 +1,6 @@
 const L_PER_GAL = 4.54609;
+const HR_PER_DAY = 24;
+const DAYS_PER_YR = 365;
 
 class Panel {
 	constructor(Pmp, Voc, Vmp, Isc, Imp, price) {
@@ -34,8 +36,8 @@ class Panel {
 		return this.price;
 	}
 
-	getPower(DCArrayOutputWPerkWp) {
-		return DCArrayOutputWPerkWp*this.Pmp;
+	getEnergy(dcArrayOutputkWhPerkWp) {
+		return dcArrayOutputkWhPerkWp*this.Pmp;
 	}
 }
 
@@ -88,12 +90,12 @@ class String {
 		return this.price;
 	}
 
-	getPower(DCArrayOutputWPerkWp) {
-		var power = 0;
+	getEnergy(dcArrayOutputkWhPerkWp) {
+		var energy = 0;
 		this.panels.forEach(panel => {
-			power+= panel.getPower(DCArrayOutputWPerkWp);
+			energy+= panel.getEnergy(dcArrayOutputkWhPerkWp);
 		});
-		return power;
+		return energy;
 	}
 }
 
@@ -147,12 +149,12 @@ class Subarray {
 		return this.price;
 	}
 
-	getPower(DCArrayOutputWPerkWp) {
-		var power = 0;
+	getEnergy(dcArrayOutputkWhPerkWp) {
+		var energy = 0;
 		this.strings.forEach(string => {
-			power+= string.getPower(DCArrayOutputWPerkWp);
+			energy+= string.getEnergy(dcArrayOutputkWhPerkWp);
 		});
-		return power*(1-this.arrayLosses);
+		return energy*(1-this.arrayLosses);
 	}
 }
 
@@ -194,8 +196,8 @@ class PVInput {
 		return this.price;
 	}
 
-	getPower(DCArrayOutputWPerkWp) {
-		return this.subarray.getPower(DCArrayOutputWPerkWp);
+	getEnergy(dcArrayOutputkWhPerkWp) {
+		return this.subarray.getEnergy(dcArrayOutputkWhPerkWp);
 	}
 }
 
@@ -222,12 +224,12 @@ class PVInverterCC {
 		return this.subarrayPrice + this.price;
 	}
 
-	getUnlimitedPower(DCArrayOutputWPerkWp) {
-		var power = 0;
+	getUnlimitedEnergy(dcArrayOutputkWhPerkWp) {
+		var energy = 0;
 		this.PVInputs.forEach(pvinput => {
-			power+= pvinput.getPower(DCArrayOutputWPerkWp);
+			energy+= pvinput.getEnergy(dcArrayOutputkWhPerkWp);
 		});
-		return power;
+		return energy;
 	}
 }
 
@@ -241,8 +243,8 @@ class ChargeController extends PVInverterCC {
 		return this.batteryChargeCurrent;
 	}
 
-	getPower(DCArrayOutputWPerkWp, outputVoltage) {
-		return Math.min(super.getUnlimitedPower(DCArrayOutputWPerkWp), outputVoltage*this.batteryChargeCurrent);
+	getEnergy(dcArrayOutputkWhPerkWp, outputVoltage, dt) {
+		return Math.min(super.getUnlimitedEnergy(dcArrayOutputkWhPerkWp), outputVoltage*this.batteryChargeCurrent*dt);
 	}
 }
 
@@ -256,8 +258,8 @@ class PVInverter extends PVInverterCC {
 		return this.ratedPower;
 	}
 
-	getPower(DCArrayOutputWPerkWp) {
-		return Math.min(super.getUnlimitedPower(), this.ratedPower);
+	getEnergy(dcArrayOutputkWhPerkWp, dt) {
+		return Math.min(super.getUnlimitedEnergy(dcArrayOutputkWhPerkWp), this.ratedPower*dt);
 	}
 }
 
@@ -280,12 +282,12 @@ class DCCoupledPVGenerationEquipment extends ACDCCoupledEquipmentGroup {
 		super(chargeControllers);
 	}
 
-	getPower(DCArrayOutputWPerkWp, outputVoltage) {
-		var power = 0;
+	getEnergy(dcArrayOutputkWhPerkWp, outputVoltage, dt) {
+		var energy = 0;
 		this.equipmentGroup.forEach(cc => {
-			power+= cc.getPower(DCArrayOutputWPerkWp, outputVoltage);
+			energy+= cc.getEnergy(dcArrayOutputkWhPerkWp, outputVoltage, dt);
 		});
-		return power;
+		return energy;
 	}
 }
 
@@ -294,19 +296,21 @@ class ACCoupledGenerationEquipment extends ACDCCoupledEquipmentGroup {
 		super(pvInverters);
 	}
 
-	getPower(DCArrayOutputWPerkWp) {
-		var power = 0;
+	getEnergy(dcArrayOutputkWhPerkWp, dt) {
+		var energy = 0;
 		this.equipmentGroup.forEach(inverter => {
-			power+= inverter.getPower(DCArrayOutputWPerkWp);
+			energy+= inverter.getEnergy(dcArrayOutputkWhPerkWp, dt);
 		});
-		return power;
+		return energy;
 	}
 }
 
 class Battery {
-	constructor(capacity, minSOC, price) {
+	constructor(capacity, minSOC, cRate, dRate, price) {
 		this.capacity = capacity;
 		this.minSOC = minSOC;
+		this.cRate = cRate;
+		this.dRate = dRate;
 		this.price = price;
 	}
 
@@ -318,18 +322,29 @@ class Battery {
 		return this.minSOC;
 	}
 
+	getCRate() {
+		return this.cRate;
+	}
+
+	getDRate() {
+		return this.dRate;
+	}
+
 	getPrice() {
 		return this.price;
 	}
 }
 
 class BatteryBank {
-	constructor(batteries) {
+	constructor(batteries, outputVoltage) {
 		this.batteries = batteries;
-		// TODO: confirm batteries have equivalent SOC
+		this.outputVoltage = outputVoltage;
+		// TODO: confirm batteries are equivalent
 
-		// NOTE: if minSOC different, this breaks
+		// NOTE: if batteries not equivalent, this breaks
 		this.minSOC = batteries[0].getMinSOC();
+		this.cRate = batteries[0].getCRate();
+		this.dRate = batteries[0].getDRate();
 		
 		this.price = 0;
 		this.capacity = 0;
@@ -344,6 +359,10 @@ class BatteryBank {
 
 	getBatteries() {
 		 return this.batteries;
+	}
+
+	getOutputVoltage() {
+		return this.outputVoltage;
 	}
 
 	getMinSOC() {
@@ -362,32 +381,133 @@ class BatteryBank {
 		return this.energy;
 	}
 
+	getEffectiveEnergy() {
+		return this.energy - this.minSOC*this.capacity;
+	}
+
+	// TODO: add limits for charging and discharging rates
+	getEnergyAvailable(dt) {
+		return this.getEffectiveEnergy();
+	}
+
 	getSOC() {
 		return this.getEnergy()/this.getCapacity();
 	}
 
 	canDischarge(energy) {
-		return (this.getEnergy()-energy)/this.getCapacity();
+		return (this.getEnergy()-energy)/this.getCapacity() > this.minSOC;
 	}
 
-	discharge(energy) {
-		this.energy-= energy;
-		this.cumE+= Math.abs(energy)/2;
+	canCharge(energy) {
+		return (this.getEnergy()+energy) <= this.getCapacity();
+	}
+
+	/**
+	 * Requests energy from the batteries. Updates SOC and cycles.
+	 *
+	 * @param {number} energy - The amount of energy requested from the batteries [kWh].
+	 * @returns {number} - The amount of energy actually supplied by the batteries, limited by the min SOC
+	 */
+	requestDischarge(energy) {
+		var energySupplied = Math.min(this.getEffectiveEnergy(), energy);
+
+		this.energy-= energySupplied;
+		this.cumE+= energySupplied;
+
+		return energySupplied;
+	}
+
+	/**
+	 * Requests the batteries charge using incoming energy. Updates SOC and cycles.
+	 *
+	 * @param {number} energy - The amount of energy requested to the batteries [kWh].
+	 * @returns {number} - The amount of energy actually used to charge the batteries, limited by the capacity
+	 */
+	requestCharge(energy) {
+		var energySupplied = Math.min(this.getCapacity()-this.getEnergy(), energy);
+
+		this.energy+= energySupplied;
+		this.cumE+= energySupplied;
+
+		return energySupplied;
 	}
 }
 
 class BatteryInverter {
-	constructor(ratedPower, price) {
+	constructor(ratedPower, inverterEfficiency, chargerEfficiency, price) {
 		this.ratedPower = ratedPower;
+		this.inverterEfficiency = inverterEfficiency;
+		this.chargerEfficiency = chargerEfficiency;
 		this.price = price;
+
+		this.batteryBank = null;
 	}
 
 	getRatedPower() {
 		return this.ratedPower;
 	}
 
+	getInverterEfficiency() {
+		return this.inverterEfficiency;
+	}
+
+	getChargerEfficiency() {
+		return this.chargerEfficiency;
+	}
+
 	getPrice() {
 		return this.price;
+	}
+
+	/**
+	 * Requests energy from the batteries inverted into AC. Updates SOC and cycles.
+	 *
+	 * @param {number} ac - The amount of energy requested to the AC bus [kWh].
+	 * @param {number} dt - The amount of time to provide the energy [hr]
+	 * @returns {number} - The amount of AC actually produced, limited by the power rating and the batteries [kWh]
+	 */
+	requestAC(ac, dt) {
+		if (this.batteryBank === null) {
+			throw new Error('Battery inverter needs battery bank to invert.')
+		}
+		
+		// Limit AC ouptut by rated power
+		ac = Math.min(ac, this.ratedPower*dt);
+
+		// Amount of DC needed to fulfill the load [kWh]
+		var dcNeeded = ac/this.inverterEfficiency;
+
+		// Amount of DC drawn from the batteries [kWh]
+		var dcProduced = this.batteryBank.requestDischarge(dcNeeded);
+
+		// Amount of AC actually provided
+		return dcProduced*this.inverterEfficiency;
+	}
+
+	/**
+	 * Requests excess energy to be used to charge the batteries. Updates SOC and cycles.
+	 *
+	 * @param {number} ac - The amount of AC energy to send to the batteries [kWh].
+	 * @param {number} dt - The amount of time to send the energy [hr]
+	 * @returns {number} - The amount of DC energy actually stored in the batteries, limited by the power rating and the batteries [kWh]
+	 */
+	requestChargeBatteries(ac, dt) {
+		if (this.batteryBank === null) {
+			throw new Error('Battery inverter needs a battery bank to charge.')
+		}
+
+		// Limit DC output by rated power
+		ac = Math.min(ac, this.ratedPower*dt);
+
+		// Rectify AC into DC
+		var dcProduced = ac*this.chargerEfficiency;
+
+		// Charge batteries with DC
+		return this.batteryBank.requestCharge(dcProduced);
+	}
+
+	connectBatteryBank(batteryBank) {
+		this.batteryBank = batteryBank;
 	}
 
 	canSupply(energy, time) {
@@ -402,6 +522,8 @@ class DieselGenerator {
 
 		this.runHours = 0;
 		this.dieselConsumed = 0;
+		this.turnedOn = false;
+		this.currentOutput = 0;
 
 		if (this.ratedPower < Math.min(DieselGenerator.genSizeHeaders) || this.ratedPower>Math.max(DieselGenerator.genSizeHeaders)) {
 			throw new Error(`Diesel genset power ${this.ratedPower} is outside the range [${Math.min(DieselGenerator.genSizeHeaders),Math.max(DieselGenerator.getSizeHeaders)}].`);
@@ -435,6 +557,10 @@ class DieselGenerator {
 
 	getDieselConsumed() {
 		return this.dieselConsumed;
+	}
+
+	getCurrentOutput() {
+		return this.currentOutput;
 	}
 
 	static get generatorTable() {
@@ -480,11 +606,28 @@ class DieselGenerator {
 		return energy/time<=this.ratedPower;
 	}
 
-	supply(power, time) {
-		var loadingFrac = power/self.ratedPower;
+	isOn() {
+		return this.turnedOn;
+	}
+	turnOn() {
+		this.turnedOn = true;
+	}
+	turnOff() {
+		this.turnedOn = false;
+	}
+
+	/**
+	 * Request generator supply power. Updates diesel consumption, run hours, and current output.
+	 *
+	 * @param {number} power - Amount of power requested from the generator.
+	 * @param {number} dt - Amount of time to run.
+	 * @returns {number} - Amount of energy supplied during the time frame.
+	 */
+	supply(power, dt) {
+		var loadingFrac = power/this.ratedPower;
 		if (loadingFrac > Math.max(DieselGenerator.loadingFracHeaders)) {
-			console.warn(`Generator asked to supply ${power}, but can only supply ${self.ratedPower}`);
-			power = self.ratedPower;
+			console.warn(`Generator asked to supply ${power}, but can only supply ${this.ratedPower}`);
+			power = this.ratedPower;
 			loadingFrac = 1.0;
 		}
 
@@ -499,12 +642,153 @@ class DieselGenerator {
 		}
 		var lPerHr = galPerHr*L_PER_GAL;
 
-		self.dieselConsumed+= lPerHr*time;
-		self.runHours+= time;
-		return power;
+		this.dieselConsumed+= lPerHr*dt;
+		this.runHours+= dt;
+		this.currentOutput = power;
+		return power*dt;
+	}
+}
+
+class Customer {
+	constructor(loadProfile, tariff, qty) {
+		// TODO: check length of loadProfile and tariff
+		this.loadProfile = loadProfile;
+		if (loadProfile.length === 24) {
+			for (let d=1; d<DAYS_PER_YEAR; d++) {
+				this.loadProfile = this.loadProfile.concat(loadProfile)
+			}
+		}
+
+		this.tariff = tariff;
+		if (!Array.isArray(this.tariff)) {
+			this.tariff = Array(HR_PER_DAY).fill(this.tariff);
+		}
+
+		this.qty = qty;
+	}
+
+	getYearLoadProfile() {
+		return this.loadProfile;
+	}
+
+	getYearTotalLoadProfile() {
+		return this.loadProfile.map(load => load*this.qty);
+	}
+
+	getTariff(t) {
+		return this.tariff[t % HR_PER_DAY];
+	}
+
+	getQty() {
+		return qty;
+	}
+
+	getLoad(t) {
+		return this.loadProfile[t];
+	}
+
+	getTotalLoad(t) {
+		return this.loadProfile*this.qty;
 	}
 }
 
 class GenerationSite {
-	constructor(batteryInverter, batteryBank, pvInverters, chargeControllers)
+	/**
+	 * All of the equipment at a generation site.
+	 *
+	 * @param {BatteryInverter} batteryInverter - The total battery inverter.
+	 * @param {BatteryBank} batteryBank - The battery bank.
+	 * @param {ACCoupledGenerationEquipment} pvInverters - All of the PV inverters and their connected solar panels.
+	 * @param {DCCoupledPVGenerationEquipment} chargeControllers - All of the charge controllers and their connected solar panels
+	 * @param {Generator} generator - The diesel generator
+	 * @param {function(soc: number, t: Date) => boolean} shouldTurnOnGenerator - A function to decide when to turn the generator on given battery SOC and the current time
+	 * @param {function(soc: number, t: Date) => boolean} shouldTurnOffGenerator - A function to decide when to turn the generator off given battery SOC and the current time
+	 * @constructor
+	 */
+	constructor(batteryInverter, batteryBank, pvInverters, chargeControllers, generator, shouldTurnGeneratorOn, shouldTurnGeneratorOff) {
+		this.batteryInverter = batteryInverter;
+		this.batteryBank = batteryBank;
+		this.pvInverters = pvInverters;
+		this.chargeControllers = chargeControllers;
+		this.generator = generator;
+		this.shouldTurnGeneratorOn = shouldTurnGeneratorOn;
+		this.shouldTurnGeneratorOff = shouldTurnGeneratorOff;
+	
+		this.batteryInverter.connectBatteryBank(this.batteryBank);
+		this.acBus = 0;
+	}
+
+	getBatteryInverter() {
+		return this.batteryInverter;
+	}
+
+	getBatteryBank() {
+		return this.batteryBank;
+	}
+
+	getPVInverters() {
+		return this.PVInverters;
+	}
+
+	getChargeControllers() {
+		return this.chargeControllers;
+	}
+
+	getGenerator() {
+		return this.generator;
+	}
+
+	/**
+	 * Runs the generation site for one unit of time
+	 *
+	 * @param {Date} t - Current date
+	 * @param {number} dt - The amount of time that passes [hr].
+	 * @param {number} dcArrayOutputkWhPerkWp - From irradiance data [kWh].
+	 * @param {number} load - Total load, including distribution losses [kWh].
+	 */
+	operate(t, dt, dcArrayOutputkWhPerkWp, load) {
+		var wastedSolar = 0;
+		var energySentToLoad = 0;
+
+		// Charge the batteries from the charge controllers
+		var availableDCFromCCs = this.chargeControllers.getEnergy(dcArrayOutputkWhPerkWp, this.batteryBank.getOutputVoltage(), dt);
+		wastedSolar+= availableDCFromCCs - this.batteryBank.requestCharge(availableDCFromCCs);
+
+		// If the generator is on but should be off, turn it off.
+		if (this.generator.isOn() && this.shouldTurnGeneratorOff(this.batteryBank.getSOC(), t)) {
+			this.generator.turnOff();
+		}
+		// If the generator is off but should be on, turn it on.
+		if (this.generator.isOff() && this.shouldTurnGeneratorOn(this.batteryBank.getSOC(), t)) {
+			this.generator.turnOn();
+		}
+		// If the generator is still on, use it to charge the batteries.
+		// Note: this commands the generator to charge the batteries at 100% generator loading fraction.
+		if (this.generator.isOn()) {
+			this.batteryBank.requestChargeBatteries(this.generator.supply(this.generator.getRatedPower(), dt), dt);
+		}
+
+		var availableACFromPVInverters = this.pvInverters.getEnergy(dcArrayOutputkWhPerkWp, dt);
+		
+		// If the PV inverters can supply the load
+		if (load <= availableACFromPVInverters) {
+			// Fulfill entire load
+			energySentToLoad+= load;
+
+			// Send the excess to the batteries
+			var extraACFromPVInverters = load - availableACFromPVInverters;
+			var energyStored = this.batteryInverter.requestChargeBatteries(extraACFromPVInverters, dt) + this.batteryBank.requestCharge(availableDCFromCCs);
+			wastedSolar+= extraACFromPVInverters - energyStored;	// Note: this counts energy lost due to battery inverter inefficiency as wasted solar. As of now, I don't count losses due to inverting battery DC as wasted energy.
+
+		// If the PV inverters can't supply the load, request the remainder from the batteries
+		} else {
+			energySentToLoad+= availableACFromPVInverters;
+			energySentToLoad+= this.batteryInverter.requestAC(load-energySentToLoad, dt);
+		}
+
+		return {
+			wastedSolar: wastedSolar,
+			energySentToLoad: energySentToLoad
+		};
+	}
 }
