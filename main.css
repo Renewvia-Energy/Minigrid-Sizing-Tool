@@ -54,13 +54,13 @@ label {
 	float: left;
 }
 
-.showcase-area {
+header {
     display: flex;
     grid-template-columns: repeat(2, 1fr);
     align-items: center;
     justify-content: center;
 }
-.project_name {
+h1 {
     padding: 5%;
 }  
 
