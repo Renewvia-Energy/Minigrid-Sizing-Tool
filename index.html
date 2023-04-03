@@ -232,6 +232,108 @@
 				</section>
 
 				<section>
+					<h2>Customers and Meters</h2>
+					
+					<section>
+						<h3>Customer Profiles</h3>
+						<div id="customer-profiles">
+							<div class="customer-profile">
+								<div>
+									<label for="customer-name">Name</label>
+									<input type="text" name="customer-name" id="customer-name" value="Generic" required>
+								</div>
+								<div>
+									<!-- <label for="customer-load-profile">Load Profile as a Function of Tariff, p, and Time, t</label> -->
+									<!-- TODO: textarea for load profile function -->
+								</div>
+								<div>
+									<label for="customer-qty">Quantity</label>
+									<input type="number" name="customer-qty" id="customer-qty" value="1" required>
+								</div>
+							</div>
+						</div>
+					</section>
+
+					<section>
+						<h3>Meters</h3>
+						<div>
+							<label for="meters-totalizer-count">Count of SM200Es</label>
+							<input type="number" name="meters-totalizer-count" id="meters-totalizer-count" value="1" required>
+						</div>
+
+						<div>
+							<label for="meters-smrsd-price">SMRSD Price</label>
+							<input type="number" name="meters-smrsd-price" id="meters-smrsd-price" value="40" required>
+							<span class="unit">USD</span>
+						</div>
+
+						<div>
+							<label for="meters-smrpi-price">SMRPI Price</label>
+							<input type="number" name="meters-smrpi-price" id="meters-smrpi-price" value="100" required>
+							<span class="unit">USD</span>
+						</div>
+
+						<div>
+							<label for="meters-sm200e-price">SM200E Price</label>
+							<input type="number" name="meters-sm200e-price" id="meters-sm200e-price" value="150" required>
+							<span class="unit">USD</span>
+						</div>
+
+						<div>
+							<label for="meters-dcu-count">Base Station Count</label>
+							<input type="number" name="meters-dcu-count" id="meters-dcu-count" value="1" required>
+						</div>
+
+						<div>
+							<label for="meters-modem-count">Modem Count</label>
+							<input type="number" name="meters-modem-count" id="meters-modem-count" value="1" required>
+						</div>
+
+						<div>
+							<label for="meters-dcu-price">Base Station Price</label>
+							<input type="number" name="meters-dcu-price" id="meters-dcu-price" value="1050" required>
+							<span class="unit">USD</span>
+						</div>
+					</section>
+
+					<section>
+						<h3>Shipping</h3>
+						<div>
+							<label for="meters-shipping">Cost per Meter</label>
+							<input type="number" name="meters-shipping" id="meters-shipping" value="5.48" required>
+							<span class="unit">USD</span>
+						</div>
+					</section>
+
+					<section>
+						<h3>Customs and Clearing</h3>
+						<div>
+							<label for="meters-port-fee">Meter Inspection Fee</label>
+							<input type="number" name="meters-port-fee" id="meters-port-fee" value="100000" required>
+							<span class="unit">NGN</span>
+						</div>
+
+						<div>
+							<label for="meters-vat">VAT on Meters, Applied to Total + All Other Charges</label>
+							<input type="number" name="meters-vat" id="meters-vat" value="0" required>
+							<span class="unit">%</span>
+						</div>
+
+						<div>
+							<label for="meters-duty">Import Duty on Meters (ID, DTY), Applied to Total</label>
+							<input type="number" name="meters-duty" id="meters-duty" value="10" required>
+							<span class="unit">%</span>
+						</div>
+
+						<div>
+							<label for="meters-levy">Levy on Meters (LVY), Applied to Total</label>
+							<input type="number" name="meters-levy" id="meters-levy" value="35" required>
+							<span class="unit">%</span>
+						</div>
+					</section>
+				</section>
+
+				<section>
 					<h2>Distribution & Transmission</h2>
 
 					<div>
@@ -313,8 +415,29 @@
 				</section>
 
 				<section>
-					<h2>Meters</h2>
-					<!-- TODO: Left off here -->
+					<h2>PV</h2>
+					
+					<section>
+						<h3>Materials</h3>
+						<div>
+							<label for="pv-pmp">Panel Size</label>
+							<input type="number" name="pv-pmp" id="pv-pmp" value="540" required>
+							<span class="unit">Wp</span>
+						</div>
+
+						<div>
+							<label for="pv-price">Price</label>
+							<input type="number" name="pv-price" id="pv-price" value="0.273" required>
+							<span class="unit">USD/W</span>
+						</div>
+					</section>
+
+					<section>
+						<h3>Shipping</h3>
+						<div>
+							<!-- TODO: left off here -->
+						</div>
+					</section>
 				</section>
 
 				<section>
