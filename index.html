@@ -8,7 +8,7 @@
 	</head>
 	<body>
 		<header>
-				<img src="images/logo.png" alt="logo" class="logo" />
+				<img src="images/logo.png" alt="logo" class="logo">
 				<h1>MINIGRID DESIGN TOOL</h1>
 		</header>
 
@@ -16,22 +16,44 @@
 			<form>
 				<p class="intro">Project Description</p>
 				<!-- TODO: load parameters from json -->
-				<section>
+				<section id="overview">
+					<h2>Overview</h2>
+
+					<fieldset id="country">
+						<legend>Country</legend>
+						<div>
+							<input type="radio" id="country-ng" name="country" value="ng" checked>
+							<label for="country-ng">Nigeria</label>
+						</div>
+						<div>
+							<input type="radio" id="country-ke" name="country" value="1">
+							<label for="country-ke">Kenya</label>
+						</div>
+					</fieldset>
+
+					<div class="q">
+						<label for="vac">AC Voltage</label>
+						<input type="number" name="vac" id="vac" value="230" required>
+						<span class="unit">V</span>
+					</div>
+				</section>
+
+				<section id="location">
 					<h2>Project Location</h2>
 
-					<div>
+					<div class="q">
 						<label for="lon">Longitude</label>
 						<input type="number" name="lon" id="lon" value="3.1166" required>
 						<span class="unit">°</span>
 					</div>
 
-					<div>
+					<div class="q">
 						<label for="lat">Latitude</label>
 						<input type="number" name="lat" id="lat" value="35.5999" required>
 						<span class="unit">°</span>
 					</div>
 
-					<fieldset>
+					<fieldset id="array-type">
 						<legend>Array Type</legend>
 						<div>
 							<input type="radio" id="array-fixed-open" name="array-type" value="0" checked>
@@ -55,65 +77,66 @@
 						</div>
 					</fieldset>
 					
-					<div>
-						<label for="tilt">Tilt</label>
+					<div class="q">
+						<label for="tilt">Panel Tilt</label>
 						<input type="number" name="tilt" id="tilt" value="10" required>
 						<span class="unit">°</span>
 					</div>
 
-					<div>
-						<label for="num-cc">Azimuth</label>
+					<div class="q">
+						<label for="azimuth">Panel Azimuth</label>
 						<input type="number" name="azimuth" id="azimuth" value="180" required>
 						<span class="unit">°</span>
 					</div>
 				</section>
 
-				<section>
-					<h2>Load Profile</h2>
-					<!-- TODO: Load profile function -->
-				</section>
-
-				<section>
+				<section id="battery">
 					<h2>Batteries</h2>
 
-					<section>
+					<section id="battery-specs">
 						<h3>Technical Specifications</h3>
-						<div>
+						<div class="q">
 							<label for="battery-capacity">Capacity</label>
 							<input type="number" name="battery-capacity" id="battery-capacity" value="14.3" required>
 							<span class="unit">kWh</span>
 						</div>
 
-						<div>
+						<div class="q">
 							<label for="battery-efficiency">Efficiency</label>
 							<input type="number" name="battery-efficiency" id="battery-efficiency" value="95" required>
 							<span class="unit">%</span>
 						</div>
+
+						<div class="q">
+							<label for="dcv">DC Bus Voltage</label>
+							<input type="number" name="dcv" id="dcv" value="48" required>
+							<span class="unit">V</span>
+						</div>
 					</section>
 					
-					<section>
+					<section id="battery-materials">
 						<h3>Materials</h3>
-						<div>
+						<div class="q">
 							<label for="battery-price">Unit Price</label>
 							<input type="number" name="battery-price" id="battery-price" value="4500" required>
 							<span class="unit">USD</span>
 						</div>
 
-						<div>
+						<div class="q">
 							<label for="battery-lugs">Lugs per Battery</label>
 							<input type="number" name="battery-lugs" id="battery-lugs" value="4" required>
 						</div>
 					</section>
 
-					<section>
+					<section id="battery-shipping">
 						<h3>Shipping</h3>
-						<div>
+						<div class="q">
 							<label for="battery-shipping-perkWh">Shipping</label>
 							<input type="number" name="battery-shipping-perkWh" id="battery-shipping-perkWh" value="6" required>
 							<span class="unit">USD/kWh</span>
 						</div>
 
-						<fieldset>
+						<fieldset id="battery-shipping-container">
 							<legend>How Are the Batteries Shipping?</legend>
 							<div>
 								<input type="radio" id="batteries-shipping-lcl" name="battery-shipping-container" value="0" checked>
@@ -129,28 +152,28 @@
 							</div>
 						</fieldset>
 
-						<div>
+						<div class="q">
 							<label for="combined-shipping-inverters-batteries">Batteries Shipping with Inverters</label>
 							<input type="checkbox" name="combined-shipping-inverters-batteries" id="combined-shipping-inverters-batteries">
 						</div>
 					</section>
 
-					<section>
+					<section id="battery-customs">
 						<h3>Customs and Clearing</h3>
 
-						<div>
+						<div class="q">
 							<label for="battery-vat">VAT on Batteries, Applied to Total + All Other Charges</label>
 							<input type="number" name="battery-vat" id="battery-vat" value="7.5" required>
 							<span class="unit">%</span>
 						</div>
 
-						<div>
+						<div class="q">
 							<label for="battery-duty">Import Duty on Batteries (ID, DTY), Applied to Total</label>
 							<input type="number" name="battery-duty" id="battery-duty" value="20" required>
 							<span class="unit">%</span>
 						</div>
 
-						<div>
+						<div class="q">
 							<label for="battery-levy">Levy on Batteries (LVY), Applied to Total</label>
 							<input type="number" name="battery-levy" id="battery-levy" value="0" required>
 							<span class="unit">%</span>
@@ -158,39 +181,39 @@
 					</section>
 				</section>
 
-				<section>
+				<section id="battinv">
 					<h2>Battery Inverters</h2>
 
-					<section>
+					<section id="battinv-specs">
 						<h3>Technical Specifications</h3>
 
-						<div>
+						<div class="q">
 							<label for="battinv-capacity">Capacity</label>
 							<input type="number" name="battinv-capacity" id="battinv-capacity" value="15" required>
 							<span class="unit">kVA</span>
 						</div>
 					</section>
 
-					<section>
+					<section id="battinv-materials">
 						<h3>Materials</h3>
 
-						<div>
+						<div class="q">
 							<label for="battinv-price">Unit Price</label>
 							<input type="number" name="battinv-price" id="battinv-price" value="2600" required>
 							<span class="unit">USD</span>
 						</div>
 					</section>
 
-					<section>
+					<section id="battinv-shipping">
 						<h3>Shipping</h3>
 
-						<div>
-							<label for="battinv-shipping">Shipping</label>
-							<input type="number" name="battinv-shipping" id="battinv-shipping" value="36" required>
+						<div class="q">
+							<label for="battinv-shipping-perKVA">Shipping</label>
+							<input type="number" name="battinv-shipping-perKVA" id="battinv-shipping-perKVA" value="36" required>
 							<span class="unit">USD/kVA</span>
 						</div>
 
-						<fieldset>
+						<fieldset id="battinv-shipping-container">
 							<legend>How Are the Battery Inverters Shipping?</legend>
 
 							<div>
@@ -208,22 +231,22 @@
 						</fieldset>
 					</section>
 
-					<section>
+					<section id="battinv-customs">
 						<h3>Customs and Clearing</h3>
 
-						<div>
+						<div class="q">
 							<label for="battinv-vat">VAT on Battery Inverters, Applied to Total + All Other Charges</label>
 							<input type="number" name="battinv-vat" id="battinv-vat" value="0" required>
 							<span class="unit">%</span>
 						</div>
 
-						<div>
+						<div class="q">
 							<label for="battinv-duty">Import Duty on Battery Inverters (ID, DTY), Applied to Total</label>
 							<input type="number" name="battinv-duty" id="battinv-duty" value="5" required>
 							<span class="unit">%</span>
 						</div>
 
-						<div>
+						<div class="q">
 							<label for="battinv-levy">Levy on Battery Inverters (LVY), Applied to Total</label>
 							<input type="number" name="battinv-levy" id="battinv-levy" value="0" required>
 							<span class="unit">%</span>
@@ -231,101 +254,104 @@
 					</section>
 				</section>
 
-				<section>
+				<section id="customers-meters">
 					<h2>Customers and Meters</h2>
 					
-					<section>
+					<section id="customers-meters-profiles">
 						<h3>Customer Profiles</h3>
-						<div id="customer-profiles">
-							<div class="customer-profile">
-								<div>
+						<div class="add-to" id="customer-profiles">
+							<div class="addable customer-profile">
+								<p>Customer 1</p>
+								<div class="q">
 									<label for="customer-name">Name</label>
 									<input type="text" name="customer-name" id="customer-name" value="Generic" required>
 								</div>
-								<div>
+								<div class="q">
 									<!-- <label for="customer-load-profile">Load Profile as a Function of Tariff, p, and Time, t</label> -->
 									<!-- TODO: textarea for load profile function -->
 								</div>
-								<div>
+								<div class="q">
 									<label for="customer-qty">Quantity</label>
 									<input type="number" name="customer-qty" id="customer-qty" value="1" required>
 								</div>
 							</div>
+
+							<input type="button" name="customer-profile-add" id="customer-profile-add" class="add" value="+">
 						</div>
 					</section>
 
-					<section>
+					<section id="customers-meters-meters">
 						<h3>Meters</h3>
-						<div>
+						<div class="q">
 							<label for="meters-totalizer-count">Count of SM200Es</label>
 							<input type="number" name="meters-totalizer-count" id="meters-totalizer-count" value="1" required>
 						</div>
 
-						<div>
+						<div class="q">
 							<label for="meters-smrsd-price">SMRSD Price</label>
 							<input type="number" name="meters-smrsd-price" id="meters-smrsd-price" value="40" required>
 							<span class="unit">USD</span>
 						</div>
 
-						<div>
+						<div class="q">
 							<label for="meters-smrpi-price">SMRPI Price</label>
 							<input type="number" name="meters-smrpi-price" id="meters-smrpi-price" value="100" required>
 							<span class="unit">USD</span>
 						</div>
 
-						<div>
+						<div class="q">
 							<label for="meters-sm200e-price">SM200E Price</label>
 							<input type="number" name="meters-sm200e-price" id="meters-sm200e-price" value="150" required>
 							<span class="unit">USD</span>
 						</div>
 
-						<div>
+						<div class="q">
 							<label for="meters-dcu-count">Base Station Count</label>
 							<input type="number" name="meters-dcu-count" id="meters-dcu-count" value="1" required>
 						</div>
 
-						<div>
+						<div class="q">
 							<label for="meters-modem-count">Modem Count</label>
 							<input type="number" name="meters-modem-count" id="meters-modem-count" value="1" required>
 						</div>
 
-						<div>
+						<div class="q">
 							<label for="meters-dcu-price">Base Station Price</label>
 							<input type="number" name="meters-dcu-price" id="meters-dcu-price" value="1050" required>
 							<span class="unit">USD</span>
 						</div>
 					</section>
 
-					<section>
+					<section id="customers-meters-shipping">
 						<h3>Shipping</h3>
-						<div>
+						<div class="q">
 							<label for="meters-shipping">Cost per Meter</label>
 							<input type="number" name="meters-shipping" id="meters-shipping" value="5.48" required>
 							<span class="unit">USD</span>
 						</div>
 					</section>
 
-					<section>
+					<section id="customers-meters-customs">
 						<h3>Customs and Clearing</h3>
-						<div>
+						<div class="q">
 							<label for="meters-port-fee">Meter Inspection Fee</label>
 							<input type="number" name="meters-port-fee" id="meters-port-fee" value="100000" required>
 							<span class="unit">NGN</span>
 						</div>
 
-						<div>
+						<div class="q">
 							<label for="meters-vat">VAT on Meters, Applied to Total + All Other Charges</label>
 							<input type="number" name="meters-vat" id="meters-vat" value="0" required>
 							<span class="unit">%</span>
 						</div>
 
-						<div>
+						<div class="q">
 							<label for="meters-duty">Import Duty on Meters (ID, DTY), Applied to Total</label>
 							<input type="number" name="meters-duty" id="meters-duty" value="10" required>
 							<span class="unit">%</span>
 						</div>
 
-						<div>
+						<div class="q">
 							<label for="meters-levy">Levy on Meters (LVY), Applied to Total</label>
 							<input type="number" name="meters-levy" id="meters-levy" value="35" required>
 							<span class="unit">%</span>
@@ -333,52 +359,52 @@
 					</section>
 				</section>
 
-				<section>
+				<section id="dxtx">
 					<h2>Distribution & Transmission</h2>
 
-					<div>
+					<div class="q">
 						<label for="dx-building">Building Distribution Lines</label>
 						<input type="checkbox" name="dx-building" id="dx-building">
 					</div>
 
-					<div id="dx-section">
-						<div>
+					<div class="hideable" id="dxtx-dxtx">
+						<div class="q">
 							<label for="dx-survey-cost">Surveyor Cost, Including Meals and Lodging</label>
 							<input type="number" name="dx-survey-cost" id="dx-survey-cost" value="120000" required>
 							<span class="unit">NGN</span>
 						</div>
 
-						<div>
+						<div class="q">
 							<label for="dx-length">Length of Distribution</label>
 							<input type="number" name="dx-length" id="dx-length" value="5" required>
 							<span class="unit">km</span>
 						</div>
 
-						<div>
+						<div class="q">
 							<label for="dx-materials-cost">Materials Cost</label>
 							<input type="number" name="dx-materials-cost" id="dx-materials-cost" value="4200000" required>
 							<span class="unit">NGN/km</span>
 						</div>
 
-						<div>
+						<div class="q">
 							<label for="dx-materials-cost">Labor Cost</label>
 							<input type="number" name="dx-labor-cost" id="dx-labor-cost" value="1180552" required>
 							<span class="unit">NGN/km</span>
 						</div>
 
-						<div>
+						<div class="q">
 							<label for="dx-shipping-cost">Shipping (Road)</label>
 							<input type="number" name="dx-shipping-cost" id="dx-shipping-cost" value="60000" required>
 							<span class="unit">NGN/km</span>
 						</div>
 
-						<div>
+						<div class="q">
 							<label for="dx-contingency">Contingency</label>
 							<input type="number" name="dx-contingency" id="dx-contingency" value="10" required>
 							<span class="unit">%</span>
 						</div>
 
-						<div>
+						<div class="q">
 							<label for="tx-length">Length of Transmission</label>
 							<input type="number" name="tx-length" id="tx-length" value="1" required>
 							<span class="unit">km</span>
@@ -386,379 +412,404 @@
 					</div>
 				</section>
 
-				<section>
+				<section id="fencing">
 					<h2>Fencing</h2>
 
-					<div>
+					<div class="q">
 						<label for="fence-length">Fencing Length</label>
 						<input type="number" name="fence-length" id="fence-length" value="200" required>
 						<span class="unit">m</span>
 					</div>
 
-					<div>
+					<div class="q">
 						<label for="fence-labor">Labor</label>
 						<input type="number" name="fence-labor" id="fence-labor" value="875" required>
 						<span class="unit">NGN/m</span>
 					</div>
 
-					<div>
+					<div class="q">
 						<label for="fence-materials">Materials</label>
 						<input type="number" name="fence-materials" id="fence-materials" value="3500" required>
 						<span class="unit">NGN/m</span>
 					</div>
 
-					<div>
+					<div class="q">
 						<label for="fence-shipping">Transport</label>
 						<input type="number" name="fence-shipping" id="fence-shipping" value="350" required>
 						<span class="unit">NGN/m</span>
 					</div>
 				</section>
 
-				<section>
+				<section id="pv">
 					<h2>PV</h2>
-					
-					<section>
-						<h3>Materials</h3>
-						<div>
-							<label for="pv-pmp">Panel Size</label>
-							<input type="number" name="pv-pmp" id="pv-pmp" value="540" required>
+
+					<section id="pv-specs">
+						<h3>Technical Specifications</h3>
+						<div class="q">
+							<label for="pv-pmp">Maximum Power (P<sub>mp</sub>)</label>
+							<input type="number" name="pv-pmp" id="pv-pmp" value="535" required>
 							<span class="unit">Wp</span>
 						</div>
 
-						<div>
+						<div class="q">
+							<label for="pv-voc">Open-Circuit Voltage (V<sub>oc</sub>)</label>
+							<input type="number" name="pv-voc" id="pv-voc" value="49.34" required>
+							<span class="unit">V</span>
+						</div>
+
+						<div class="q">
+							<label for="pv-vmp">Maximum-Power Voltage (V<sub>mp</sub>)</label>
+							<input type="number" name="pv-vmp" id="pv-vmp" value="40.63" required>
+							<span class="unit">V</span>
+						</div>
+
+						<div class="q">
+							<label for="pv-isc">Short-Circuit Current (I<sub>sc</sub>)</label>
+							<input type="number" name="pv-isc" id="pv-isc" value="13.17" required>
+							<span class="unit">A</span>
+						</div>
+
+						<div class="q">
+							<label for="pv-imp">Maximum-Power Current (I<sub>mp</sub>)</label>
+							<input type="number" name="pv-imp" id="pv-imp" value="13.17" required>
+							<span class="unit">A</span>
+						</div>
+					</section>
+					
+					<section id="pv-materials">
+						<h3>Materials</h3>
+						<div class="q">
 							<label for="pv-price">Price</label>
 							<input type="number" name="pv-price" id="pv-price" value="0.273" required>
 							<span class="unit">USD/W</span>
 						</div>
 					</section>
 
-					<section>
+					<section id="pv-shipping">
 						<h3>Shipping</h3>
-						<div>
-							<!-- TODO: left off here -->
+						<div class="q">
+							<label for="pv-panels-in-shipment">Total Panels in Shipment</label>
+							<input type="number" name="pv-panels-in-shipment" id="pv-panels-in-shipment" value="620" required>
+						</div>
+
+						<div class="q">
+							<label for="pv-shipping-total">International Transport Total</label>
+							<input type="number" name="pv-shipping-total" id="pv-shipping-total" value="4000" required>
+							<span class="unit">USD</span>
+						</div>
+
+						<fieldset id="pv-shipping-container">
+							<legend>How Are the Panels Shipping?</legend>
+
+							<div class="q">
+								<input type="radio" id="pv-shipping-lcl" name="pv-shipping-container" value="0" checked>
+								<label for="pv-shipping-lcl">LCL</label>
+							</div>
+							<div class="q">
+								<input type="radio" id="pv-shipping-20" name="pv-shipping-container" value="1">
+								<label for="pv-shipping-20">20' Container</label>
+							</div>
+							<div class="q">
+								<input type="radio" id="pv-shipping-40" name="pv-shipping-container" value="2">
+								<label for="pv-shipping-40">40' Container</label>
+							</div>
+						</fieldset>
+					</section>
+
+					<section id="pv-customs">
+						<h3>Customs and Clearing</h3>
+
+						<div class="q">
+							<label for="pv-vat">VAT on Panels, Applied to Total + All Other Charges</label>
+							<input type="number" name="pv-vat" id="pv-vat" value="0" required>
+							<span class="unit">%</span>
+						</div>
+
+						<div class="q">
+							<label for="pv-duty">Import Duty on Panels (ID, DTY), Applied to Total</label>
+							<input type="number" name="pv-duty" id="pv-duty" value="0" required>
+							<span class="unit">%</span>
+						</div>
+
+						<div class="q">
+							<label for="pv-levy">Levy on Panels (LVY), Applied to Total</label>
+							<input type="number" name="pv-levy" id="pv-levy" value="0" required>
+							<span class="unit">%</span>
 						</div>
 					</section>
 				</section>
 
-				<section>
-					<h2>Engineering Inputs</h2>
-					<label for="num-cc">Number of PV:</label>
-					<input type="number" name="num-pv" id="num-pv" value="225" required><br>
-	
-					<label for="num-batteries">Number of Batteries:</label>
-					<input type="number" name="num-batteries" id="num-batteries" value="21" required><br>
-	
-					<label for="num-battery-inverters">Number of Charge Controller (CC):</label>
-					<input type="number" name="num-cc" id="num-cc" value="25" required><br>
-				</section>
-	
-				<section>
-					<h2>Procurement Parameters</h2>
-					<!-- TODO: Add procurement parameters from Cost Tracking Tool -->
-					<label for="num-cc">Exchange Rate NGNUSD</label>
-					<input type="number" name="num-cc" id="num-cc" value="411" required><br>
-					<label for="num-cc">Exchange Rate USDNG</label>
-					<input type="number" name="num-cc" id="num-cc" value="1/411" required><br>
-					<label for="num-cc">Exchange Rate KshsUSD</label>
-					<input type="number" name="num-cc" id="num-cc" value="117" required><br>
-					<label for="num-cc">Inspection Fees</label>
-					<input type="number" name="num-cc" id="num-cc" value="250" required><br>
-					<label for="num-cc">VAT Rate</label>
-					<input type="number" name="num-cc" id="num-cc" value="0.075" required><br>
-					<label for="num-cc">Import Charge</label>
-					<input type="number" name="num-cc" id="num-cc" value="0.01" required><br>
-					<label for="num-cc">ETL Levy</label>
-					<input type="number" name="num-cc" id="num-cc" value="0.005" required><br>
-					<label for="num-cc">PortSurcharge</label>
-					<input type="number" name="num-cc" id="num-cc" value="0.07" required><br>
-					<label for="num-cc">Time Interval for IRR</label>
-					<input type="number" name="num-cc" id="num-cc" value="20" required><br>
-					<label for="num-cc">Epsilon</label>
-					<input type="number" name="num-cc" id="num-cc" value="0.005" required><br>
-					<!--BATTERY-->
-					<label for="num-cc">BatteryShippingPerkWh</label>
-					<input type="number" name="num-cc" id="num-cc" value="6" required><br>
-					<label for="num-cc">BatterykWhPerUnit</label>
-					<input type="number" name="num-cc" id="num-cc" value="7.4" required><br>
-					<label for="num-cc">BatteryPricePerUnit</label>
-					<input type="number" name="num-cc" id="num-cc" value="2200" required><br>
-					<label for="num-cc">BatteryLugsPerUnit</label>
-					<input type="number" name="num-cc" id="num-cc" value="4" required><br>
-					<label for="num-cc">DutyOnBatteries</label>
-					<input type="number" name="num-cc" id="num-cc" value="0.2" required><br>
-					<label for="num-cc">LevyOnBatteries</label>
-					<input type="number" name="num-cc" id="num-cc" value="0" required><br>
-					<label for="num-cc">Solar MD Smart Logger</label>
-					<input type="number" name="c1" id="c1" value="170.53" required><br>
-					<!-- Inverter -->
-					<label for="num-cc">BatteryInverterPricePerUnit</label>
-					<input type="number" name="num-cc" id="num-cc" value="2600" required><br>
-					<label for="num-cc">BatteryInverterkWPerUnit</label>
-					<input type="number" name="num-cc" id="num-cc" value="15" required><br>
-					<label for="num-cc">BatteryInverterShippingPricePerkW </label>
-					<input type="number" name="num-cc" id="num-cc" value="36" required><br>
-					<label for="num-cc">VATonBatteryInverters</label>
-					<input type="number" name="num-cc" id="num-cc" value="0" required><br>
-					<label for="num-cc">DutyOnBatteryInverters</label>
-					<input type="number" name="num-cc" id="num-cc" value="0.05" required><br>
-					<label for="num-cc">LevyOnBatteryInverters</label>
-					<input type="number" name="num-cc" id="num-cc" value="0" required><br>
-					<!-- Charge Controller -->
-					<label for="num-cc">PVCCPricePerUnit</label>
-					<input type="number" name="num-cc" id="num-cc" value="588.8" required><br>
-					<label for="num-cc">VATonPVInverters</label>
-					<input type="number" name="num-cc" id="num-cc" value="0" required><br>
-					<label for="num-cc">DutyOnPVInverters</label>
-					<input type="number" name="num-cc" id="num-cc" value="0.05" required><br>
-					<label for="num-cc">LevyOnPVInverters</label>
-					<input type="number" name="num-cc" id="num-cc" value="0" required><br>
-					<label for="num-cc">LevyOnBatteryInverters</label>
-					<input type="number" name="num-cc" id="num-cc" value="0" required><br>
-					<!-- Community Relations -->                    
-					<label for="num-cc">Pre-construction visits: lodging</label>
-					<input type="number" name="c2" id="c2" value="313.87" required><br>
-					<label for="num-cc">Pre-construction visits: per diem</label>
-					<input type="number" name="c3" id="c3" value="97.32" required><br>
-					<label for="num-cc">Pre-construction visits: rental boda bodas (or, rental cars + fuel)</label>
-					<input type="number" name="c4" id="c4" value="121.65" required><br>
-					<label for="num-cc">Pre-construction visits: travel (flight)</label>
-					<input type="number" name="c5" id="c5" value="418.49" required><br>
-					<label for="num-cc">Chair rental and drinks for meetings</label>
-					<input type="number" name="c6" id="c6" value="48.66" required><br>
-					<label for="num-cc">Salaries for community representatives</label>
-					<input type="number" name="c7" id="c7" value="19.46" required><br>
-					<label for="num-cc">Security during construction</label>
-					<input type="number" name="c8" id="c8" value="170.32" required><br>
-					<!-- Customer Metering and Wiring-->
-					<label for="num-cc">SparkMeter pre-shipment fees</label>
-					<input type="number" name="c9" id="c9" value="500" required><br>
-					<label for="num-cc">SparkMeter SaaS Term Licenses</label>
-					<input type="number" name="c10" id="c10" value="0" required><br>
-					<label for="num-cc">Loading of meters and customer wiring materials</label>
-					<input type="number" name="c11" id="c11" value="43.80" required><br>
-					<label for="num-cc">Offloading of meters and customer wiring materials</label>
-					<input type="number" name="c12" id="c12" value="43.80" required><br>
-					<label for="num-cc">Meter transport to site</label>
-					<input type="number" name="c13" id="c13" value="681.27" required><br>
-					<!-- Distribution (LV) -->
-					<label for="num-cc">Distribution materials boat transport</label>
-					<input type="number" name="c14" id="c14" value="0" required><br>
-					<!-- GENERATOR -->
-					<label for="num-cc">Generator foundation labor</label>
-					<input type="number" name="c15" id="c15" value="0" required><br>
-					<label for="num-cc">Generator</label>
-					<input type="number" name="c16" id="c16" value="0" required><br>
-					<label for="num-cc">Generator cabling</label>
-					<input type="number" name="c17" id="c17" value="0" required><br>
-					<label for="num-cc">Generator foundation and shade materials</label>
-					<input type="number" name="c18" id="c18" value="0" required><br>
-					<!-- Inverters/Chargers (PV) -->
-					<label for="num-cc">PVPanelsInShipment</label>
-					<input type="number" name="num-cc" id="num-cc" value="620" required><br>
-					<label for="num-cc">PortFeesTwentyFoot</label>
-					<input type="number" name="num-cc" id="num-cc" value="218703" required><br>
-					<label for="num-cc">PVPricePerWatt</label>
-					<input type="number" name="num-cc" id="num-cc" value="0.273" required><br>
-					<label for="num-cc">PVTransportTotal</label>
-					<input type="number" name="num-cc" id="num-cc" value="4000" required><br>
-					<label for="num-cc">VATonPV</label>
-					<input type="number" name="num-cc" id="num-cc" value="0" required><br>
-					<label for="num-cc">DutyOnPV</label>
-					<input type="number" name="num-cc" id="num-cc" value="0" required><br>
-					<label for="num-cc">LevyOnPV</label>
-					<input type="number" name="num-cc" id="num-cc" value="0" required><br>
-					<label for="num-cc">Extras (like surge protectors)</label>
-					<input type="number" name="c19" id="c19" value="0" required><br>
-					<!-- Permits -->
-					<label for="num-cc">All other permits (estimating for the unknown permit costs)</label>
-					<input type="number" name="c20" id="c20" value="973.24" required><br>
-					<label for="num-cc">Building Permit</label>
-					<input type="number" name="c21" id="c21" value="364.96" required><br>
-					<label for="num-cc">ESMP</label>
-					<input type="number" name="c22" id="c22" value="2355.32" required><br>
-					<label for="num-cc">Land Lease Processing</label>
-					<input type="number" name="c23" id="c23" value="194.65" required><br>
-					<label for="num-cc">Land Purchase</label>
-					<input type="number" name="c24" id="c24" value="0" required><br>
-					<label for="num-cc">NERC Application Fee</label>
-					<input type="number" name="c25" id="c25" value="194.65" required><br>
-					<!-- Plant Balance of System -->
-					<label for="num-cc">Contingency</label>
-					<input type="number" name="c26" id="c26" value="182.48" required><br>
-					<label for="num-cc">Earthing pit for site - labor</label>
-					<input type="number" name="c27" id="c27" value="68.13" required><br>
-					<label for="num-cc">Loading of various BOS materials</label>
-					<input type="number" name="c28" id="c28" value="42.58" required><br>
-					<label for="num-cc">Offloading of various BOS materials</label>
-					<input type="number" name="c29" id="c29" value="42.58" required><br>
-					<label for="num-cc">AC DB MCBs</label>
-					<input type="number" name="c30" id="c30" value="45.77" required><br>
-					<label for="num-cc">AC Distribution Board</label>
-					<input type="number" name="c31" id="c31" value="36.62" required><br>
-					<label for="num-cc">Battery racking</label>
-					<input type="number" name="c32" id="c32" value="42.58" required><br>
-					<label for="num-cc">Conduit for outside cable runs</label>
-					<input type="number" name="c33" id="c33" value="209.25" required><br>
-					<label for="num-cc">DC bus bars</label>
-					<input type="number" name="c34" id="c34" value="183.09" required><br>
-					<label for="num-cc">Earthing pits for site</label>
-					<input type="number" name="c35" id="c35" value="559.61" required><br>
-					<label for="num-cc">Frame for mounting inverters and switchgear</label>
-					<input type="number" name="c36" id="c36" value="104.62" required><br>
-					<label for="num-cc">Hardware for frame for mounting inverters and switchgear</label>
-					<input type="number" name="c37" id="c37" value="2.09" required><br>
-					<label for="num-cc">Inverter monitoring device power supply</label>
-					<input type="number" name="c38" id="c38" value="0" required><br>
-					<label for="num-cc">Lightning arrestor cabling</label>
-					<input type="number" name="c39" id="c39" value="52.31" required><br>
-					<label for="num-cc">Lightning arrestor kit for site</label>
-					<input type="number" name="c40" id="c40" value="52.31" required><br>
-					<label for="num-cc">Racking earthing cables</label>
-					<input type="number" name="c41" id="c41" value="170.01" required><br>
-					<label for="num-cc">Victron GX device and accessories</label>
-					<input type="number" name="c42" id="c42" value="392.52" required><br>
-					<label for="num-cc">Wiring from output breaker to grid</label>
-					<input type="number" name="c43" id="c43" value="836.98" required><br>
-					<!-- Plant Site -->
-					<label for="num-cc">Gate house labor</label>
-					<input type="number" name="c44" id="c44" value="170.32" required><br>
-					<label for="num-cc">Site preparation</label>
-					<input type="number" name="c45" id="c45" value="121.65" required><br>
-					<label for="num-cc">Toilets labor</label>
-					<input type="number" name="c46" id="c46" value="170.32" required><br>
-					<label for="num-cc">Trenching</label>
-					<input type="number" name="c47" id="c47" value="72.99" required><br>
-					<label for="num-cc">External lighting</label>
-					<input type="number" name="c48" id="c48" value="39.23" required><br>
-					<label for="num-cc">External lighting wiring</label>
-					<input type="number" name="c49" id="c49" value="20.92" required><br>
-					<label for="num-cc">Gate house</label>
-					<input type="number" name="c50" id="c50" value="851.58" required><br>
-					<label for="num-cc">Padlocks</label>
-					<input type="number" name="c51" id="c51" value="10.46" required><br>
-					<label for="num-cc">Site tools kit</label>
-					<input type="number" name="c52" id="c52" value="209.25" required><br>
-					<label for="num-cc">Toilets</label>
-					<input type="number" name="c53" id="c53" value="729.93" required><br>
-					<!-- Power House -->
-					<label for="num-cc">Construction labor</label>
-					<input type="number" name="c54" id="c54" value="0" required><br>
-					<label for="num-cc">Foundation labor</label>
-					<input type="number" name="c55" id="c55" value="85.16" required><br>
-					<label for="num-cc">Air conditioner</label>
-					<input type="number" name="c56" id="c56" value="0" required><br>
-					<label for="num-cc">Chairs</label>
-					<input type="number" name="c57" id="c57" value="7.85" required><br>
-					<label for="num-cc">Desk</label>
-					<input type="number" name="c58" id="c58" value="31.39" required><br>
-					<label for="num-cc">Fire extinguisher</label>
-					<input type="number" name="c59" id="c59" value="104.62" required><br>
-					<label for="num-cc">First aid kit</label>
-					<input type="number" name="c60" id="c60" value="78.47" required><br>
-					<label for="num-cc">Foundation</label>
-					<input type="number" name="c61" id="c61" value="364.96" required><br>
-					<label for="num-cc">Internal lights</label>
-					<input type="number" name="c62" id="c62" value="7.85" required><br>
-					<label for="num-cc">Internal wiring</label>
-					<input type="number" name="c63" id="c63" value="20.92" required><br>
-					<label for="num-cc">Power house</label>
-					<input type="number" name="c64" id="c64" value="7.85" required><br>
-					<label for="num-cc">Roofing and paint for power house</label>
-					<input type="number" name="c65" id="c65" value="20.92" required><br>
-					<label for="num-cc">Trash bin</label>
-					<input type="number" name="c66" id="c66" value="3138.69" required><br>
-					<label for="num-cc">Visitors book</label>
-					<input type="number" name="c67" id="c67" value="486.62" required><br>
-					<label for="num-cc">Power house cabinet transport by boat</label>
-					<input type="number" name="c68" id="c68" value="9.15" required><br>
-					<!-- Racking and Mounting -->
-					<label for="num-cc">PVWattsPerPanel</label>
-					<input type="number" name="num-cc" id="num-cc" required><br>
-					<label for="num-cc">RackingPricePerW</label>
-					<input type="number" name="num-cc" id="num-cc" required><br>
-					<label for="num-cc">RackingShippingCost</label>
-					<input type="number" name="num-cc" id="num-cc" required><br>
-					<label for="num-cc">LevyOnRacking</label>
-					<input type="number" name="num-cc" id="num-cc" required><br>
-					<label for="num-cc">DutyOnRacking</label>
-					<input type="number" name="num-cc" id="num-cc" required><br>
-					<label for="num-cc">VATonRacking</label>
-					<input type="number" name="num-cc" id="num-cc" required><br>
+				<section id="pvinv-cc">
+					<h2>PV Inverters and Charge Controllers</h2>
 
-					<label for="num-cc">Loading of racking materials</label>
-					<input type="number" name="c69" id="c69" value="13.08" required><br>
-					<label for="num-cc">Offloading of racking materials</label>
-					<input type="number" name="c70" id="c70" value="0" required><br>
-					<label for="num-cc">Racking foundations materials transport</label>
-					<input type="number" name="c71" id="c71" value="39.23" required><br>
-					<label for="num-cc">Racking international transport</label>
-					<input type="number" name="c72" id="c72" value="39.23" required><br>
-					<!-- Solar Panels -->
-					<label for="num-cc">Importing contingency</label>
-					<input type="number" name="c73" id="c73" value="425.79" required><br>
-					<label for="num-cc">Loading of solar panels</label>
-					<input type="number" name="c74" id="c74" value="4000" required><br>
-					<label for="num-cc">Offloading of solar panels</label>
-					<input type="number" name="c75" id="c75" value="2433.09" required><br>
-					<!-- Temporary Facilities -->
-					<label for="num-cc">Boat rental contingency (for materials transport)</label>
-					<input type="number" name="c76" id="c76" value="36.50" required><br>
-					<label for="num-cc">Storage space rental</label>
-					<input type="number" name="c77" id="c77" value="36.50" required><br>
-					<!-- Transmission (MV) -->
-					<label for="num-cc">Transmission contingency</label>
-					<input type="number" name="c78" id="c78" value="0" required><br>
-					<label for="num-cc">Pole offloading</label>
-					<input type="number" name="c79" id="c79" value="121.65" required><br>
-					<label for="num-cc">Step-down transformer(s) earthing labor</label>
-					<input type="number" name="c80" id="c80" value="0" required><br>
-					<label for="num-cc">Step-up transformer base labor</label>
-					<input type="number" name="c81" id="c81" value="0" required><br>
-					<label for="num-cc">Step-up transformer earthing labor</label>
-					<input type="number" name="c82" id="c82" value="0" required><br>
-					<label for="num-cc">Transmission labor</label>
-					<input type="number" name="c83" id="c83" value="0" required><br>
-					<label for="num-cc">Step-down transformer(s)</label>
-					<input type="number" name="c84" id="c84" value="0" required><br>
-					<label for="num-cc">Step-down transformer(s) earthing</label>
-					<input type="number" name="c85" id="c85" value="0" required><br>
-					<label for="num-cc">Step-down transformer(s) mounting</label>
-					<input type="number" name="c86" id="c86" value="0" required><br>
-					<label for="num-cc">Step-up transformer</label>
-					<input type="number" name="c87" id="c87" value="0" required><br>
-					<label for="num-cc">Step-up transformer base</label>
-					<input type="number" name="c88" id="c88" value="0" required><br>
-					<label for="num-cc">Step-up transformer earthing</label>
-					<input type="number" name="c89" id="c89" value="0" required><br>
-					<label for="num-cc">Transmission materials</label>
-					<input type="number" name="c90" id="c90" value="0" required><br>
-					<label for="num-cc">Balance of transmission transport</label>
-					<input type="number" name="c91" id="c91" value="0" required><br>
-					<label for="num-cc">Conductor transport</label>
-					<input type="number" name="c92" id="c92" value="0" required><br>
-					<label for="num-cc">Poles transport</label>
-					<input type="number" name="c93" id="c93" value="0" required><br>
-					<label for="num-cc">Transformer transport</label>
-					<input type="number" name="c94" id="c94" value="0" required><br>
-					<!-- Travel, Lodging, and Meals -->
-					<label for="num-cc">Fuel for rentals</label>
-					<input type="number" name="c95" id="c95" value="43.80" required><br>
-					<label for="num-cc">Lodging</label>
-					<input type="number" name="c96" id="c96" value="1977.37" required><br>
-					<label for="num-cc"> Travel, Lodging, and Meals Per diem</label>
-					<input type="number" name="c97" id="c97" value="613.14" required><br>
-					<label for="num-cc">Staff flights from home cities</label>
-					<input type="number" name="c98" id="c98" value="313.87" required><br>
-					<label for="num-cc">Rental motorcycles/cars</label>
-					<input type="number" name="c99" id="c99" value="510.95" required><br>
-					<label for="num-cc">Rental pickup truck</label>
-					<input type="number" name="c100" id="c100" value="0" required><br>
-				</section>
-				<input type="button" name="cost" id="cost" value="Load Cost (required for optimizer)">
-				<input type="button" name="optimizer" id="optimizer" value="Optimizer">
-				<input type="button" name="simulate" id="simulate" value="Simulate">
-			</form>
+					<section id="pvinv-cc-pvinv-specs">
+						<h3>PV Inverter Technical Specifications</h3>
 
+						<div class="add-to" id="pvinv-pvinputs">
+							<div class="addable" id="pvinv-pvinput">
+								<p>PV Input 1</p>
+								<div class="q">
+									<label for="pvinv-pmp">Maximum Generator Power</label>
+									<input type="number" name="pvinv-pmp" id="pvinv-pmp" value="15" required>
+									<span class="unit">kWp</span>
+								</div>
+		
+								<div class="q">
+									<label for="pvinv-voc-min">Minimum Open-Circuit Input Voltage</label>
+									<input type="number" name="pvinv-voc-min" id="pvinv-voc-min" value="188" required>
+									<span class="unit">V</span>
+								</div>
+		
+								<div class="q">
+									<label for="pvinv-voc-max">Maximum Open-Circuit Input Voltage</label>
+									<input type="number" name="pvinv-voc-max" id="pvinv-voc-max" value="1000" required>
+									<span class="unit">V</span>
+								</div>
+		
+								<div class="q">
+									<label for="pvinv-vmp-min">Minimum Maximum-Power Input Voltage</label>
+									<input type="number" name="pvinv-vmp-min" id="pvinv-vmp-min" value="150" required>
+									<span class="unit">V</span>
+								</div>
+		
+								<div class="q">
+									<label for="pvinv-vmp-max">Maximum Maximum-Power Input Voltage</label>
+									<input type="number" name="pvinv-vmp-max" id="pvinv-vmp-max" value="33" required>
+									<span class="unit">V</span>
+								</div>
+		
+								<div class="q">
+									<label for="pvinv-isc-max">Maximum Short-Circuit Input Current</label>
+									<input type="number" name="pvinv-isc-max" id="pvinv-isc-max" value="33" required>
+									<span class="unit">A</span>
+								</div>
+		
+								<div class="q">
+									<label for="pvinv-imp-max">Maximum Maximum-Power Input Current</label>
+									<input type="number" name="pvinv-imp-max" id="pvinv-imp-max" value="33" required>
+									<span class="unit">A</span>
+								</div>
+
+								<div class="q">
+									<label for="pvinv-panels-per-string">Panels per String</label>
+									<input type="number" name="cc-pvinv-per-string" id="pvinv-panels-per-string" value="4" required>
+								</div>
+		
+								<div class="q">
+									<label for="pvinv-strings-per-subarray">Strings per Subarray</label>
+									<input type="number" name="pvinv-strings-per-subarray" id="pvinv-strings-per-subarray" value="3" required>
+								</div>
+							</div>
+
+							<input type="button" name="pvinv-pvinput-add" id="pvinv-pvinput-add" class="add" value="+">
+						</div>
+						
+						<div class="q">
+							<label for="pvinv-iout">Maximum Output Current</label>
+							<input type="number" name="pvinv-iout" id="pvinv-iout" value="29" required>
+							<span class="unit">A</span>
+						</div>
+					</section>
+
+					<section id="pvinv-cc-cc-specs">
+						<h3>Charge Controller Technical Specifications</h3>
+
+						<div class="add-to" id="cc-pvinputs">
+							<div class="addable" id="cc-pvinput">
+								<p>PV Input 1</p>
+								<div class="q">
+									<label for="cc-pmp">Maximum Generator Power</label>
+									<input type="number" name="cc-pmp" id="cc-pmp" value="4.9" required>
+									<span class="unit">kWp</span>
+								</div>
+		
+								<div class="q">
+									<label for="cc-voc-min">Minimum Open-Circuit Input Voltage</label>
+									<input type="number" name="cc-voc-min" id="cc-voc-min" value="60" required>
+									<span class="unit">V</span>
+								</div>
+		
+								<div class="q">
+									<label for="cc-voc-max">Maximum Open-Circuit Input Voltage</label>
+									<input type="number" name="cc-voc-max" id="cc-voc-max" value="245" required>
+									<span class="unit">V</span>
+								</div>
+		
+								<div class="q">
+									<label for="cc-vmp-min">Minimum Maximum-Power Input Voltage</label>
+									<input type="number" name="cc-vmp-min" id="cc-vmp-min" value="60" required>
+									<span class="unit">V</span>
+								</div>
+		
+								<div class="q">
+									<label for="cc-vmp-max">Maximum Maximum-Power Input Voltage</label>
+									<input type="number" name="cc-vmp-max" id="cc-vmp-max" value="245" required>
+									<span class="unit">V</span>
+								</div>
+		
+								<div class="q">
+									<label for="cc-isc-max">Maximum Short-Circuit Input Current</label>
+									<input type="number" name="cc-isc-max" id="cc-isc-max" value="70" required>
+									<span class="unit">A</span>
+								</div>
+		
+								<div class="q">
+									<label for="cc-imp-max">Maximum Maximum-Power Input Current</label>
+									<input type="number" name="cc-imp-max" id="cc-imp-max" value="70" required>
+									<span class="unit">A</span>
+								</div>
+
+								<div class="q">
+									<label for="cc-panels-per-string">Panels per String</label>
+									<input type="number" name="cc-panels-per-string" id="cc-panels-per-string" value="4" required>
+								</div>
+		
+								<div class="q">
+									<label for="cc-strings-per-subarray">Strings per Subarray</label>
+									<input type="number" name="cc-strings-per-subarray" id="cc-strings-per-subarray" value="3" required>
+								</div>
+							</div>
+
+							<input type="button" name="cc-pvinput-add" id="cc-pvinput-add" class="add" value="+">
+						</div>
+						
+						<div class="q">
+							<label for="cc-iout">Maximum Output Current</label>
+							<input type="number" name="cc-iout" id="cc-iout" value="85" required>
+							<span class="unit">A</span>
+						</div>
+					</section>
+					
+					<section id="pvinv-cc-materials">
+						<h3>Materials</h3>
+
+						<div class="q">
+							<label for="pvinv-price">PV Inverter Price</label>
+							<input type="number" name="pvinv-price" id="pvinv-price" value="4364" required>
+							<span class="unit">USD</span>
+						</div>
+
+						<div class="q">
+							<label for="cc-price">Charge Controller Price</label>
+							<input type="number" name="cc-price" id="cc-price" value="588.88" required>
+							<span class="unit">USD</span>
+						</div>
+					</section>
+
+					<section id="pvinv-cc-shipping">
+						<h3>Shipping</h3>
+
+						<div class="q">
+							<label for="pvinv-shipping">PV Inverter Shipping</label>
+							<input type="number" name="pvinv-shipping" id="pvinv-shipping" value="0" required>
+							<span class="unit">USD</span>
+						</div>
+
+						<div class="q">
+							<label for="cc-shipping">Charge Controller Shipping</label>
+							<input type="number" name="cc-shipping" id="cc-shipping" value="0" required>
+							<span class="unit">USD</span>
+						</div>
+					</section>
+
+					<section id="pvinv-cc-customs">
+						<h3>Customs and Clearing</h3>
+
+						<div class="q">
+							<label for="pvinv-cc-vat">VAT on PV Inverters/Charge Controllers, Applied to Total + All Other Charges</label>
+							<input type="number" name="pvinv-cc-vat" id="pvinv-cc-vat" value="0" required>
+							<span class="unit">%</span>
+						</div>
+
+						<div class="q">
+							<label for="pvinv-cc-duty">Import Duty on PV Inverters/Charge Controllers (ID, DTY), Applied to Total</label>
+							<input type="number" name="pvinv-cc-duty" id="pvinv-cc-duty" value="5" required>
+							<span class="unit">%</span>
+						</div>
+
+						<div class="q">
+							<label for="pvinv-cc-levy">Levy on PV Inverters/Charge Controllers (LVY), Applied to Total</label>
+							<input type="number" name="pvinv-cc-levy" id="pvinv-cc-levy" value="0" required>
+							<span class="unit">%</span>
+						</div>
+					</section>
+				</section>
+
+				<section id="racking">
+					<h2>Racking</h2>
+
+					<section id="racking-materials">
+						<h3>Materials</h3>
+
+						<div class="q">
+							<label for="racking-materials-price">Price of Materials</label>
+							<input type="number" name="racking-materials-price" id="racking-materials-price" value="0.05" required>
+							<span class="unit">USD/W</span>
+						</div>
+
+						<div class="q">
+							<label for="racking-materials-labor">Price of Labor</label>
+							<input type="number" name="racking-materials-labor" id="racking-materials-labor" value="0.01" required>
+							<span class="unit">USD/W</span>
+						</div>
+					</section>
+
+					<section id="racking-shipping">
+						<h3>Shipping</h3>
+
+						<div class="q">
+							<label for="racking-shipping-total">Shipping</label>
+							<input type="number" name="racking-shipping-total" id="racking-shipping-total" value="1000" required>
+							<span class="unit">USD</span>
+						</div>
+
+						<fieldset id="racking-shipping-container">
+							<legend>How Is the Racking Shipping?</legend>
+							<div>
+								<input type="radio" id="racking-shipping-lcl" name="racking-shipping-container" value="0" checked>
+								<label for="racking-shipping-lcl">LCL</label>
+							</div>
+							<div>
+								<input type="radio" id="racking-shipping-20" name="racking-shipping-container" value="1">
+								<label for="racking-shipping-20">20' Container</label>
+							</div>
+							<div>
+								<input type="radio" id="racking-shipping-40" name="racking-shipping-container" value="2">
+								<label for="racking-shipping-40">40' Container</label>
+							</div>
+						</fieldset>
+					</section>
+
+					<section id="racking-customs">
+						<h3>Customs and Clearing</h3>
+
+						<div class="q">
+							<label for="racking-customs-import">Importing Racking</label>
+							<input type="checkbox" name="racking-customs-import" id="racking-customs-import" checked>
+						</div>
+
+						<div class="hideable" id="racking-customs-taxes">
+							<div class="q">
+								<label for="racking-vat">VAT on Racking, Applied to Total + All Other Charges</label>
+								<input type="number" name="racking-vat" id="racking-vat" value="7.5" required>
+								<span class="unit">%</span>
+							</div>
+
+							<div class="q">
+								<label for="racking-duty">Import Duty on Racking (ID, DTY), Applied to Total</label>
+								<input type="number" name="racking-duty" id="racking-duty" value="5" required>
+								<span class="unit">%</span>
+							</div>
+
+							<div class="q">
+								<label for="racking-levy">Levy on Racking (LVY), Applied to Total</label>
+								<input type="number" name="racking-levy" id="racking-levy" value="15" required>
+								<span class="unit">%</span>
+							</div>
+						</div>
+					</section>
+				</section>
+				<!-- 
 			<section>
 				<h2>Simutation Results</h2>
 				<p>Total Energy Produced from PV: <span id="total-energy-from-PV"></p>
@@ -783,7 +834,8 @@
 				<p>Battery: <span id="oB"></p>
 				<p>Charge Controller: <span id="oCC"></p>
 				<h3>IRR: <span id="oIRR"></h3>
-			</section>
+			</section> -->
+			</form>
 		</main>
 
 		<script src="functions.js"></script>
