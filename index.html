@@ -126,6 +126,12 @@
 							<label for="battery-lugs">Lugs per Battery</label>
 							<input type="number" name="battery-lugs" id="battery-lugs" value="4" required>
 						</div>
+
+						<div class="q">
+							<label for="battery-logger">Logger</label>
+							<input type="number" name="battery-logger" id="battery-logger" value="170.53" required>
+							<span class="unit">USD</span>
+						</div>
 					</section>
 
 					<section id="battery-shipping">
@@ -254,6 +260,66 @@
 					</section>
 				</section>
 
+				<section id="community">
+					<h2>Community Relations</h2>
+
+					<section id="visit">
+						<h3>Pre-Construction Visit</h3>
+
+						<div class="q">
+							<label for="community-visit-lodging">Lodging</label>
+							<input type="number" name="community-visit-lodging" id="community-visit-lodging" value="12000" required>
+							<span class="unit">NGN/person/day</span>
+						</div>
+
+						<div class="q">
+							<label for="community-visit-perdiem">Per Diem</label>
+							<input type="number" name="community-visit-perdiem" id="community-visit-perdiem" value="4000" required>
+							<span class="unit">NGN/person/day</span>
+						</div>
+
+						<div class="q">
+							<label for="community-visit-rentals">Rental Vehicles</label>
+							<input type="number" name="community-visit-rentals" id="community-visit-rentals" value="10000" required>
+							<span class="unit">NGN/day</span>
+						</div>
+
+						<div class="q">
+							<label for="community-visit-flights">Flights</label>
+							<input type="number" name="community-visit-flights" id="community-visit-flights" value="40000" required>
+							<span class="unit">NGN/person</span>
+						</div>
+
+						<div class="q">
+							<label for="community-visit-reps">Number of Staff</label>
+							<input type="number" name="community-visit-reps" id="community-visit-reps" value="2" required>
+						</div>
+
+						<div class="q">
+							<label for="community-visit-days">Number of Days</label>
+							<input type="number" name="community-visit-days" id="community-visit-days" value="5" required>
+						</div>
+					</section>
+
+					<div class="q">
+						<label for="community-meetings">Chair Rentals and Drinks for Meetings</label>
+						<input type="number" name="community-meetings" id="community-meetings" value="20000" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="community-salary">Salary for Community Representatives</label>
+						<input type="number" name="community-salary" id="community-salary" value="8000" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="community-security">Security During Construction</label>
+						<input type="number" name="community-security" id="community-security" value="70000" required>
+						<span class="unit">NGN</span>
+					</div>
+				</section>
+
 				<section id="customers-meters">
 					<h2>Customers and Meters</h2>
 					
@@ -311,14 +377,78 @@
 						</div>
 
 						<div class="q">
-							<label for="meters-modem-count">Modem Count</label>
+							<label for="modem-count">Modem Count</label>
 							<input type="number" name="meters-modem-count" id="meters-modem-count" value="1" required>
+						</div>
+
+						<div class="q">
+							<label for="modem-price">Modem Unit Price</label>
+							<input type="number" name="modem-price" id="modem-price" value="30000" required>
+							<span class="unit">NGN</span>
+						</div>
+
+						<div class="q">
+							<label for="sim-price">SIM Card Price</label>
+							<input type="number" name="sim-price" id="sim-price" value="100" required>
+							<span class="unit">NGN</span>
 						</div>
 
 						<div class="q">
 							<label for="meters-dcu-price">Base Station Price</label>
 							<input type="number" name="meters-dcu-price" id="meters-dcu-price" value="1050" required>
 							<span class="unit">USD</span>
+						</div>
+
+						<div class="q">
+							<label for="meters-saas-license">SaaS Term License</label>
+							<input type="number" name="meters-saas-license" id="meters-saas-license" value="2250" required>
+							<span class="unit">USD</span>
+						</div>
+
+						<div class="q">
+							<label for="meters-labor-sa">Connection Labor: Site Agents</label>
+							<input type="number" name="meters-labor-sa" id="meters-labor-sa" value="400" required>
+							<span class="unit">NGN/connection</span>
+						</div>
+
+						<div class="q">
+							<label for="meters-labor-tech">Connection Labor: Technicians</label>
+							<input type="number" name="meters-labor-tech" id="meters-labor-tech" value="1200" required>
+							<span class="unit">NGN/connection</span>
+						</div>
+					</section>
+
+					<section id="customers-wiring">
+						<h3>Customer Wiring</h3>
+
+						<div class="q">
+							<label for="customers-wiring-internal">Customer Internal Wiring</label>
+							<input type="number" name="customers-wiring-internal" id="customers-wiring-internal" value="0" required>
+							<span class="unit">NGN/connection</span>
+						</div>
+
+						<div class="q">
+							<label for="customers-wiring-drops-len">Length of Customer Service Drops</label>
+							<input type="number" name="customers-wiring-drops-len" id="customers-wiring-drops-len" value="25" required>
+							<span class="unit">m/connection</span>
+						</div>
+
+						<div class="q">
+							<label for="customers-wiring-drops-1p">Single-Phase Customer Service Drops Cost</label>
+							<input type="number" name="customers-wiring-drops-1p" id="customers-wiring-drops-1p" value="280" required>
+							<span class="unit">NGN/m</span>
+						</div>
+
+						<div class="q">
+							<label for="customers-wiring-drops-3p">Three-Phase Customer Drops Cost</label>
+							<input type="number" name="customers-wiring-drops-3p" id="customers-wiring-drops-3p" value="1600" required>
+							<span class="unit">NGN/m</span>
+						</div>
+
+						<div class="q">
+							<label for="shackles-bolts">Shackle Insulators, D-Irons, and Bolts</label>
+							<input type="number" name="shackles-bolts" id="shackles-bolts" value="3000" required>
+							<span class="unit">NGN/customer</span>
 						</div>
 					</section>
 
@@ -329,10 +459,39 @@
 							<input type="number" name="meters-shipping" id="meters-shipping" value="5.48" required>
 							<span class="unit">USD</span>
 						</div>
+
+						<div class="q">
+							<label for="customer-wiring-transport">Customer Internal Wiring Transport to Site</label>
+							<input type="number" name="customer-wiring-transport" id="customer-wiring-transport" value="100000" required>
+							<span class="unit">NGN</span>
+						</div>
+
+						<div class="q">
+							<label for="customer-meter-transport">Customer Meter Transport to Site</label>
+							<!-- TODO: left off here -->
+						</div>
+
+						<div class="q">
+							<label for="meters-loading">Loading of Meters and Customer Wiring Materials</label>
+							<input type="number" name="meters-loading" id="meters-loading" value="18000" required>
+							<span class="unit">NGN</span>
+						</div>
+
+						<div class="q">
+							<label for="meters-offloading">Offloading of Meters and Customer Wiring Materials</label>
+							<input type="number" name="meters-offloading" id="meters-offloading" value="18000" required>
+							<span class="unit">NGN</span>
+						</div>
 					</section>
 
 					<section id="customers-meters-customs">
 						<h3>Customs and Clearing</h3>
+						<div class="q">
+							<label for="meters-preshipment">Vendor Pre-Shipment Fee</label>
+							<input type="number" name="meters-preshipment" id="meters-preshipment" value="500" required>
+							<span class="unit">USD</span>
+						</div>
+
 						<div class="q">
 							<label for="meters-port-fee">Meter Inspection Fee</label>
 							<input type="number" name="meters-port-fee" id="meters-port-fee" value="100000" required>
@@ -807,6 +966,173 @@
 								<span class="unit">%</span>
 							</div>
 						</div>
+					</section>
+
+					<section id="constants">
+						<h2>Constant Budget Inputs</h2>
+
+						<section id="constants-forex">
+							<h3>Exchange Rates from USD</h3>
+
+							<div class="q">
+								<label for="constants-forex-usd">USD</label>
+								<input type="number" name="constants-forex-usd" id="constants-forex-usd" value="1" required>
+							</div>
+
+							<div class="q">
+								<label for="constants-forex-eur">EUR</label>
+								<input type="number" name="constants-forex-eur" id="constants-forex-eur" value="0.95" required>
+								<span class="unit">EUR/USD</span>
+							</div>
+
+							<div class="q">
+								<label for="constants-forex-kes">KES</label>
+								<input type="number" name="constants-forex-kes" id="constants-forex-kes" value="125" required>
+								<span class="unit">KES/USD</span>
+							</div>
+
+							<div class="q">
+								<label for="constants-forex-ngn">NGN</label>
+								<input type="number" name="constants-forex-ngn" id="constants-forex-ngn" value="450" required>
+								<span class="unit">NGN/USD</span>
+							</div>
+						</section>
+
+						<section id="constants-shipping">
+							<h3>International Shipping</h3>
+
+							<div class="q">
+								<label for="constants-shipping-inspection">Pre-Shipping Inspection (SGS/BV/IT) Fee</label>
+								<input type="number" name="constants-shipping-inspection" id="constants-shipping-inspection" value="250" required>
+								<span class="unit">USD</span>
+							</div>
+
+							<div class="q">
+								<label for="constants-shipping-insurance">Shipping Insurance Rate</label>
+								<input type="number" name="constants-shipping-insurance" id="constants-shipping-insurance" value="0.5" required>
+								<span class="unit">%</span>
+							</div>
+
+							<div class="q">
+								<label for="constants-shipping-agent">Clearing Agent Fees per Shipment</label>
+								<input type="number" name="constants-shipping-agent" id="constants-shipping-agent" value="137000" required>
+								<span class="unit">NGN</span>
+							</div>
+
+							<div class="q">
+								<label for="constants-shipping-delivery-fee">Delivery Order Fee</label>
+								<input type="number" name="constants-shipping-delivery-fee" id="constants-shipping-delivery-fee" value="70" required>
+								<span class="unit">USD</span>
+							</div>
+
+							<section id="constants-shipping-20ft">
+								<h4>20' Container or LVL</h4>
+
+								<div class="q">
+									<label for="constants-shipping-20ft-thc">THC/Handling/Cleaning Fee</label>
+									<input type="number" name="constants-shipping-20ft-thc" id="constants-shipping-20ft-thc" value="170" required>
+									<span class="unit">USD</span>
+								</div>
+
+								<div class="q">
+									<label for="constants-shipping-20ft-shorehandling">Shorehandling</label>
+									<input type="number" name="constants-shipping-20ft-shorehandling" id="constants-shipping-20ft-shorehandling" value="105" required>
+									<span class="unit">USD</span>
+								</div>
+
+								<div class="q">
+									<label for="constants-shipping-20ft-wharfage">Wharfage</label>
+									<input type="number" name="constants-shipping-20ft-wharfage" id="constants-shipping-20ft-wharfage" value="70" required>
+									<span class="unit">USD</span>
+								</div>
+
+								<div class="q">
+									<label for="constants-shipping-20ft-verification">Port Verification Charge</label>
+									<input type="number" name="constants-shipping-20ft-verification" id="constants-shipping-20ft-verification" value="80" required>
+									<span class="unit">USD</span>
+								</div>
+							</section>
+
+							<section id="constants-shipping-40ft">
+								<h4>40' Container</h4>
+
+								<div class="q">
+									<label for="constants-shipping-40ft-thc">THC/Handling/Cleaning Fee</label>
+									<input type="number" name="constants-shipping-40ft-thc" id="constants-shipping-40ft-thc" value="230" required>
+									<span class="unit">USD</span>
+								</div>
+
+								<div class="q">
+									<label for="constants-shipping-40ft-shorehandling">Shorehandling</label>
+									<input type="number" name="constants-shipping-40ft-shorehandling" id="constants-shipping-40ft-shorehandling" value="160" required>
+									<span class="unit">USD</span>
+								</div>
+
+								<div class="q">
+									<label for="constants-shipping-40ft-wharfage">Wharfage</label>
+									<input type="number" name="constants-shipping-40ft-wharfage" id="constants-shipping-40ft-wharfage" value="105" required>
+									<span class="unit">USD</span>
+								</div>
+
+								<div class="q">
+									<label for="constants-shipping-40ft-verification">Port Verification Charge</label>
+									<input type="number" name="constants-shipping-40ft-verification" id="constants-shipping-40ft-verification" value="120" required>
+									<span class="unit">USD</span>
+								</div>
+							</section>
+						</section>
+
+						<section id="constants-taxes">
+							<h3>Taxes</h3>
+
+							<div class="q">
+								<label for="constants-taxes-vat">VAT</label>
+								<input type="number" name="constants-taxes-vat" id="constants-taxes-vat" value="7.5" required>
+								<span class="unit">%</span>
+							</div>
+
+							<div class="q">
+								<label for="constants-taxes-import">Import Administrative Charge on Product Value, Excluding Shipping or Insurance</label>
+								<input type="number" name="constants-taxes-import" id="constants-taxes-import" value="1" required>
+								<span class="unit">%</span>
+							</div>
+
+							<div class="q">
+								<label for="constants-taxes-port">Port Surcharge on Duty Amount</label>
+								<input type="number" name="constants-taxes-port" id="constants-taxes-port" value="7" required>
+								<span class="unit">%</span>
+							</div>
+
+							<div class="q">
+								<label for="constants-taxes-ecowas">ECOWAS Trade Liberalization Scheme Levy on Total Value</label>
+								<input type="number" name="constants-taxes-ecowas" id="constants-taxes-ecowas" value="0.5" required>
+								<span class="unit">%</span>
+							</div>
+						</section>
+
+						<section id="constants-transport">
+							<h3>Transport (Domestic Road and Water)</h3>
+
+							<div class="q">
+								<label for="constants-transport-truck">Cost of 5T Truck to Site (or Beach for Island)</label>
+								<input type="number" name="constants-transport-truck" id="constants-transport-truck" value="200000" required>
+								<span class="unit">NGN</span>
+							</div>
+
+							<!-- TODO: Add splitting category transport costs -->
+
+							<div class="q">
+								<label for="constants-transport-boat">Cost of Normal Cargo Boat Transport</label>
+								<input type="number" name="constants-transport-boat" id="constants-transport-boat" value="75000" required>
+								<span class="unit">NGN</span>
+							</div>
+
+							<div class="q">
+								<label for="constants-transport-big-boat">Cost of Big Cargo Boat Transport</label>
+								<input type="number" name="constants-transport-big-boat" id="constants-transport-big-boat" value="150000" required>
+								<span class="unit">NGN</span>
+							</div>
+						</section>
 					</section>
 				</section>
 				<!-- 
