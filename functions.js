@@ -1027,3 +1027,7 @@ async function simulate(t, dt, latitude, longitude, panelsPerStringCC, stringsPe
 }
 
 simulate(HR_PER_DAY*DAYS_PER_YR, 1, 3.1166662, 35.5999976, 3, 3, 2, 2);
+
+async function main() {
+	
+}
