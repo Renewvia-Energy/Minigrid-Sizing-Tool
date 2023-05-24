@@ -123,11 +123,6 @@
 						</div>
 
 						<div class="q">
-							<label for="battery-lugs">Lugs per Battery</label>
-							<input type="number" name="battery-lugs" id="battery-lugs" value="4" required>
-						</div>
-
-						<div class="q">
 							<label for="battery-logger">Logger</label>
 							<input type="number" name="battery-logger" id="battery-logger" value="170.53" required>
 							<span class="unit">USD</span>
@@ -467,8 +462,9 @@
 						</div>
 
 						<div class="q">
-							<label for="customer-meter-transport">Customer Meter Transport to Site</label>
-							<!-- TODO: left off here -->
+							<label for="customer-meter-transport">Meter Transport to Site</label>
+							<input type="number" name="customer-meter-transport" id="customer-meter-transport" value="280000" required>
+							<span class="unit">NGN</span>
 						</div>
 
 						<div class="q">
@@ -558,6 +554,12 @@
 						</div>
 
 						<div class="q">
+							<label for="dx-shipping-boat">Shipping (Local Boat)</label>
+							<input type="number" name="dx-shipping-boat" id="dx-shipping-boat" value="0" required>
+							<span class="unit">NGN</span>
+						</div>
+
+						<div class="q">
 							<label for="dx-contingency">Contingency</label>
 							<input type="number" name="dx-contingency" id="dx-contingency" value="10" required>
 							<span class="unit">%</span>
@@ -596,6 +598,74 @@
 						<label for="fence-shipping">Transport</label>
 						<input type="number" name="fence-shipping" id="fence-shipping" value="350" required>
 						<span class="unit">NGN/m</span>
+					</div>
+				</section>
+
+				<section id="generator">
+					<h2>Diesel Generator</h2>
+
+					<div class="q">
+						<label for="generator-price">Generator Price</label>
+						<input type="number" name="generator-price" id="generator-price" value="181" required>
+						<span class="unit">USD/kVA</span>
+					</div>
+
+					<div class="q">
+						<label for="generator-cabling">Cabling</label>
+						<input type="number" name="generator-cabling" id="generator-cabling" value="28000" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="generator-foundation">Foundation and Shade Materials</label>
+						<input type="number" name="generator-foundation" id="generator-foundation" value="175000" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="generator-labor">Foundation Labor</label>
+						<input type="number" name="generator-labor" id="generator-labor" value="35000" required>
+						<span class="unit">NGN</span>
+					</div>
+				</section>
+
+				<section id="permits">
+					<h2>Permits</h2>
+
+					<div class="q">
+						<label for="permits-building">Building Permit</label>
+						<input type="number" name="permits-building" id="permits-building" value="150000" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="permits-esmp">ESMP</label>
+						<input type="number" name="permits-esmp" id="permits-esmp" value="900500" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="permits-land-lease">Land Lease Processing</label>
+						<input type="number" name="permits-land-lease" id="permits-land-lease" value="80000" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="permits-land">Land Purchase</label>
+						<input type="number" name="permits-land" id="permits-land" value="0" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="permits-nerc">NERC Application Fee</label>
+						<input type="number" name="permits-nerc" id="permits-nerc" value="80000" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="permits-contingency">Contingency</label>
+						<input type="number" name="permits-contingency" id="permits-contingency" value="400000" required>
+						<span class="unit">NGN</span>
 					</div>
 				</section>
 
@@ -851,6 +921,12 @@
 						<div class="q">
 							<label for="cc-price">Charge Controller Price</label>
 							<input type="number" name="cc-price" id="cc-price" value="588.88" required>
+							<span class="unit">USD</span>
+						</div>
+
+						<div class="q">
+							<label for="pvinc-cc-materials-extra">Extras, like Surge Protectors</label>
+							<input type="number" name="pvinc-cc-materials-extra" id="pvinc-cc-materials-extra" value="0" required>
 							<span class="unit">USD</span>
 						</div>
 					</section>
@@ -1134,6 +1210,260 @@
 							</div>
 						</section>
 					</section>
+				</section>
+
+				<section id="bos">
+					<h2>Balance of System</h2>
+
+					<div class="q">
+						<label for="bos-earthing-pits">Number of Earthing Pits at Site</label>
+						<input type="number" name="bos-earthing-pits" id="bos-earthing-pits" value="2" required>
+					</div>
+
+					<div class="q">
+						<label for="bos-earthing-cost">Site Earthing Pit Cost</label>
+						<input type="number" name="bos-earthing-cost" id="bos-earthing-cost" value="115000" required>
+						<span class="unit">NGN/pit</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-earthing-labor">Site Earthing Pit Labor</label>
+						<input type="number" name="bos-earthing-labor" id="bos-earthing-labor" value="14000" required>
+						<span class="unit">NGN/pit</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-acdb">AC Distribution Board</label>
+						<input type="number" name="bos-acdb" id="bos-acdb" value="14000" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-acdb-mcb">AC DB MCBs</label>
+						<input type="number" name="bos-acdb-mcb" id="bos-acdb-mcb" value="17500" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-battery-fuses-breakers">Battery Fuses and Breakers</label>
+						<input type="number" name="bos-battery-fuses-breakers" id="bos-battery-fuses-breakers" value="0" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-battinv-ac-wiring">Battery Inverter AC Wiring</label>
+						<input type="number" name="bos-battinv-ac-wiring" id="bos-battinv-ac-wiring" value="2000" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-battinv-dc-wiring">Battery Inverter DC Wiring</label>
+						<input type="number" name="bos-battinv-dc-wiring" id="bos-battinv-dc-wiring" value="2000" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-battinv-mounting">Battery Inverter Mounting Hardware</label>
+						<input type="number" name="bos-battinv-mounting" id="bos-battinv-mounting" value="700" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-battinv-frame">Frame for Mounting Inverters and Switchgear</label>
+						<input type="number" name="bos-battinv-frame" id="bos-battinv-frame" value="40000" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-battinv-frame-mounting">Hardware for Frame for Mounting Inverters and Switchgear</label>
+						<input type="number" name="bos-battinv-frame-mounting" id="bos-battinv-frame-mounting" value="800" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-battinv-monitoring-power-supply">Inverter-Monitoring Device Power Supply</label>
+						<input type="number" name="bos-battinv-monitoring-power-supply" id="bos-battinv-monitoring-power-supply" value="0" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-battinv-ethernet">Ethernet Cables for Inverter Monitoring</label>
+						<input type="number" name="bos-battinv-ethernet" id="bos-battinv-ethernet" value="1000" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-battery-racking">Battery Racking</label>
+						<input type="number" name="bos-battery-racking" id="bos-battery-racking" value="17500" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-battery-wiring">Battery Wiring</label>
+						<input type="number" name="bos-battery-wiring" id="bos-battery-wiring" value="250" required>
+						<span class="unit">NGN/battery</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-battery-lugs">Lugs per Battery</label>
+						<input type="number" name="bos-battery-lugs" id="bos-battery-lugs" value="4" required>
+					</div>
+
+					<div class="q">
+						<label for="bos-battery-lugs-price">Battery Lug Price</label>
+						<input type="number" name="bos-battery-lugs-price" id="bos-battery-lugs-price" value="400" required>
+						<span class="unit">NGN/battery</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-cc-mounting">Charge Controller Mounting Hardware</label>
+						<input type="number" name="bos-cc-mounting" id="bos-cc-mounting" value="400" required>
+						<span class="unit">NGN/charge controller</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-cc-wiring">Charge Controller Output Wiring</label>
+						<input type="number" name="bos-cc-wiring" id="bos-cc-wiring" value="2400" required>
+						<span class="unit">NGN/charge controller</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-pvinv-mounting">PV Inverter Mounting Hardware</label>
+						<input type="number" name="bos-pvinv-mounting" id="bos-pvinv-mounting" value="400" required>
+						<span class="unit">NGN/PV inverter</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-pvinv-wiring">PV Inverter Output Wiring</label>
+						<input type="number" name="bos-pvinv-wiring" id="bos-pvinv-wiring" value="2400" required>
+						<span class="unit">NGN/PV inverter</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-combiner-box-wiring">Combiner Box Output Wiring</label>
+						<input type="number" name="bos-combiner-box-wiring" id="bos-combiner-box-wiring" value="1400" required>
+						<span class="unit">NGN/combiner box</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-conduit">Conduit for Outside Cable Runs</label>
+						<input type="number" name="bos-conduit" id="bos-conduit" value="80000" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-busbar">DC Bus Bar</label>
+						<input type="number" name="bos-busbar" id="bos-busbar" value="35000" required>
+						<span class="unit">NGN/bus bar</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-lightning-arrestor">Lightning Arrestor Kit for Site</label>
+						<input type="number" name="bos-lightning-arrestor" id="bos-lightning-arrestor" value="20000" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-lightning-arrestor-cabling">Lightning Arrestor Cabling</label>
+						<input type="number" name="bos-lightning-arrestor-cabling" id="bos-lightning-arrestor-cabling" value="20000" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-mc4">MC4 Connector Price</label>
+						<input type="number" name="bos-mc4" id="bos-mc4" value="1500" required>
+						<span class="unit">NGN/string</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-pv-combiner-boxes">PV Combiner Box Price</label>
+						<input type="number" name="bos-pv-combiner-boxes" id="bos-pv-combiner-boxes" value="15000" required>
+						<span class="unit">NGN/subarray</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-racking-earthing">PV Racking Earthing Cables</label>
+						<input type="number" name="bos-racking-earthing" id="bos-racking-earthing" value="260" required>
+						<span class="unit">NGN/subarray</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-pv-wiring">PV String Wiring</label>
+						<input type="number" name="bos-pv-wiring" id="bos-pv-wiring" value="2400" required>
+						<span class="unit">NGN/string</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-victron-gx">Victron GX Device and Accessories</label>
+						<input type="number" name="bos-victron-gx" id="bos-victron-gx" value="393" required>
+						<span class="unit">USD</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-output-wiring">Wiring from Output Breaker to Grid</label>
+						<input type="number" name="bos-output-wiring" id="bos-output-wiring" value="320000" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-site-prep">Site Preparation</label>
+						<input type="number" name="bos-site-prep" id="bos-site-prep" value="50000" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-toilets-labor">Toilets Labor</label>
+						<input type="number" name="bos-toilets-labor" id="bos-toilets-labor" value="70000" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-gatehouse">Gate House</label>
+						<input type="number" name="bos-gatehouse" id="bos-gatehouse" value="350000" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-gatehouse-labor">Gate House Labor</label>
+						<input type="number" name="bos-gatehouse-labor" id="bos-gatehouse-labor" value="70000" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-trenching">Trenching</label>
+						<input type="number" name="bos-trenching" id="bos-trenching" value="30000" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-external-lighting">External Lighting</label>
+						<input type="number" name="bos-external-lighting" id="bos-external-lighting" value="15000" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-external-lighting-wiring">Wiring for External Lighting</label>
+						<input type="number" name="bos-external-lighting-wiring" id="bos-external-lighting-wiring" value="8000" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-loading">Loading of Various BOS Materials</label>
+						<input type="number" name="bos-loading" id="bos-loading" value="17500" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-offloading">Offloading of Various BOS Materials</label>
+						<input type="number" name="bos-offloading" id="bos-offloading" value="17500" required>
+						<span class="unit">NGN</span>
+					</div>
+
+					<div class="q">
+						<label for="bos-contingency">Contingency</label>
+						<input type="number" name="bos-contingency" id="bos-contingency" value="75000" required>
+						<span class="unit">NGN</span>
+					</div>
 				</section>
 				<!-- 
 			<section>
