@@ -1,0 +1,33 @@
+[
+	{
+		"header": "Overview",
+		"key": "overview",
+		"questions": [
+			{
+				"label": "Name",
+				"type": "text",
+				"default": "Template Mini-grid"
+			},
+			{
+				"label": "Country",
+				"type": "fieldset",
+				"options": [
+					{
+						"label": "Nigeria",
+						"value": "ng"
+					},
+					{
+						"label": "Kenya",
+						"value": "ke"
+					}
+				]
+			},
+			{
+				"label": "Transmission Length",
+				"key": "tx-len",
+				"type": "number",
+				"default": 0
+			}
+		]
+	}
+]
