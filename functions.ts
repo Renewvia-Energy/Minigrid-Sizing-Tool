@@ -1036,7 +1036,7 @@ async function main() {
 	});
 
 	// Load form
-	const formReq = new Request('http://0.0.0.0:8080/form.json');
+	const formReq = new Request('https://renewvia-energy.github.io/Minigrid-Sizing-Tool/form.json');
 	const formRes = await fetch(formReq);
 	const formElements = await formRes.json();
 	console.log(formElements);

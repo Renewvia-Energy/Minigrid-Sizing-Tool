@@ -875,7 +875,7 @@ async function main() {
         fr.readAsText(credFileInput.files[0]);
     });
     // Load form
-    const formReq = new Request('http://0.0.0.0:8080/form.json');
+    const formReq = new Request('http://localhost/form.json');
     const formRes = await fetch(formReq);
     const formElements = await formRes.json();
     console.log(formElements);
