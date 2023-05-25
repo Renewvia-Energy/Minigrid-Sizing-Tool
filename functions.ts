@@ -1018,6 +1018,25 @@ interface Credentials {
 	PVWATTS_API_KEY: string;
 }
 
+interface RadioOption {
+	label: string;
+	value: string;
+}
+
+interface Question {
+	label: string;
+	key: string;
+	type: string;
+	default: string | number;
+	options: Array<RadioOption>;
+}
+
+interface FormSection {
+	header: string;
+	key: string;
+	questions: Array<Question>;
+}
+
 async function main() {
 	// Get credentials
 	var creds: Credentials;
@@ -1036,10 +1055,21 @@ async function main() {
 	});
 
 	// Load form
+	const formEl = document.getElementById('form-from-json');
 	const formReq = new Request('https://renewvia-energy.github.io/Minigrid-Sizing-Tool/form.json');
 	const formRes = await fetch(formReq);
 	const formElements = await formRes.json();
-	console.log(formElements);
+	formElements.forEach((section: FormSection) => {
+		let sectionHeader = document.createElement('H2');
+		sectionHeader.innerHTML = section.header;
+		formEl.appendChild(sectionHeader);
+
+		section.questions.forEach((q: Question) => {
+			let qDiv = document.createElement('DIV');
+			qDiv.classList.add('q');
+			
+		});
+	});
 }
 
 main();

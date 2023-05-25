@@ -875,9 +875,14 @@ async function main() {
         fr.readAsText(credFileInput.files[0]);
     });
     // Load form
-    const formReq = new Request('http://localhost/form.json');
+    const formEl = document.getElementById('form-from-json');
+    const formReq = new Request('https://renewvia-energy.github.io/Minigrid-Sizing-Tool/form.json');
     const formRes = await fetch(formReq);
     const formElements = await formRes.json();
-    console.log(formElements);
+    formElements.forEach((section) => {
+        var sectionHeader = document.createElement('H2');
+        sectionHeader.innerHTML = section.header;
+        formEl.appendChild(sectionHeader);
+    });
 }
 main();
