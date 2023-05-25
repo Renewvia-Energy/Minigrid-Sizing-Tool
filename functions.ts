@@ -1034,7 +1034,12 @@ async function main() {
 		};
 		fr.readAsText(credFileInput.files[0]);
 	});
-	// simulate(HR_PER_DAY*DAYS_PER_YR, 1, 3.1166662, 35.5999976, "Briy4bp8imL6tXQnBtfciedtG81I0uDOerZye4m3", 3, 3, 2, 2);
+
+	// Load form
+	const formReq = new Request('http://0.0.0.0:8080/form.json');
+	const formRes = await fetch(formReq);
+	const formElements = await formRes.json();
+	console.log(formElements);
 }
 
 main();
