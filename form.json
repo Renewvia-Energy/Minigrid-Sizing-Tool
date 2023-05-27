@@ -23,11 +23,72 @@
 				]
 			},
 			{
+				"label": "AC Voltage",
+				"key": "vac",
+				"default": 230,
+				"unit": "V"
+			},
+			{
 				"label": "Transmission Length",
 				"key": "tx-len",
-				"type": "number",
 				"default": 0,
 				"unit": "km"
+			}
+		]
+	},
+	{
+		"header": "Project Location",
+		"key": "location",
+		"questions": [
+			{
+				"label": "Longitude",
+				"key": "lon",
+				"default": 3.1166,
+				"unit": "°"
+			},
+			{
+				"label": "Latitude",
+				"key": "lat",
+				"default": 35.5999,
+				"unit": "°"
+			},
+			{
+				"label": "Array Type",
+				"type": "fieldset",
+				"options": [
+					{
+						"label": "Fixed - Open Rack",
+						"value": "0"
+					},
+					{
+						"label": "Fixed - Roof Mounted",
+						"value": "1"
+					},
+					{
+						"label": "1-Axis",
+						"value": "2"
+					},
+					{
+						"label": "1-Axis Backtracking",
+						"value": "3"
+					},
+					{
+						"label": "2-Axis",
+						"value": "4"
+					}
+				]
+			},
+			{
+				"label": "Panel Tilt",
+				"key": "tilt",
+				"default": 10,
+				"unit": "°"
+			},
+			{
+				"label": "Panel Azimuth",
+				"key": "azimuth",
+				"default": 180,
+				"unit": "°"
 			}
 		]
 	}
