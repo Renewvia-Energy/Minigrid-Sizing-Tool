@@ -5,6 +5,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="main.css">
 		<title>Minigrid Design Tool</title>
+
+		<script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 	</head>
 	<body>
 		<header>
@@ -19,7 +21,26 @@
 					<input type="file" id="cred-file" name="cred-file" accept=".json" required>
 				</div>
 
-				<div id="form-from-json"></div>
+				<div id="form-from-json">
+					<section v-for="section in sections" :id="section.key">
+						<h2>{{section.header}}</h2>
+						<div v-for="question in section.questions">
+							<fieldset v-if="question.type === 'fieldset'" :id="createId(section, question)">
+								<legend>{{question.label}}</legend>
+								<div v-for="option in question.options">
+									<input type="radio" :id="createId(section, question).concat('-',option.value)" :name="createId(section, question)" :value="option.value" checked>
+									<label :for="createId(section, question).concat('-',option.value)">{{option.label}}</label>
+								</div>
+							</fieldset>
+							<div v-else class="q">
+								<label :for="createId(section, question)">{{question.label}}</label>
+								<input :type="question.type" :name="createId(section, question)" :id="createId(section, question)" :value="question.default" required>
+								<span v-if="'unit' in question" class="unit">{{question.unit}}</span>
+							</div>
+						</div>
+					</section>
+				</div>
+
 				
 					<!-- <div class="q">
 						<label for="bos-contingency">Contingency</label>
@@ -29,6 +50,27 @@
 			</form>
 		</main>
 
-		<script src="functions.js"></script>
+		<!-- <script src="functions.js"></script> -->
+		<script>
+			const { createApp } = Vue
+
+			let id = 0;
+
+			createApp({
+				data() {
+					fetch('https://renewvia-energy.github.io/Minigrid-Sizing-Tool/form.json')
+						.then(response => response.json())
+						.then(jsonData => this.sections = jsonData);
+					return {
+						sections: []
+					}
+				},
+				methods: {
+					createId(section, q) {
+						return section.key.concat('key' in q ? q.key : q.label.toLowerCase());
+					}
+				}
+			}).mount('#form-from-json')
+		</script>
 	</body>
 </html>
