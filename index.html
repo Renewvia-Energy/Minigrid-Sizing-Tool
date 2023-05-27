@@ -40,13 +40,6 @@
 						</div>
 					</section>
 				</div>
-
-				
-					<!-- <div class="q">
-						<label for="bos-contingency">Contingency</label>
-						<input type="number" name="bos-contingency" id="bos-contingency" value="75000" required>
-						<span class="unit">NGN</span>
-					</div> -->
 			</form>
 		</main>
 
@@ -60,14 +53,23 @@
 				data() {
 					fetch('https://renewvia-energy.github.io/Minigrid-Sizing-Tool/form.json')
 						.then(response => response.json())
-						.then(jsonData => this.sections = jsonData);
+						.then(jsonData => {
+							for (section in jsonData) {
+								for (question in section.questions) {
+									if (!('type' in question)) {
+										question.type = 'number';
+									}
+								}
+							}
+							this.sections = jsonData;
+						});
 					return {
 						sections: []
 					}
 				},
 				methods: {
 					createId(section, q) {
-						return section.key.concat('key' in q ? q.key : q.label.toLowerCase());
+						return section.key.concat('key' in q ? q.key : q.label.toLowerCase()).replace(' ', '_');
 					}
 				}
 			}).mount('#form-from-json')
