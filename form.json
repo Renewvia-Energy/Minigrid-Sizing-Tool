@@ -26,7 +26,8 @@
 				"label": "Transmission Length",
 				"key": "tx-len",
 				"type": "number",
-				"default": 0
+				"default": 0,
+				"unit": "km"
 			}
 		]
 	}
