@@ -91,5 +91,38 @@
 				"unit": "°"
 			}
 		]
+	},
+	{
+		"header": "Batteries",
+		"questions": [
+			{
+				"label": "Technical Specifications",
+				"type": "header"
+			},
+			{
+				"label": "Capacity",
+				"default": 14.3,
+				"unit": "kWh"
+			},
+			{
+				"label": "Efficiency",
+				"default": 95,
+				"unit": "%"
+			},
+			{
+				"label": "DC Bus Voltage",
+				"key": "dcv",
+				"default": 48,
+				"unit": "V"
+			},
+			{
+				"label": "Materials",
+				"type": "header"
+			},
+			{
+				"label": "Unit Price",
+				"key": "price"
+			}
+		]
 	}
 ]
