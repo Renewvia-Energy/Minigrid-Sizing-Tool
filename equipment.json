@@ -1,0 +1,16 @@
+{
+    "Battery Inverters": [
+        {
+            "Name": "Victron Quattro 48/10000/140-100/100",
+            "Price ($)": 2617.36,
+            "Size (kVA)": 10,
+            "Maximum Quantity": 6
+        },
+        {
+            "Name": "Victron Quattro 48/150000/200-100/100",
+            "Price ($)": 4214.58,
+            "Size (kVA)": 15,
+            "Maximum Quantity": 5
+        }
+    ]
+}

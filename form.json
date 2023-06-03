@@ -115,13 +115,97 @@
 				"default": 48,
 				"unit": "V"
 			},
+
 			{
 				"label": "Materials",
 				"type": "header"
 			},
 			{
 				"label": "Unit Price",
-				"key": "price"
+				"key": "price",
+				"default": 4400,
+				"unit": "$/battery"
+			},
+			{
+				"label": "Lugs per Battery",
+				"key":"lugs",
+				"default": 4
+			},
+
+			{
+				"label": "Shipping",
+				"type": "header"
+			},
+			{
+				"label": "How Many Sites in Battery Shipment?",
+				"key": "sites-count",
+				"default": 1
+			},
+			{
+				"label": "Battery Shipping per kWh",
+				"key": "shipping",
+				"default": 6,
+				"unit": "$"
+			},
+			{
+				"label": "How are the Batteries Shipping?",
+				"key": "shipping-container",
+				"type": "fieldset",
+				"options": [
+					{
+						"label": "LCL",
+						"value": "lcl"
+					},
+					{
+						"label": "20' Container",
+						"value": "20ft"
+					},
+					{
+						"label": "40' Container",
+						"value": "40ft"
+					}
+				]
+			},
+			{
+				"label": "Batteries Shipping with Inverters?",
+				"key": "combined-shipping-inverters-batteries",
+				"type": "checkbox",
+				"default": true
+			},
+
+			{
+				"label": "Customs and Clearing",
+				"type": "header"
+			},
+			{
+				"label": "VAT on Batteries, Applied to Total + All Other Charges",
+				"key": "vat",
+				"default": 7.5,
+				"unit": "%"
+			},
+			{
+				"label": "Import Duty on Batteries (ID, DTY), Applied to Total",
+				"key": "duty",
+				"default": 20,
+				"unit": "%"
+			},
+			{
+				"label": "Levy on Batteries (LVY), Applied to Total",
+				"key": "levy",
+				"default": 0,
+				"unit": "%"
+			}
+		]
+	},
+	{
+		"header": "Battery Inverters",
+		"key": "batt-inv",
+		"questions": [
+			{
+				"label": "Battery Inverters",
+				"key": "options",
+				"type": "table",
+				"headers": ["Name", "Price ($)", "Size (kVA)", "Maximum Quantity"]
 			}
 		]
 	}
