@@ -22,20 +22,43 @@
 				</div>
 
 				<div id="form-from-json">
+					<!-- For each section in form.json -->
 					<section v-for="section in sections" :id="section.key">
+
+						<!-- Display the section header -->
 						<h2>{{section.header}}</h2>
+
+						<!-- For each form question in the section -->
 						<div v-for="question in section.questions">
+
+							<!-- If the question is multiple choice -->
 							<fieldset v-if="question.type === 'fieldset'" :id="createId(section, question)">
 								<legend>{{question.label}}</legend>
 								<div v-for="option in question.options">
-									<input type="radio" :id="createId(section, question).concat('-',option.value)" :name="createId(section, question)" :value="option.value" checked>
+									<input type="radio" :id="createId(section, question).concat('-',option.value)" :name="createId(section, question)" v-model="option.value" checked>
 									<label :for="createId(section, question).concat('-',option.value)">{{option.label}}</label>
 								</div>
 							</fieldset>
+
+							<!-- If the question is a table -->
+							<table v-else-if="question.type === 'table'">
+								<caption>{{question.label}}</caption>
+								<tr>
+									<th></th>
+									<th v-for="header in question.headers">{{header}}</th>
+								</tr>
+								<tr>
+									<td></td>
+								</tr>
+							</table>
+
+							<!-- If the question is actually a subsection header -->
 							<h3 v-else-if="question.type === 'header'">{{question.label}}</h3>
+
+							<!-- If the question asks for a number, check, or text -->
 							<div v-else class="q">
 								<label :for="createId(section, question)">{{question.label}}</label>
-								<input :type="question.type" :name="createId(section, question)" :id="createId(section, question)" :value="question.default" required>
+								<input :type="question.type" :name="createId(section, question)" :id="createId(section, question)" v-model="question.default" :required="!(question.type === 'checkbox')">
 								<span v-if="'unit' in question" class="unit">{{question.unit}}</span>
 							</div>
 						</div>
@@ -48,18 +71,26 @@
 		<script>
 			const { createApp } = Vue
 
-			let id = 0;
+			var formData;
+			var equipmentData;
 
 			createApp({
 				data() {
+					fetch('https://renewvia-energy.github.io/Minigrid-Sizing-Tool/equipment.json')
+						.then(response => response.json())
+						.then(jsonData => {
+							equipmentData = jsonData;
+						})
+
 					fetch('https://renewvia-energy.github.io/Minigrid-Sizing-Tool/form.json')
 						.then(response => response.json())
 						.then(jsonData => {
-							for (section in jsonData) {
+							formData = jsonData;
+							for (let section of jsonData) {
 								if (!('key' in section)) {
-									section.key = section.toLowerCase().replace(' ','_');
+									section.key = section['header'].toLowerCase().replace(' ','_');
 								}
-								for (question in section.questions) {
+								for (let question of section.questions) {
 									if (!('type' in question)) {
 										question.type = 'number';
 									}
