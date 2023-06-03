@@ -1,6 +1,12 @@
 {
     "Battery Inverters": [
         {
+            "Name": "Generic",
+            "Price ($)": 1,
+            "Size (kVA)": 1,
+            "Maximum Quantity": 1
+        },
+        {
             "Name": "Victron Quattro 48/10000/140-100/100",
             "Price ($)": 2617.36,
             "Size (kVA)": 10,

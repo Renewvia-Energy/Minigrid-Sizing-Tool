@@ -205,7 +205,24 @@
 				"label": "Battery Inverters",
 				"key": "options",
 				"type": "table",
-				"headers": ["Name", "Price ($)", "Size (kVA)", "Maximum Quantity"]
+				"attributes": [
+					{
+						"label": "Name",
+						"type": "string"
+					},
+					{
+						"label": "Price ($)",
+						"type": "number"
+					},
+					{
+						"label": "Size (kVA)",
+						"type": "number"
+					},
+					{
+						"label": "Maximum Quantity",
+						"type": "number"
+					}
+				]
 			}
 		]
 	}
