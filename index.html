@@ -15,7 +15,7 @@
 		</header>
 
 		<main>
-			<form>
+			<form @submit.prevent="addEquipment">
 				<!-- <div class="q">
 					<label for="cred-file">Upload Credentials</label>
 					<input type="file" id="cred-file" name="cred-file" accept=".json" required>
@@ -41,18 +41,18 @@
 							</fieldset>
 
 							<!-- If the question is a table -->
-							<table v-else-if="question.type === 'table'">
+							<table v-else-if="question.type === 'table'" :id="createId(section, question)">
 								<caption>{{question.label}}</caption>
 								<tr>
 									<th></th>
 									<th v-for="attribute in question.attributes">{{attribute.label}}</th>
 								</tr>
 								<tr v-for="inv in equipment[question.label].slice(1)" :key="inv.id">
-									<td><button @click="removeEquipment(question.label, inv)">X</button></td>
+									<td><button type="button" @click="removeEquipment(question.label, inv)">X</button></td>
 									<td v-for="attribute in question.attributes">{{inv[attribute.label]}}</td>
 								</tr>
 								<tr>
-									<td><button @click="addEquipment(question.label, addableEq[question.label])">+</button></td>
+									<td><button type="button" @click="addEquipment(question.label)">+</button></td>
 									<td v-for="attribute in question.attributes">
 										<input :type="attribute.type" step="any" v-model="addableEq[question.label][attribute.label]" required>
 									</td>
@@ -117,8 +117,8 @@
 						})
 
 					return {
-						equipment: [],
-						addableEq: [],
+						equipment: {},
+						addableEq: {},
 						sections: []
 					}
 				},
@@ -128,10 +128,12 @@
 					},
 
 					removeEquipment(label, eq) {
-						console.log(this.equipment[label])
-						console.log(eq)
 						this.equipment[label] = this.equipment[label].filter(e => e !== eq)
-						console.log(this.equipment[label])
+					},
+
+					addEquipment(label) {
+						this.addableEq[label].id = this.equipment[label].length
+						this.equipment[label].push(this.addableEq[label])
 					}
 				}
 			}).mount('#form-from-json')

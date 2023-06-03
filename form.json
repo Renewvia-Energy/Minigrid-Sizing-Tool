@@ -223,6 +223,63 @@
 						"type": "number"
 					}
 				]
+			},
+			{
+				"label": "Shipping",
+				"type": "header"
+			},
+			{
+				"label": "How Many Projects' Battery Inverters are in This Shipment?",
+				"key": "sites-count",
+				"default": 1
+			},
+			{
+				"label": "Battery Inverter Shipping Price per kWh",
+				"key": "shipping",
+				"default": 36,
+				"unit": "$/kWh"
+			},
+			{
+				"label": "How are the Battery Inverters Shipping?",
+				"key": "shipping-container",
+				"type": "fieldset",
+				"options": [
+					{
+						"label": "LCL",
+						"value": "lcl"
+					},
+					{
+						"label": "20' Container",
+						"value": "20ft"
+					},
+					{
+						"label": "40' Container",
+						"value": "40ft"
+					}
+				]
+			},
+
+			{
+				"label": "Customs and Clearing",
+				"type": "header"
+			},
+			{
+				"label": "VAT on Battery Inverters, Applied to Total + All Other Charges",
+				"key": "vat",
+				"default": 7.5,
+				"unit": "%"
+			},
+			{
+				"label": "Import Duty on Battery Inverters (ID, DTY), Applied to Total",
+				"key": "duty",
+				"default": 20,
+				"unit": "%"
+			},
+			{
+				"label": "Levy on Battery Inverters (LVY), Applied to Total",
+				"key": "levy",
+				"default": 0,
+				"unit": "%"
 			}
 		]
 	}
