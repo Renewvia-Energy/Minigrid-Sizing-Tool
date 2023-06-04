@@ -282,5 +282,81 @@
 				"unit": "%"
 			}
 		]
+	},
+	{
+		"header": "Distribution",
+		"key": "dx",
+		"questions": [
+			{
+				"label": "Are You Building Distribution Lines?",
+				"key": "buildingDX",
+				"type": "checkbox",
+				"default": true
+			},
+			{
+				"label": "Distribution Surveyor Cost, Including Meals and Lodging",
+				"key": "survey_cost",
+				"default": 120000,
+				"unit": "¤"
+			},
+			{
+				"label": "Length to Build",
+				"key": "len",
+				"default": 5,
+				"unit": "km"
+			},
+			{
+				"label": "Materials Cost",
+				"key": "materials",
+				"default": 4200000,
+				"unit": "¤/km"
+			},
+			{
+				"label": "Labor Cost",
+				"key": "labor",
+				"default": 1180552,
+				"unit": "¤/km"
+			},
+			{
+				"label": "Transport Cost (Road)",
+				"key": "transport",
+				"default": 60000,
+				"unit": "¤/km"
+			},
+			{
+				"label": "Contingency",
+				"default": 10,
+				"unit": "%"
+			}
+		]
+	},
+	{
+		"header": "Fencing",
+		"questions": [
+			{
+				"label": "Length",
+				"key": "len",
+				"default": 200,
+				"unit": "m"
+			},
+			{
+				"label": "Labor Cost",
+				"key": "labor",
+				"default": 875,
+				"unit": "¤/m"
+			},
+			{
+				"label": "Materials Cost",
+				"key": "materials",
+				"default": 3500,
+				"unit": "¤/m"
+			},
+			{
+				"label": "Transport Cost",
+				"key": "transport",
+				"default": 350,
+				"unit": "¤/m"
+			}
+		]
 	}
 ]

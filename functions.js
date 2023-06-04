@@ -880,9 +880,13 @@ async function main() {
     const formRes = await fetch(formReq);
     const formElements = await formRes.json();
     formElements.forEach((section) => {
-        var sectionHeader = document.createElement('H2');
+        let sectionHeader = document.createElement('H2');
         sectionHeader.innerHTML = section.header;
         formEl.appendChild(sectionHeader);
+        section.questions.forEach((q) => {
+            let qDiv = document.createElement('DIV');
+            qDiv.classList.add('q');
+        });
     });
 }
 main();
