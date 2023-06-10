@@ -7,36 +7,31 @@
 				"label": "Name",
 				"type": "text",
 				"default": "Template Mini-grid"
-			},
-			{
+			},{
 				"label": "Country",
 				"type": "fieldset",
 				"options": [
 					{
 						"label": "Nigeria",
 						"value": "ng"
-					},
-					{
+					},{
 						"label": "Kenya",
 						"value": "ke"
 					}
 				]
-			},
-			{
+			},{
 				"label": "AC Voltage",
 				"key": "vac",
 				"default": 230,
 				"unit": "V"
-			},
-			{
+			},{
 				"label": "Transmission Length",
 				"key": "tx-len",
 				"default": 0,
 				"unit": "km"
 			}
 		]
-	},
-	{
+	},{
 		"header": "Project Location",
 		"key": "location",
 		"questions": [
@@ -45,109 +40,88 @@
 				"key": "lon",
 				"default": 3.1166,
 				"unit": "°"
-			},
-			{
+			},{
 				"label": "Latitude",
 				"key": "lat",
 				"default": 35.5999,
 				"unit": "°"
-			},
-			{
+			},{
 				"label": "Array Type",
 				"type": "fieldset",
 				"options": [
 					{
 						"label": "Fixed - Open Rack",
 						"value": "0"
-					},
-					{
+					},{
 						"label": "Fixed - Roof Mounted",
 						"value": "1"
-					},
-					{
+					},{
 						"label": "1-Axis",
 						"value": "2"
-					},
-					{
+					},{
 						"label": "1-Axis Backtracking",
 						"value": "3"
-					},
-					{
+					},{
 						"label": "2-Axis",
 						"value": "4"
 					}
 				]
-			},
-			{
+			},{
 				"label": "Panel Tilt",
 				"key": "tilt",
 				"default": 10,
 				"unit": "°"
-			},
-			{
+			},{
 				"label": "Panel Azimuth",
 				"key": "azimuth",
 				"default": 180,
 				"unit": "°"
 			}
 		]
-	},
-	{
+	},{
 		"header": "Batteries",
 		"questions": [
 			{
 				"label": "Technical Specifications",
 				"type": "header"
-			},
-			{
+			},{
 				"label": "Capacity",
 				"default": 14.3,
 				"unit": "kWh"
-			},
-			{
+			},{
 				"label": "Efficiency",
 				"default": 95,
 				"unit": "%"
-			},
-			{
+			},{
 				"label": "DC Bus Voltage",
 				"key": "dcv",
 				"default": 48,
 				"unit": "V"
-			},
-
-			{
+			},{
 				"label": "Materials",
 				"type": "header"
-			},
-			{
+			},{
 				"label": "Unit Price",
 				"key": "price",
 				"default": 4400,
 				"unit": "$/battery"
-			},
-			{
+			},{
 				"label": "Lugs per Battery",
 				"key":"lugs",
 				"default": 4
-			},
-
-			{
+			},{
 				"label": "Shipping",
 				"type": "header"
-			},
-			{
+			},{
 				"label": "How Many Sites in Battery Shipment?",
 				"key": "sites-count",
 				"default": 1
-			},
-			{
+			},{
 				"label": "Battery Shipping per kWh",
 				"key": "shipping",
 				"default": 6,
 				"unit": "$"
-			},
-			{
+			},{
 				"label": "How are the Batteries Shipping?",
 				"key": "shipping-container",
 				"type": "fieldset",
@@ -155,49 +129,40 @@
 					{
 						"label": "LCL",
 						"value": "lcl"
-					},
-					{
+					},{
 						"label": "20' Container",
 						"value": "20ft"
-					},
-					{
+					},{
 						"label": "40' Container",
 						"value": "40ft"
 					}
 				]
-			},
-			{
+			},{
 				"label": "Batteries Shipping with Inverters?",
 				"key": "combined-shipping-inverters-batteries",
 				"type": "checkbox",
 				"default": true
-			},
-
-			{
+			},{
 				"label": "Customs and Clearing",
 				"type": "header"
-			},
-			{
+			},{
 				"label": "VAT on Batteries, Applied to Total + All Other Charges",
 				"key": "vat",
 				"default": 7.5,
 				"unit": "%"
-			},
-			{
+			},{
 				"label": "Import Duty on Batteries (ID, DTY), Applied to Total",
 				"key": "duty",
 				"default": 20,
 				"unit": "%"
-			},
-			{
+			},{
 				"label": "Levy on Batteries (LVY), Applied to Total",
 				"key": "levy",
 				"default": 0,
 				"unit": "%"
 			}
 		]
-	},
-	{
+	},{
 		"header": "Battery Inverters",
 		"key": "batt-inv",
 		"questions": [
@@ -209,37 +174,30 @@
 					{
 						"label": "Name",
 						"type": "string"
-					},
-					{
+					},{
 						"label": "Price ($)",
 						"type": "number"
-					},
-					{
+					},{
 						"label": "Size (kVA)",
 						"type": "number"
-					},
-					{
+					},{
 						"label": "Maximum Quantity",
 						"type": "number"
 					}
 				]
-			},
-			{
+			},{
 				"label": "Shipping",
 				"type": "header"
-			},
-			{
+			},{
 				"label": "How Many Projects' Battery Inverters are in This Shipment?",
 				"key": "sites-count",
 				"default": 1
-			},
-			{
+			},{
 				"label": "Battery Inverter Shipping Price per kWh",
 				"key": "shipping",
 				"default": 36,
 				"unit": "$/kWh"
-			},
-			{
+			},{
 				"label": "How are the Battery Inverters Shipping?",
 				"key": "shipping-container",
 				"type": "fieldset",
@@ -247,43 +205,35 @@
 					{
 						"label": "LCL",
 						"value": "lcl"
-					},
-					{
+					},{
 						"label": "20' Container",
 						"value": "20ft"
-					},
-					{
+					},{
 						"label": "40' Container",
 						"value": "40ft"
 					}
 				]
-			},
-
-			{
+			},{
 				"label": "Customs and Clearing",
 				"type": "header"
-			},
-			{
+			},{
 				"label": "VAT on Battery Inverters, Applied to Total + All Other Charges",
 				"key": "vat",
 				"default": 7.5,
 				"unit": "%"
-			},
-			{
+			},{
 				"label": "Import Duty on Battery Inverters (ID, DTY), Applied to Total",
 				"key": "duty",
 				"default": 20,
 				"unit": "%"
-			},
-			{
+			},{
 				"label": "Levy on Battery Inverters (LVY), Applied to Total",
 				"key": "levy",
 				"default": 0,
 				"unit": "%"
 			}
 		]
-	},
-	{
+	},{
 		"header": "Distribution",
 		"key": "dx",
 		"questions": [
@@ -292,45 +242,38 @@
 				"key": "buildingDX",
 				"type": "checkbox",
 				"default": true
-			},
-			{
+			},{
 				"label": "Distribution Surveyor Cost, Including Meals and Lodging",
 				"key": "survey_cost",
 				"default": 120000,
 				"unit": "¤"
-			},
-			{
+			},{
 				"label": "Length to Build",
 				"key": "len",
 				"default": 5,
 				"unit": "km"
-			},
-			{
+			},{
 				"label": "Materials Cost",
 				"key": "materials",
 				"default": 4200000,
 				"unit": "¤/km"
-			},
-			{
+			},{
 				"label": "Labor Cost",
 				"key": "labor",
 				"default": 1180552,
 				"unit": "¤/km"
-			},
-			{
+			},{
 				"label": "Transport Cost (Road)",
 				"key": "transport",
 				"default": 60000,
 				"unit": "¤/km"
-			},
-			{
+			},{
 				"label": "Contingency",
 				"default": 10,
 				"unit": "%"
 			}
 		]
-	},
-	{
+	},{
 		"header": "Fencing",
 		"questions": [
 			{
@@ -338,24 +281,195 @@
 				"key": "len",
 				"default": 200,
 				"unit": "m"
-			},
-			{
+			},{
 				"label": "Labor Cost",
 				"key": "labor",
 				"default": 875,
 				"unit": "¤/m"
-			},
-			{
+			},{
 				"label": "Materials Cost",
 				"key": "materials",
 				"default": 3500,
 				"unit": "¤/m"
-			},
-			{
+			},{
 				"label": "Transport Cost",
 				"key": "transport",
 				"default": 350,
 				"unit": "¤/m"
+			}
+		]
+	},{
+		"header": "Customers",
+		"key": "customers",
+		"questions": [
+			{
+				"label": "Upload customer details",
+				"key": "customers",
+				"type": "file"
+			},{
+				"label": "Meter Materials",
+				"type": "header"
+			},{
+				"label": "How Many Sites in Meter Order?",
+				"key": "sites-count",
+				"default": 1
+			},{
+				"label": "Quantity of SMRSD Meters",
+				"key": "smrsd-qty",
+				"default": 400
+			},{
+				"label": "Quantity of SMRPI Meters",
+				"key": "smrpi-qty",
+				"default": 0
+			},{
+				"label": "Quantity of SM200E Totalizers",
+				"key": "sm200e-qty",
+				"default": 3
+			},{
+				"label": "SMRSD Price",
+				"default": 40,
+				"unit": "USD"
+			},{
+				"label": "SMRPI Price",
+				"default": 100,
+				"unit": "USD"
+			},{
+				"label": "SM200E Price",
+				"default": 150,
+				"unit": "USD"
+			},{
+				"label": "How Many Base Stations Do You Need?",
+				"key": "base-station-qty",
+				"default": 1
+			},{
+				"label": "Base Station Price",
+				"default": 1050,
+				"unit": "USD"
+			},{
+				"label": "How Many Modems Do You Need?",
+				"key": "modem-qty",
+				"default": 1
+			},{
+				"label": "Meter Shipping",
+				"type": "header"
+			},{
+				"label": "Shipping Cost per Meter",
+				"key": "meter-shipping",
+				"default": 5.48,
+				"unit": "USD"
+			},{
+				"label": "Customs and Clearing",
+				"type": "header"
+			},{
+				"label": "Meter Port Fees",
+				"default": 100000,
+				"unit": "¤"
+			},{
+				"label": "VAT on Meters, Applied to Total + All Other Charges",
+				"key": "vat",
+				"default": 0,
+				"unit": "%"
+			},{
+				"label": "Import Duty on Meters (ID, DTY), Applied to Total",
+				"key": "duty",
+				"default": 10,
+				"unit": "%"
+			},{
+				"label": "Levy on Meters (LVY), Applied to Total",
+				"key": "levy",
+				"default": 35,
+				"unit": "%"
+			}
+		]
+	},{
+		"header": "PV",
+		"key": "pv",
+		"questions":[
+			{
+				"label": "Technical Specifications",
+				"type": "header"
+			},{
+				"label": "Maximum Power (Pmax)",
+				"key": "Pmp",
+				"default": 475,
+				"unit": "W"
+			},{
+				"label": "Maximum Power Voltage (Vmp)",
+				"key": "Vmp",
+				"default": 43.38,
+				"unit": "V"
+			},{
+				"label": "Maximum Power Current (Imp)",
+				"key": "Imp",
+				"default": 10.95,
+				"unit": "A"
+			},{
+				"label": "Open-Circuit Voltage (Voc)",
+				"key": "Voc",
+				"default": 52.24,
+				"unit": "V"
+			},{
+				"label": "Short-Circuit Current (Isc)",
+				"key": "Isc",
+				"default": 11.77,
+				"unit": "A"
+			},{
+				"label": "Materials",
+				"type": "header"
+			},{
+				"label": "Number of Strings",
+				"key": "strings",
+				"default": 30
+			},{
+				"label": "Panels per String",
+				"default": 3
+			},{
+				"label": "Panel Price",
+				"key": "price",
+				"default": 0.255,
+				"unit": "USD/Wp"
+			},{
+				"label": "Shipping",
+				"type": "header"
+			},{
+				"label": "International Transport Total",
+				"key": "shipping",
+				"default": 4000,
+				"unit": "USD"
+			},{
+				"label": "How are the Panels Shipping?",
+				"key": "shipping-container",
+				"type": "fieldset",
+				"options": [
+					{
+						"label": "LCL",
+						"value": "lcl"
+					},{
+						"label": "20' Container",
+						"value": "20ft"
+					},{
+						"label": "40' Container",
+						"value": "40ft"
+					}
+				]
+			},{
+				"label": "Customs and Clearing",
+				"type": "header"
+			},{
+				"label": "VAT on Panels, Applied to Total + All Other Charges",
+				"key": "vat",
+				"default": 0,
+				"unit": "%"
+			},{
+				"label": "Import Duty on Panels (ID, DTY), Applied to Total",
+				"key": "duty",
+				"default": 0,
+				"unit": "%"
+			},{
+				"label": "Levy on Panels (LVY), Applied to Total",
+				"key": "levy",
+				"default": 0,
+				"unit": "%"
 			}
 		]
 	}
