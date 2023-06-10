@@ -29,6 +29,10 @@
 				"key": "tx-len",
 				"default": 0,
 				"unit": "km"
+			},{
+				"label": "Array Losses",
+				"default": 11,
+				"unit": "%"
 			}
 		]
 	},{
@@ -97,6 +101,15 @@
 				"key": "dcv",
 				"default": 48,
 				"unit": "V"
+			},{
+				"label": "Minimum Allowable SOC",
+				"key": "minSOC",
+				"default": 15,
+				"unit": "%"
+			},{
+				"label": "C-Rate",
+				"default": 1,
+				"unit": "C"
 			},{
 				"label": "Materials",
 				"type": "header"
@@ -303,9 +316,10 @@
 		"key": "customers",
 		"questions": [
 			{
-				"label": "Upload customer details",
+				"label": "Upload Customer Details",
 				"key": "customers",
-				"type": "file"
+				"type": "file",
+				"accept": ".csv"
 			},{
 				"label": "Meter Materials",
 				"type": "header"
@@ -470,6 +484,341 @@
 				"key": "levy",
 				"default": 0,
 				"unit": "%"
+			}
+		]
+	},{
+		"header": "PV Inverters",
+		"key": "pvinv",
+		"questions": [
+			{
+				"label": "PV Inverter Inputs",
+				"type": "table",
+				"attributes": [
+					{
+						"label": "Min Voc (V)",
+						"type": "number"
+					},{
+						"label": "Max Voc (V)",
+						"type": "number"
+					},{
+						"label": "Min Vmp (V)",
+						"type": "number"
+					},{
+						"label": "Max Vmp (V)",
+						"type": "number"
+					},{
+						"label": "Max Isc (A)",
+						"type": "number"
+					},{
+						"label": "Max Imp (A)",
+						"type": "number"
+					},{
+						"label": "Max Output Current (A)",
+						"type": "number"
+					},{
+						"label": "Max PV Power (Wp)",
+						"type": "number"
+					}
+				]
+			},{
+				"label": "Sites in Shipment",
+				"key": "sites-count",
+				"default": 1
+			},{
+				"label": "Unit Price",
+				"key": "price",
+				"default": 4713.75,
+				"unit": "USD"
+			},{
+				"label": "Shipping Cost",
+				"key": "shipping",
+				"default": 0,
+				"unit": "USD"
+			},{
+				"label": "Customs and Clearing",
+				"type": "header"
+			},{
+				"label": "VAT on PV Inverters, Applied to Total + All Other Charges",
+				"key": "vat",
+				"default": 0,
+				"unit": "%"
+			},{
+				"label": "Import Duty on PV Inverters (ID, DTY), Applied to Total",
+				"key": "duty",
+				"default": 5,
+				"unit": "%"
+			},{
+				"label": "Levy on PV Inverters (LVY), Applied to Total",
+				"key": "levy",
+				"default": 0,
+				"unit": "%"
+			}
+		]
+	},{
+		"header": "Charge Controllers",
+		"key": "ccs",
+		"questions": [
+			{
+				"label": "Charge Controller Inputs",
+				"type": "table",
+				"attributes": [
+					{
+						"label": "Min Voc (V)",
+						"type": "number"
+					},{
+						"label": "Max Voc (V)",
+						"type": "number"
+					},{
+						"label": "Min Vmp (V)",
+						"type": "number"
+					},{
+						"label": "Max Vmp (V)",
+						"type": "number"
+					},{
+						"label": "Max Isc (A)",
+						"type": "number"
+					},{
+						"label": "Max Imp (A)",
+						"type": "number"
+					},{
+						"label": "Max Output Current (A)",
+						"type": "number"
+					},{
+						"label": "Max PV Power (Wp)",
+						"type": "number"
+					}
+				]
+			},{
+				"label": "Sites in Shipment",
+				"key": "sites-count",
+				"default": 1
+			},{
+				"label": "Unit Price",
+				"key": "price",
+				"default": 650.30,
+				"unit": "USD"
+			},{
+				"label": "Shipping Cost",
+				"key": "shipping",
+				"default": 0,
+				"unit": "USD"
+			},{
+				"label": "Customs and Clearing",
+				"type": "header"
+			},{
+				"label": "VAT on Charge Controllers, Applied to Total + All Other Charges",
+				"key": "vat",
+				"default": 0,
+				"unit": "%"
+			},{
+				"label": "Import Duty on Charge Controllers (ID, DTY), Applied to Total",
+				"key": "duty",
+				"default": 5,
+				"unit": "%"
+			},{
+				"label": "Levy on Charge Controllers (LVY), Applied to Total",
+				"key": "levy",
+				"default": 0,
+				"unit": "%"
+			}
+		]
+	},{
+		"header": "Racking",
+		"key": "racking",
+		"questions": [
+			{
+				"label": "Materials",
+				"type": "header"
+			},{
+				"label": "Materials Price",
+				"key": "price",
+				"default": 0.05,
+				"unit": "USD/Wp"
+			},{
+				"label": "Labor Cost",
+				"key": "labor",
+				"default": 0.01,
+				"unit": "USD/Wp"
+			},{
+				"label": "Shipping",
+				"type": "header"
+			},{
+				"label": "Shipping Cost",
+				"key": "shipping",
+				"default": 1000,
+				"unit": "USD"
+			},{
+				"label": "Customs and Clearing",
+				"type": "header"
+			},{
+				"label": "VAT on Racking, Applied to Total + All Other Charges",
+				"key": "vat",
+				"default": 0,
+				"unit": "%"
+			},{
+				"label": "Import Duty on Racking (ID, DTY), Applied to Total",
+				"key": "duty",
+				"default": 5,
+				"unit": "%"
+			},{
+				"label": "Levy on Racking (LVY), Applied to Total",
+				"key": "levy",
+				"default": 0,
+				"unit": "%"
+			}
+		]
+	},{
+		"header": "Miscellaneous",
+		"key": "misc",
+		"questions": [
+			{
+				"label": "Exchange Rate",
+				"key": "toUSD",
+				"default": 462,
+				"unit": "¤/USD"
+			},{
+				"label": "Inspection (SGS/BV/IT) Fee",
+				"key": "inspection-fees",
+				"default": 250,
+				"unit": "USD"
+			},{
+				"label": "Insurance Rate",
+				"default": 0.5,
+				"unit": "%"
+			},{
+				"label": "Clearing Agent Fees per Shipment",
+				"key": "clearing-agent-fee",
+				"default": 137000,
+				"unit": "¤"
+			},{
+				"label": "Delivery Order Fee",
+				"default": 70,
+				"unit": "USD"
+			},{
+				"label": "LCL",
+				"type": "header"
+			},{
+				"label": "THC/Handling/Cleaning Fee",
+				"key": "lcl-handling",
+				"default": 170,
+				"unit": "USD"
+			},{
+				"label": "Shorehandling",
+				"key": "lcl-shorehandling",
+				"default": 105,
+				"unit": "USD"
+			},{
+				"label": "Wharfage",
+				"key": "lcl-wharfage",
+				"default": 70,
+				"unit": "USD"
+			},{
+				"label": "Port Verification Charge",
+				"key": "lcl-verification",
+				"default": 80,
+				"unit": "USD"
+			},{
+				"label": "20' Container",
+				"type": "header"
+			},{
+				"label": "THC/Handling/Cleaning Fee",
+				"key": "20-handling",
+				"default": 170,
+				"unit": "USD"
+			},{
+				"label": "Shorehandling",
+				"key": "20-shorehandling",
+				"default": 105,
+				"unit": "USD"
+			},{
+				"label": "Wharfage",
+				"key": "20-wharfage",
+				"default": 70,
+				"unit": "USD"
+			},{
+				"label": "Port Verification Charge",
+				"key": "20-verification",
+				"default": 80,
+				"unit": "USD"
+			},{
+				"label": "40' Container",
+				"type": "header"
+			},{
+				"label": "THC/Handling/Cleaning Fee",
+				"key": "40-handling",
+				"default": 230,
+				"unit": "USD"
+			},{
+				"label": "Shorehandling",
+				"key": "40-shorehandling",
+				"default": 160,
+				"unit": "USD"
+			},{
+				"label": "Wharfage",
+				"key": "40-wharfage",
+				"default": 105,
+				"unit": "USD"
+			},{
+				"label": "Port Verification Charge",
+				"key": "40-verification",
+				"default": 120,
+				"unit": "USD"
+			},{
+				"label": "Taxes",
+				"type": "header"
+			},{
+				"label": "VAT",
+				"default": 7.5,
+				"unit": "%"
+			},{
+				"label": "Import Administrative Charge on Product Value, sans Shipping and Insurance",
+				"key": "import-admin",
+				"default": 1,
+				"unit": "%"
+			},{
+				"label": "Port Surcharge on Duty Amount",
+				"key": "port-surcharge",
+				"default": 7,
+				"unit": "%"
+			},{
+				"label": "ECOWAS Trade Liberalization Scheme Levy on Total Value",
+				"key": "ecowas",
+				"default": 0.5,
+				"unit": "%"
+			},{
+				"label": "Domestic Transport",
+				"type": "header"
+			},{
+				"label": "Cost of 5T Truck to Site (or Beach if Island)",
+				"key": "truck-cost",
+				"default": 200000,
+				"unit": "¤"
+			},{
+				"label": "Split Racking Transport with How Many Other Categories?",
+				"key": "truck-transport-split-racking",
+				"default": 2
+			},{
+				"label": "Split Panels Transport with How Many Other Categories?",
+				"key": "truck-transport-split-panels",
+				"default": 2
+			},{
+				"label": "Split Power House Transport with How Many Other Categories?",
+				"key": "truck-transport-split-powerhouse",
+				"default": 2
+			},{
+				"label": "Split Meters Transport with How Many Other Categories?",
+				"key": "truck-transport-split-meters",
+				"default": 2
+			},{
+				"label": "Normal Cargo Boat Transport Cost",
+				"key": "boat-cost",
+				"default": 75000,
+				"unit": "¤"
+			},{
+				"label": "Big Cargo Boat Transport Cost",
+				"key": "big-boat-cost",
+				"default": 150000,
+				"unit": "¤"
 			}
 		]
 	}

@@ -1037,39 +1037,34 @@ interface FormSection {
 	questions: Array<Question>;
 }
 
-async function main() {
+async function run() {
 	// Get credentials
 	var creds: Credentials;
 	const credFileInput = document.getElementById('cred-file');
 	if (!credFileInput || !(credFileInput instanceof HTMLInputElement))
   		throw Error('Could not retrieve file input element');
-	credFileInput.addEventListener('change', () => {
-		const fr = new FileReader();
-		fr.onload = (e: Event) => {
-			const contents: string = fr.result as string;
-			creds = JSON.parse(contents);
-
-			simulate(HR_PER_DAY*DAYS_PER_YR, 1, 3.1166662, 35.5999976, creds.PVWATTS_API_KEY, 3, 3, 2, 2);
-		};
-		fr.readAsText(credFileInput.files[0]);
-	});
+	const fr = new FileReader();
+	fr.onload = (e: Event) => {
+		const contents: string = fr.result as string;
+		creds = JSON.parse(contents);
+	};
+	fr.readAsText(credFileInput.files[0]);
 
 	// Load form
 	const formEl = document.getElementById('form-from-json');
-	const formReq = new Request('https://renewvia-energy.github.io/Minigrid-Sizing-Tool/form.json');
-	const formRes = await fetch(formReq);
-	const formElements = await formRes.json();
-	formElements.forEach((section: FormSection) => {
-		let sectionHeader = document.createElement('H2');
-		sectionHeader.innerHTML = section.header;
-		formEl.appendChild(sectionHeader);
 
-		section.questions.forEach((q: Question) => {
-			let qDiv = document.createElement('DIV');
-			qDiv.classList.add('q');
-			
-		});
-	});
+	// TODO: Extract data from form
+
+	// TODO: Pick battery inverter and genset to be barely big enough to handle load
+
+	// TODO: Optimization loop
+		// For each combination of decision variables
+			// TODO: Simulate
+
+			// TODO: Create BOQ
+
+			// TODO: Compute IRR
+		// Move in the direction of steepest IRR ascent
 }
 
-main();
+document.getElementById('run').addEventListener('click', run)
