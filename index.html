@@ -16,10 +16,10 @@
 
 		<main>
 			<form @submit.prevent="addEquipment">
-				<!-- <div class="q">
+				<div class="q">
 					<label for="cred-file">Upload Credentials</label>
 					<input type="file" id="cred-file" name="cred-file" accept=".json" required>
-				</div> -->
+				</div>
 
 				<div id="form-from-json">
 					<!-- For each section in form.json -->
@@ -62,6 +62,12 @@
 							<!-- If the question is actually a subsection header -->
 							<h3 v-else-if="question.type === 'header'">{{question.label}}</h3>
 
+							<!-- If the question is asks for a file -->
+							<div v-else-if="question.type === 'file'" class="q">
+								<label :for="createId(section, question)">{{question.label}}</label>
+								<input type="file" :id="createId(section, question)" name="createId(section, question)" :accept="question.accept" required>
+							</div>
+
 							<!-- If the question asks for a number, check, or text -->
 							<div v-else class="q">
 								<label :for="createId(section, question)">{{question.label}}</label>
@@ -71,6 +77,8 @@
 						</div>
 					</section>
 				</div>
+
+				<input type="submit" id="run" value="Run">
 			</form>
 		</main>
 
