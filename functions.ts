@@ -1,207 +1,207 @@
-const L_PER_GAL: number = 4.54609;
-const HR_PER_DAY: number = 24;
-const DAYS_PER_YR: number = 365;
-const LV_VOLTAGE: number = 240;
+const L_PER_GAL: number = 4.54609
+const HR_PER_DAY: number = 24
+const DAYS_PER_YR: number = 365
+const LV_VOLTAGE: number = 240
 
 class Panel {
-	#Pmp: number;
-	#Voc: number;
-	#Vmp: number;
-	#Isc: number;
-	#Imp: number;
-	#price: number;
+	#Pmp: number
+	#Voc: number
+	#Vmp: number
+	#Isc: number
+	#Imp: number
+	#price: number
 	
 	constructor(Pmp: number, Voc: number, Vmp: number, Isc: number, Imp: number, price: number) {
-		this.#Pmp = Pmp;
-		this.#Voc = Voc;
-		this.#Vmp = Vmp;
-		this.#Isc = Isc;
-		this.#Imp = Imp;
-		this.#price = price;
+		this.#Pmp = Pmp
+		this.#Voc = Voc
+		this.#Vmp = Vmp
+		this.#Isc = Isc
+		this.#Imp = Imp
+		this.#price = price
 	}
 
 	copy(): Panel {
-		return new Panel(this.#Pmp, this.#Voc, this.#Vmp, this.#Isc, this.#Imp, this.#price);
+		return new Panel(this.#Pmp, this.#Voc, this.#Vmp, this.#Isc, this.#Imp, this.#price)
 	}
 
-	get Pmp() { return this.#Pmp; }
-	get Voc() { return this.#Voc; }
-	get Vmp() { return this.#Vmp; }
-	get Isc() { return this.#Isc; }
-	get Imp() { return this.#Imp; }
-	get price() { return this.#price; }
+	get Pmp() { return this.#Pmp }
+	get Voc() { return this.#Voc }
+	get Vmp() { return this.#Vmp }
+	get Isc() { return this.#Isc }
+	get Imp() { return this.#Imp }
+	get price() { return this.#price }
 
 	getEnergy(dcArrayOutputkWhPerkWp: number): number {
-		return dcArrayOutputkWhPerkWp*this.#Pmp;
+		return dcArrayOutputkWhPerkWp*this.#Pmp
 	}
 }
 
 class PVString {
-	#panels: Panel[];
-	#Pmp: number;
-	#Voc: number;
-	#Vmp: number;
-	#Isc: number;
-	#Imp: number;
-	#price: number;
+	#panels: Panel[]
+	#Pmp: number
+	#Voc: number
+	#Vmp: number
+	#Isc: number
+	#Imp: number
+	#price: number
 
 	constructor(panels: Panel[]) {
-		this.#panels = panels;
+		this.#panels = panels
 		// TODO: check all panels equal
 		
-		this.#Pmp = 0;
-		this.#Voc = 0;
-		this.#Vmp = 0;
-		this.#price = 0;
+		this.#Pmp = 0
+		this.#Voc = 0
+		this.#Vmp = 0
+		this.#price = 0
 		this.#panels.forEach(panel => {
-			this.#Pmp+= panel.Pmp;
-			this.#Voc+= panel.Voc;
-			this.#Vmp+= panel.Vmp;
-			this.#price+= panel.price;
-		});
+			this.#Pmp+= panel.Pmp
+			this.#Voc+= panel.Voc
+			this.#Vmp+= panel.Vmp
+			this.#price+= panel.price
+		})
 
 		// NOTE: if you allow different panels in one string, this breaks.
-		this.#Isc = this.#panels[0].Isc;
-		this.#Imp = this.#panels[0].Imp;
+		this.#Isc = this.#panels[0].Isc
+		this.#Imp = this.#panels[0].Imp
 	}
 
 	copy(): PVString {
-		var copiedPanels: Panel[] = this.#panels.map(panel => panel.copy());
-		return new PVString(copiedPanels);
+		var copiedPanels: Panel[] = this.#panels.map(panel => panel.copy())
+		return new PVString(copiedPanels)
 	}
 
-	get panels() { return this.#panels; }
-	get Pmp() { return this.#Pmp; }
-	get Voc() { return this.#Voc; }
-	get Vmp() { return this.#Vmp; }
-	get Isc() { return this.#Isc; }
-	get Imp() { return this.#Imp; }
-	get price() { return this.#price; }
+	get panels() { return this.#panels }
+	get Pmp() { return this.#Pmp }
+	get Voc() { return this.#Voc }
+	get Vmp() { return this.#Vmp }
+	get Isc() { return this.#Isc }
+	get Imp() { return this.#Imp }
+	get price() { return this.#price }
 	
 	getEnergy(dcArrayOutputkWhPerkWp: number): number {
-		var energy: number = 0;
+		var energy: number = 0
 		this.panels.forEach(panel => {
-			energy+= panel.getEnergy(dcArrayOutputkWhPerkWp);
-		});
-		return energy;
+			energy+= panel.getEnergy(dcArrayOutputkWhPerkWp)
+		})
+		return energy
 	}
 }
 
 class Subarray {
-	#pvStrings: PVString[];
-	#arrayLosses: number;
-	#Voc: number;
-	#Vmp: number;
-	#Pmp: number;
-	#Isc: number;
-	#Imp: number;
-	#price: number;
+	#pvStrings: PVString[]
+	#arrayLosses: number
+	#Voc: number
+	#Vmp: number
+	#Pmp: number
+	#Isc: number
+	#Imp: number
+	#price: number
 
 	constructor(pvStrings: PVString[], arrayLosses: number) {
-		this.#pvStrings = pvStrings;
+		this.#pvStrings = pvStrings
 		// TODO: confirm all strings same
-		this.#arrayLosses = arrayLosses;
+		this.#arrayLosses = arrayLosses
 
 		// NOTE: this breaks if strings have different voltages
-		this.#Voc = this.#pvStrings[0].Voc;
-		this.#Vmp = this.#pvStrings[0].Vmp;
+		this.#Voc = this.#pvStrings[0].Voc
+		this.#Vmp = this.#pvStrings[0].Vmp
 
-		this.#Pmp = 0;
-		this.#Isc = 0;
-		this.#Imp = 0;
-		this.#price = 0;
+		this.#Pmp = 0
+		this.#Isc = 0
+		this.#Imp = 0
+		this.#price = 0
 		this.#pvStrings.forEach(pvString => {
-			this.#Pmp+= pvString.Pmp;
-			this.#Isc+= pvString.Isc;
-			this.#Imp+= pvString.Imp;
-			this.#price+= pvString.price;
-		});
+			this.#Pmp+= pvString.Pmp
+			this.#Isc+= pvString.Isc
+			this.#Imp+= pvString.Imp
+			this.#price+= pvString.price
+		})
 	}
 
 	copy(): Subarray {
-		var copiedPVStrings: PVString[] = this.#pvStrings.map(pvString => pvString.copy());
-		return new Subarray(copiedPVStrings, this.#arrayLosses);
+		var copiedPVStrings: PVString[] = this.#pvStrings.map(pvString => pvString.copy())
+		return new Subarray(copiedPVStrings, this.#arrayLosses)
 	}
 
-	get PVStrings() { return this.#pvStrings; }
-	get Voc() { return this.#Voc; }
-	get Vmp() { return this.#Vmp; }
-	get Pmp() { return this.#Pmp; }
-	get Isc() { return this.#Isc; }
-	get Imp() { return this.#Imp; }
-	get price() { return this.#price; }
+	get PVStrings() { return this.#pvStrings }
+	get Voc() { return this.#Voc }
+	get Vmp() { return this.#Vmp }
+	get Pmp() { return this.#Pmp }
+	get Isc() { return this.#Isc }
+	get Imp() { return this.#Imp }
+	get price() { return this.#price }
 	
 	getEnergy(dcArrayOutputkWhPerkWp: number): number {
-		var energy: number = 0;
+		var energy: number = 0
 		this.#pvStrings.forEach(pvString => {
-			energy+= pvString.getEnergy(dcArrayOutputkWhPerkWp);
-		});
-		return energy*(1-this.#arrayLosses);
+			energy+= pvString.getEnergy(dcArrayOutputkWhPerkWp)
+		})
+		return energy*(1-this.#arrayLosses)
 	}
 }
 
 class PVInput {
-	#Voc_min: number;
-	#Voc_max: number;
-	#Vmp_min: number;
-	#Vmp_max: number;
-	#Isc_max: number;
-	#Imp_max: number;
-	#PVPowerMax: number;
-	#price: number;
-	#subarray: Subarray;
+	#Voc_min: number
+	#Voc_max: number
+	#Vmp_min: number
+	#Vmp_max: number
+	#Isc_max: number
+	#Imp_max: number
+	#PVPowerMax: number
+	#price: number
+	#subarray: Subarray
 
 	constructor(Voc_min: number, Voc_max: number, Vmp_min: number, Vmp_max: number, Isc_max: number, Imp_max: number, PVPowerMax: number) {
-		this.#Voc_min = Voc_min;
-		this.#Voc_max = Voc_max;
-		this.#Vmp_min = Vmp_min;
-		this.#Vmp_max = Vmp_max;
-		this.#Isc_max = Isc_max;
-		this.#Imp_max = Imp_max;
-		this.#PVPowerMax = PVPowerMax;
-		this.#price = 0;
+		this.#Voc_min = Voc_min
+		this.#Voc_max = Voc_max
+		this.#Vmp_min = Vmp_min
+		this.#Vmp_max = Vmp_max
+		this.#Isc_max = Isc_max
+		this.#Imp_max = Imp_max
+		this.#PVPowerMax = PVPowerMax
+		this.#price = 0
 	}
 
 	connectSubarray(subarray: Subarray): void {
-		this.#subarray = subarray;
+		this.#subarray = subarray
 
 		if (this.#subarray.Voc<this.#Voc_min || this.#subarray.Voc>this.#Voc_max) {
-			throw new Error(`Subarray Voc ${this.#subarray.Voc} is outside the bounds [${this.#Voc_min},${this.#Voc_max}]`);
+			throw new Error(`Subarray Voc ${this.#subarray.Voc} is outside the bounds [${this.#Voc_min},${this.#Voc_max}]`)
 		}
 		if (this.#subarray.Vmp<this.#Vmp_min || this.#subarray.Vmp>this.#Vmp_max) {
-			throw new Error(`Subarray Vmp ${this.#subarray.Vmp} is outside the bounds [${this.#Vmp_min},${this.#Vmp_max}]`);
+			throw new Error(`Subarray Vmp ${this.#subarray.Vmp} is outside the bounds [${this.#Vmp_min},${this.#Vmp_max}]`)
 		}
 		if (this.#subarray.Isc>this.#Isc_max) {
-			throw new Error(`Subarray Isc ${this.#subarray.Isc} is greater than the charge controller Isc_max ${this.#Isc_max}`);
+			throw new Error(`Subarray Isc ${this.#subarray.Isc} is greater than the charge controller Isc_max ${this.#Isc_max}`)
 		}
 		if (this.#subarray.Imp>this.#Imp_max) {
-			throw new Error(`Subarray Imp ${this.#subarray.Imp} is greater than the charge controller Imp_max ${this.#Imp_max}`);
+			throw new Error(`Subarray Imp ${this.#subarray.Imp} is greater than the charge controller Imp_max ${this.#Imp_max}`)
 		}
 		if (this.#subarray.Pmp>this.#PVPowerMax) {
-			throw new Error(`Subarray Pmp ${this.#subarray.Pmp} is greater than the charge controller PVPowerMax ${this.#PVPowerMax}`);
+			throw new Error(`Subarray Pmp ${this.#subarray.Pmp} is greater than the charge controller PVPowerMax ${this.#PVPowerMax}`)
 		}
 
-		this.#price = this.#subarray.price;
+		this.#price = this.#subarray.price
 	}
 
 	copy(): PVInput {
-		var copiedSubarray: Subarray = this.#subarray.copy();
-		var copiedPVInput: PVInput = new PVInput(this.#Voc_min, this.#Voc_max, this.#Vmp_min, this.#Vmp_max, this.#Isc_max, this.#Imp_max, this.#PVPowerMax);
-		copiedPVInput.connectSubarray(copiedSubarray);
-		return copiedPVInput;
+		var copiedSubarray: Subarray = this.#subarray.copy()
+		var copiedPVInput: PVInput = new PVInput(this.#Voc_min, this.#Voc_max, this.#Vmp_min, this.#Vmp_max, this.#Isc_max, this.#Imp_max, this.#PVPowerMax)
+		copiedPVInput.connectSubarray(copiedSubarray)
+		return copiedPVInput
 	}
 
-	get price() { return this.#price; }
+	get price() { return this.#price }
 
 	getEnergy(dcArrayOutputkWhPerkWp: number): number {
-		return this.#subarray.getEnergy(dcArrayOutputkWhPerkWp);
+		return this.#subarray.getEnergy(dcArrayOutputkWhPerkWp)
 	}
 }
 
 abstract class PVInverterCC {
-	#pvInputs: PVInput[];
-	#price: number;
-	#subarrayPrice: number;
+	#pvInputs: PVInput[]
+	#price: number
+	#subarrayPrice: number
 
 	/**
 	 * A customer archetype and quantity.
@@ -211,219 +211,219 @@ abstract class PVInverterCC {
 	 * @constructor
 	 */
 	constructor(pvInputs: PVInput[], price: number) {
-		this.#pvInputs = pvInputs;
-		this.#price = price;
+		this.#pvInputs = pvInputs
+		this.#price = price
 
-		this.#subarrayPrice = 0;
+		this.#subarrayPrice = 0
 		this.#pvInputs.forEach(pvinput => {
-			this.#subarrayPrice+= pvinput.price;
-		});
+			this.#subarrayPrice+= pvinput.price
+		})
 	}
 
 	copy(): PVInverterCC {
-		throw new Error('Must implement');
+		throw new Error('Must implement')
 	}
 
-	get PVInputs() { return this.#pvInputs; }
-	get price() { return this.#price; }
-	get totalPrice() { return this.#subarrayPrice + this.#price; }
+	get PVInputs() { return this.#pvInputs }
+	get price() { return this.#price }
+	get totalPrice() { return this.#subarrayPrice + this.#price }
 
 	getUnlimitedEnergy(dcArrayOutputkWhPerkWp: number): number {
-		var energy: number = 0;
+		var energy: number = 0
 		this.#pvInputs.forEach(pvinput => {
-			energy+= pvinput.getEnergy(dcArrayOutputkWhPerkWp);
-		});
-		return energy;
+			energy+= pvinput.getEnergy(dcArrayOutputkWhPerkWp)
+		})
+		return energy
 	}
 
 	getEnergy(dcArrayOutputkWhPerkWp: number, outputVoltage: number, dt: number): number {
-		throw new Error('Need to implement.');
+		throw new Error('Need to implement.')
 	}
 }
 
 class ChargeController extends PVInverterCC {
-	#batteryChargeCurrent: number;
+	#batteryChargeCurrent: number
 
 	constructor(batteryChargeCurrent: number, pvInputs: PVInput[], price: number) {
-		super(pvInputs, price);
-		this.#batteryChargeCurrent = batteryChargeCurrent;
+		super(pvInputs, price)
+		this.#batteryChargeCurrent = batteryChargeCurrent
 	}
 
 	copy(): ChargeController {
-		var copiedPVInputs: PVInput[] = this.PVInputs.map(pvInput => pvInput.copy());
-		return new ChargeController(this.#batteryChargeCurrent, copiedPVInputs, this.price);
+		var copiedPVInputs: PVInput[] = this.PVInputs.map(pvInput => pvInput.copy())
+		return new ChargeController(this.#batteryChargeCurrent, copiedPVInputs, this.price)
 	}
 
-	get batteryChargeCurrent() { return this.#batteryChargeCurrent; }
+	get batteryChargeCurrent() { return this.#batteryChargeCurrent }
 
 	getEnergy(dcArrayOutputkWhPerkWp: number, outputVoltage: number, dt: number): number {
-		return Math.min(super.getUnlimitedEnergy(dcArrayOutputkWhPerkWp), outputVoltage*this.#batteryChargeCurrent*dt);
+		return Math.min(super.getUnlimitedEnergy(dcArrayOutputkWhPerkWp), outputVoltage*this.#batteryChargeCurrent*dt)
 	}
 }
 
 class PVInverter extends PVInverterCC {
-	#ratedPower: number;
+	#ratedPower: number
 
 	constructor(ratedPower: number, pvInputs: PVInput[], price: number) {
-		super(pvInputs, price);
-		this.#ratedPower = ratedPower;
+		super(pvInputs, price)
+		this.#ratedPower = ratedPower
 	}
 
 	copy(): PVInverter {
-		var copiedPVInputs: PVInput[] = this.PVInputs.map(pvInput => pvInput.copy());
-		return new PVInverter(this.#ratedPower, copiedPVInputs, this.price);
+		var copiedPVInputs: PVInput[] = this.PVInputs.map(pvInput => pvInput.copy())
+		return new PVInverter(this.#ratedPower, copiedPVInputs, this.price)
 	}
 
-	get ratedPower() { return this.#ratedPower; }
+	get ratedPower() { return this.#ratedPower }
 
 	getEnergy(dcArrayOutputkWhPerkWp: number, outputVoltage: number, dt: number): number {
-		return Math.min(super.getUnlimitedEnergy(dcArrayOutputkWhPerkWp), this.#ratedPower*dt);
+		return Math.min(super.getUnlimitedEnergy(dcArrayOutputkWhPerkWp), this.#ratedPower*dt)
 	}
 }
 
 abstract class ACDCCoupledEquipmentGroup {
-	#equipmentGroup: PVInverterCC[];
+	#equipmentGroup: PVInverterCC[]
 
 	constructor(equipmentGroup: PVInverterCC[]) {
-		this.#equipmentGroup = equipmentGroup;
+		this.#equipmentGroup = equipmentGroup
 	}
 
 	copy(): ACDCCoupledEquipmentGroup {
-		throw new Error('Must implement');
+		throw new Error('Must implement')
 	}
 
-	get equipmentGroup() { return this.#equipmentGroup; }
+	get equipmentGroup() { return this.#equipmentGroup }
 
 	get price(): number {
-		var price: number = 0;
+		var price: number = 0
 		this.#equipmentGroup.forEach(equipment => {
-			price+= equipment.totalPrice;
-		});
-		return price;
+			price+= equipment.totalPrice
+		})
+		return price
 	}
 }
 
 class DCCoupledPVGenerationEquipment extends ACDCCoupledEquipmentGroup {
-	#equipmentGroup: ChargeController[];
+	#equipmentGroup: ChargeController[]
 
 	constructor(chargeControllers: ChargeController[]) {
-		super(chargeControllers);
+		super(chargeControllers)
 	}
 
 	copy(): DCCoupledPVGenerationEquipment {
-		var copiedEquipmentGroup: ChargeController[] = this.#equipmentGroup.map(equipment => equipment.copy());
-		return new DCCoupledPVGenerationEquipment(copiedEquipmentGroup);
+		var copiedEquipmentGroup: ChargeController[] = this.#equipmentGroup.map(equipment => equipment.copy())
+		return new DCCoupledPVGenerationEquipment(copiedEquipmentGroup)
 	}
 
 	getEnergy(dcArrayOutputkWhPerkWp: number, outputVoltage: number, dt: number): number {
-		var energy: number = 0;
+		var energy: number = 0
 		this.equipmentGroup.forEach((cc: ChargeController) => {
-			energy+= cc.getEnergy(dcArrayOutputkWhPerkWp, outputVoltage, dt);
-		});
-		return energy;
+			energy+= cc.getEnergy(dcArrayOutputkWhPerkWp, outputVoltage, dt)
+		})
+		return energy
 	}
 }
 
 class ACCoupledPVGenerationEquipment extends ACDCCoupledEquipmentGroup {
-	#equipmentGroup: PVInverter[];
+	#equipmentGroup: PVInverter[]
 
 	constructor(pvInverters: PVInverter[]) {
-		super(pvInverters);
+		super(pvInverters)
 	}
 
 	copy(): ACCoupledPVGenerationEquipment {
-		var copiedEquipmentGroup: PVInverter[] = this.#equipmentGroup.map(equipment => equipment.copy());
-		return new ACCoupledPVGenerationEquipment(copiedEquipmentGroup);
+		var copiedEquipmentGroup: PVInverter[] = this.#equipmentGroup.map(equipment => equipment.copy())
+		return new ACCoupledPVGenerationEquipment(copiedEquipmentGroup)
 	}
 
 	getEnergy(dcArrayOutputkWhPerkWp: number, dt: number): number {
-		var energy: number = 0;
+		var energy: number = 0
 		this.equipmentGroup.forEach((inverter: PVInverter) => {
-			energy+= inverter.getEnergy(dcArrayOutputkWhPerkWp, LV_VOLTAGE, dt);
-		});
-		return energy;
+			energy+= inverter.getEnergy(dcArrayOutputkWhPerkWp, LV_VOLTAGE, dt)
+		})
+		return energy
 	}
 }
 
 class Battery {
-	#capacity: number;
-	#minSOC: number;
-	#cRate: number;
-	#dRate: number;
-	#price: number;
+	#capacity: number
+	#minSOC: number
+	#cRate: number
+	#dRate: number
+	#price: number
 
 	constructor(capacity: number, minSOC: number, cRate: number, dRate: number, price: number) {
-		this.#capacity = capacity;
-		this.#minSOC = minSOC;
-		this.#cRate = cRate;
-		this.#dRate = dRate;
-		this.#price = price;
+		this.#capacity = capacity
+		this.#minSOC = minSOC
+		this.#cRate = cRate
+		this.#dRate = dRate
+		this.#price = price
 	}
 
 	copy(): Battery {
-		return new Battery(this.#capacity, this.#minSOC, this.#cRate, this.#dRate, this.#price);
+		return new Battery(this.#capacity, this.#minSOC, this.#cRate, this.#dRate, this.#price)
 	}
 
-	get capacity() { return this.#capacity; }
-	get minSOC() { return this.#minSOC; }
-	get cRate() { return this.#cRate; }
-	get dRate() { return this.#dRate; }
-	get price() { return this.#price; }
+	get capacity() { return this.#capacity }
+	get minSOC() { return this.#minSOC }
+	get cRate() { return this.#cRate }
+	get dRate() { return this.#dRate }
+	get price() { return this.#price }
 }
 
 class BatteryBank {
-	#batteries: Battery[];
-	#outputVoltage: number;
-	#minSOC: number;
-	#cRate: number;
-	#dRate: number;
-	#price: number;
-	#capacity: number;
-	#energy: number;
-	#cumE: number;
+	#batteries: Battery[]
+	#outputVoltage: number
+	#minSOC: number
+	#cRate: number
+	#dRate: number
+	#price: number
+	#capacity: number
+	#energy: number
+	#cumE: number
 
 	constructor(batteries: Battery[], outputVoltage: number) {
-		this.#batteries = batteries;
-		this.#outputVoltage = outputVoltage;
+		this.#batteries = batteries
+		this.#outputVoltage = outputVoltage
 		// TODO: confirm batteries are equivalent
 
 		// NOTE: if batteries not equivalent, this breaks
-		this.#minSOC = batteries[0].minSOC;
-		this.#cRate = batteries[0].cRate;
-		this.#dRate = batteries[0].dRate;
+		this.#minSOC = batteries[0].minSOC
+		this.#cRate = batteries[0].cRate
+		this.#dRate = batteries[0].dRate
 		
-		this.#price = 0;
-		this.#capacity = 0;
+		this.#price = 0
+		this.#capacity = 0
 		this.#batteries.forEach(battery => {
-			this.#capacity+= battery.capacity;
-			this.#price+= battery.price;
-		});
+			this.#capacity+= battery.capacity
+			this.#price+= battery.price
+		})
 		
-		this.#energy = this.#capacity;
-		this.#cumE = 0;
+		this.#energy = this.#capacity
+		this.#cumE = 0
 	}
 
-	get batteries() { return this.#batteries; }
-	get outputVoltage() { return this.#outputVoltage; }
-	get minSOC() { return this.#minSOC; }
-	get price() { return this.#price; }
-	get capacity() { return this.#capacity; }
-	get energy() { return this.#energy; }
-	get effectiveEnergy(): number { return this.#energy - this.#minSOC*this.#capacity; }
+	get batteries() { return this.#batteries }
+	get outputVoltage() { return this.#outputVoltage }
+	get minSOC() { return this.#minSOC }
+	get price() { return this.#price }
+	get capacity() { return this.#capacity }
+	get energy() { return this.#energy }
+	get effectiveEnergy(): number { return this.#energy - this.#minSOC*this.#capacity }
 
 	// TODO: add limits for charging and discharging rates
 	getEnergyAvailable(dt: number): number {
-		return this.effectiveEnergy;
+		return this.effectiveEnergy
 	}
 
-	get soc() { return this.#energy/this.#capacity; }
+	get soc() { return this.#energy/this.#capacity }
 
 	canDischarge(energy: number): boolean {
-		return (this.#energy-energy)/this.#capacity > this.#minSOC;
+		return (this.#energy-energy)/this.#capacity > this.#minSOC
 	}
 
 	canCharge(energy: number): boolean {
-		return (this.#energy+energy) <= this.#capacity;
+		return (this.#energy+energy) <= this.#capacity
 	}
 
 	/**
@@ -433,12 +433,12 @@ class BatteryBank {
 	 * @returns {number} - The amount of energy actually supplied by the batteries, limited by the min SOC
 	 */
 	requestDischarge(energy: number): number {
-		var energySupplied: number = Math.min(this.effectiveEnergy, energy);
+		var energySupplied: number = Math.min(this.effectiveEnergy, energy)
 
-		this.#energy-= energySupplied;
-		this.#cumE+= energySupplied;
+		this.#energy-= energySupplied
+		this.#cumE+= energySupplied
 
-		return energySupplied;
+		return energySupplied
 	}
 
 	/**
@@ -448,33 +448,33 @@ class BatteryBank {
 	 * @returns {number} - The amount of energy actually used to charge the batteries, limited by the capacity
 	 */
 	requestCharge(energy: number): number {
-		var energySupplied: number = Math.min(this.#capacity-this.#energy, energy);
+		var energySupplied: number = Math.min(this.#capacity-this.#energy, energy)
 
-		this.#energy+= energySupplied;
-		this.#cumE+= energySupplied;
+		this.#energy+= energySupplied
+		this.#cumE+= energySupplied
 
-		return energySupplied;
+		return energySupplied
 	}
 }
 
 class BatteryInverter {
-	#ratedPower: number;
-	#inverterEfficiency: number;
-	#chargerEfficiency: number;
-	#price: number;
-	#batteryBank: BatteryBank;
+	#ratedPower: number
+	#inverterEfficiency: number
+	#chargerEfficiency: number
+	#price: number
+	#batteryBank: BatteryBank
 
 	constructor(ratedPower: number, inverterEfficiency: number, chargerEfficiency: number, price: number) {
-		this.#ratedPower = ratedPower;
-		this.#inverterEfficiency = inverterEfficiency;
-		this.#chargerEfficiency = chargerEfficiency;
-		this.#price = price;
+		this.#ratedPower = ratedPower
+		this.#inverterEfficiency = inverterEfficiency
+		this.#chargerEfficiency = chargerEfficiency
+		this.#price = price
 	}
 
-	get ratedPower() { return this.#ratedPower; }
-	get inverterEfficiency() { return this.#inverterEfficiency; }
-	get chargerEfficiency() { return this.#chargerEfficiency; }
-	get price() { return this.#price; }
+	get ratedPower() { return this.#ratedPower }
+	get inverterEfficiency() { return this.#inverterEfficiency }
+	get chargerEfficiency() { return this.#chargerEfficiency }
+	get price() { return this.#price }
 
 	/**
 	 * Requests energy from the batteries inverted into AC. Updates SOC and cycles.
@@ -485,20 +485,20 @@ class BatteryInverter {
 	 */
 	requestAC(ac: number, dt: number): number {
 		if (!this.#batteryBank) {
-			throw new Error('Battery inverter needs battery bank to invert.');
+			throw new Error('Battery inverter needs battery bank to invert.')
 		}
 		
 		// Limit AC ouptut by rated power
-		ac = Math.min(ac, this.ratedPower*dt);
+		ac = Math.min(ac, this.ratedPower*dt)
 
 		// Amount of DC needed to fulfill the load [kWh]
-		var dcNeeded: number = ac/this.inverterEfficiency;
+		var dcNeeded: number = ac/this.inverterEfficiency
 
 		// Amount of DC drawn from the batteries [kWh]
-		var dcProduced: number = this.#batteryBank.requestDischarge(dcNeeded);
+		var dcProduced: number = this.#batteryBank.requestDischarge(dcNeeded)
 
 		// Amount of AC actually provided
-		return dcProduced*this.inverterEfficiency;
+		return dcProduced*this.inverterEfficiency
 	}
 
 	/**
@@ -510,74 +510,74 @@ class BatteryInverter {
 	 */
 	requestChargeBatteries(ac: number, dt: number): number {
 		if (!this.#batteryBank) {
-			throw new Error('Battery inverter needs a battery bank to charge.');
+			throw new Error('Battery inverter needs a battery bank to charge.')
 		}
 
 		// Limit DC output by rated power
-		ac = Math.min(ac, this.ratedPower*dt);
+		ac = Math.min(ac, this.ratedPower*dt)
 
 		// Rectify AC into DC
-		var dcProduced: number = ac*this.chargerEfficiency;
+		var dcProduced: number = ac*this.chargerEfficiency
 
 		// Charge batteries with DC
-		return this.#batteryBank.requestCharge(dcProduced);
+		return this.#batteryBank.requestCharge(dcProduced)
 	}
 
 	connectBatteryBank(batteryBank: BatteryBank): void {
-		this.#batteryBank = batteryBank;
+		this.#batteryBank = batteryBank
 	}
 
 	canSupply(energy: number, time: number): boolean {
-		return energy/time<=this.ratedPower;
+		return energy/time<=this.ratedPower
 	}
 }
 
 interface GeneratorResponse {
-	energy: number;
-	diesel: number;
+	energy: number
+	diesel: number
 }
 
 class DieselGenerator {
-	#ratedPower: number;
-	#price: number;
-	#runHours: number;
-	#dieselConsumed: number;
-	#turnedOn: boolean;
-	#currentOutput: number;
-	#generatorRow: number[];
+	#ratedPower: number
+	#price: number
+	#runHours: number
+	#dieselConsumed: number
+	#turnedOn: boolean
+	#currentOutput: number
+	#generatorRow: number[]
 
 	constructor(ratedPower: number, price: number) {
-		this.#ratedPower = ratedPower;
-		this.#price = price;
+		this.#ratedPower = ratedPower
+		this.#price = price
 
-		this.#runHours = 0;
-		this.#dieselConsumed = 0;
-		this.#turnedOn = false;
-		this.#currentOutput = 0;
+		this.#runHours = 0
+		this.#dieselConsumed = 0
+		this.#turnedOn = false
+		this.#currentOutput = 0
 
 		if (this.#ratedPower < Math.min(...DieselGenerator.genSizeHeaders) || this.#ratedPower>Math.max(...DieselGenerator.genSizeHeaders)) {
-			throw new Error(`Diesel genset power ${this.#ratedPower} is outside the range [${Math.min(...DieselGenerator.genSizeHeaders),Math.max(...DieselGenerator.genSizeHeaders)}].`);
+			throw new Error(`Diesel genset power ${this.#ratedPower} is outside the range [${Math.min(...DieselGenerator.genSizeHeaders),Math.max(...DieselGenerator.genSizeHeaders)}].`)
 		}
-		this.#generatorRow = [];
+		this.#generatorRow = []
 		for (let p: number=0; p<DieselGenerator.genSizeHeaders.length; p++) {
 			if (this.#ratedPower === DieselGenerator.genSizeHeaders[p]) {
-				this.#generatorRow = DieselGenerator.generatorTable[p];
-				break;
+				this.#generatorRow = DieselGenerator.generatorTable[p]
+				break
 			} else if (this.#ratedPower < DieselGenerator.genSizeHeaders[p+1]) {
-				var p_frac: number = (this.#ratedPower-DieselGenerator.genSizeHeaders[p])/(DieselGenerator.genSizeHeaders[p+1]-DieselGenerator.genSizeHeaders[p]);
+				var p_frac: number = (this.#ratedPower-DieselGenerator.genSizeHeaders[p])/(DieselGenerator.genSizeHeaders[p+1]-DieselGenerator.genSizeHeaders[p])
 				for (let l: number=0; l<DieselGenerator.loadingFracHeaders.length; l++) {
-					this.#generatorRow.push(DieselGenerator.generatorTable[p][l] + p_frac*(DieselGenerator.generatorTable[p+1][l]-DieselGenerator.generatorTable[p][l]));
+					this.#generatorRow.push(DieselGenerator.generatorTable[p][l] + p_frac*(DieselGenerator.generatorTable[p+1][l]-DieselGenerator.generatorTable[p][l]))
 				}
-				break;
+				break
 			}
 		}
 	}
 
-	get ratedPower() { return this.#ratedPower; }
-	get price() { return this.#price; }
-	get runHours() { return this.#runHours; }
-	get dieselConsumed() { return this.#dieselConsumed; }
-	get currentOutput() { return this.#currentOutput; }
+	get ratedPower() { return this.#ratedPower }
+	get price() { return this.#price }
+	get runHours() { return this.#runHours }
+	get dieselConsumed() { return this.#dieselConsumed }
+	get currentOutput() { return this.#currentOutput }
 
 	static get generatorTable(): number[][] {
 		return [
@@ -607,30 +607,30 @@ class DieselGenerator {
 			[0.0, 37.5, 63.2,  90.7, 124.2],
 			[0.0, 42.8, 72.2, 103.5, 141.9],
 			[0.0, 48.1, 81.1, 116.4, 159.6]
-		];
+		]
 	}
 
 	static get loadingFracHeaders(): number[] {
-		return [0, 0.25, 0.5, 0.75, 1.0];
+		return [0, 0.25, 0.5, 0.75, 1.0]
 	}
 
 	static get genSizeHeaders(): number[] {
-		return [10, 20, 30, 40, 60, 75, 100, 125, 135, 150, 175, 200, 230, 250, 300, 350, 400, 500, 600, 750, 1000, 125, 1500, 1750, 2000, 2250];
+		return [10, 20, 30, 40, 60, 75, 100, 125, 135, 150, 175, 200, 230, 250, 300, 350, 400, 500, 600, 750, 1000, 125, 1500, 1750, 2000, 2250]
 	}
 
 	canSupply(energy: number, time: number) {
-		return energy/time<=this.ratedPower;
+		return energy/time<=this.ratedPower
 	}
 
 	get isOn(): boolean {
-		return this.#turnedOn;
+		return this.#turnedOn
 	}
 
 	turnOn(): void {
-		this.#turnedOn = true;
+		this.#turnedOn = true
 	}
 	turnOff(): void {
-		this.#turnedOn = false;
+		this.#turnedOn = false
 	}
 
 	/**
@@ -643,41 +643,41 @@ class DieselGenerator {
 	 * - diesel {number} Amount of diesel consumed during dt.
 	 */
 	supply(power: number, dt: number): GeneratorResponse {
-		var loadingFrac: number = power/this.ratedPower;
+		var loadingFrac: number = power/this.ratedPower
 		if (loadingFrac > Math.max(...DieselGenerator.loadingFracHeaders)) {
-			console.warn(`Generator asked to supply ${power}, but can only supply ${this.ratedPower}`);
-			power = this.ratedPower;
-			loadingFrac = 1.0;
+			console.warn(`Generator asked to supply ${power}, but can only supply ${this.ratedPower}`)
+			power = this.ratedPower
+			loadingFrac = 1.0
 		}
 
-		var galPerHr: number = -1;
+		var galPerHr: number = -1
 		for (let l: number=0; l<DieselGenerator.loadingFracHeaders.length; l++) {
 			if (loadingFrac === DieselGenerator.loadingFracHeaders[l]) {
-				galPerHr = this.#generatorRow[l];
+				galPerHr = this.#generatorRow[l]
 			} else if (loadingFrac < DieselGenerator.loadingFracHeaders[l+1]) {
-				var l_frac: number = (loadingFrac - DieselGenerator.loadingFracHeaders[l]) / (DieselGenerator.loadingFracHeaders[l+1] - DieselGenerator.loadingFracHeaders[l]);
-				galPerHr = this.#generatorRow[l] + l_frac*(this.#generatorRow[l+1] - this.#generatorRow[l]);
+				var l_frac: number = (loadingFrac - DieselGenerator.loadingFracHeaders[l]) / (DieselGenerator.loadingFracHeaders[l+1] - DieselGenerator.loadingFracHeaders[l])
+				galPerHr = this.#generatorRow[l] + l_frac*(this.#generatorRow[l+1] - this.#generatorRow[l])
 			}
 		}
 		if (galPerHr === -1) {
-			throw new Error(`I wasn't able to compute the amount of diesel consumed per hour.`);
+			throw new Error(`I wasn't able to compute the amount of diesel consumed per hour.`)
 		}
-		var lPerHr: number = galPerHr*L_PER_GAL;
+		var lPerHr: number = galPerHr*L_PER_GAL
 
-		this.#dieselConsumed+= lPerHr*dt;
-		this.#runHours+= dt;
-		this.#currentOutput = power;
+		this.#dieselConsumed+= lPerHr*dt
+		this.#runHours+= dt
+		this.#currentOutput = power
 		return {
 			energy: power*dt,
 			diesel: lPerHr*dt
-		};
+		}
 	}
 }
 
 class Customer {
-	#name: string;
-	#loadProfile: (tariff: number, t: number) => number;
-	#qty: number;
+	#name: string
+	#loadProfile: (tariff: number, t: number) => number
+	#qty: number
 
 	/**
 	 * A customer archetype and quantity.
@@ -688,54 +688,54 @@ class Customer {
 	 * @constructor
 	 */
 	constructor(name: string, loadProfile: (tariff: number, t: number) => number, qty: number) {
-		this.#name = name;
-		this.#loadProfile = loadProfile;
-		this.#qty = qty;
+		this.#name = name
+		this.#loadProfile = loadProfile
+		this.#qty = qty
 	}
 
-	get name() { return this.#name; }
-	get loadProfile() { return this.#loadProfile; }
+	get name() { return this.#name }
+	get loadProfile() { return this.#loadProfile }
 
 	get totalLoadProfile() {
-		return (tariff: number, t: number) => this.loadProfile(tariff, t)*this.#qty;
+		return (tariff: number, t: number) => this.loadProfile(tariff, t)*this.#qty
 	}
 
-	get qty () { return this.#qty; }
+	get qty () { return this.#qty }
 
 	getLoad(tariff: number, t: number): number {
-		return this.#loadProfile(tariff, t);
+		return this.#loadProfile(tariff, t)
 	}
 
 	getTotalLoad(tariff: number, t: number): number {
-		return this.totalLoadProfile(tariff, t);
+		return this.totalLoadProfile(tariff, t)
 	}
 }
 
 interface GenerationSiteOperationStep {
-	availableACFromPVInverters: number;
-	availableDCFromCCs: number;
-	loadWithDxLosses: number;
-	batterySOCkWh: number;
-	batterySOC: number;
-	totalSolarToLoad: number;
-	totalSolarToBattery: number;
-	totalBatteryToLoad: number;
-	totalEnergyToLoad: number;
-	generatorLoad: number;
-	generatorFuelConsumption: number;
-	remainingLoad: number;
-	wastedSolar: number;
+	availableACFromPVInverters: number
+	availableDCFromCCs: number
+	loadWithDxLosses: number
+	batterySOCkWh: number
+	batterySOC: number
+	totalSolarToLoad: number
+	totalSolarToBattery: number
+	totalBatteryToLoad: number
+	totalEnergyToLoad: number
+	generatorLoad: number
+	generatorFuelConsumption: number
+	remainingLoad: number
+	wastedSolar: number
 }
 
 class GenerationSite {
-	#batteryInverter: BatteryInverter;
-	#batteryBank: BatteryBank;
-	#pvInverters: ACCoupledPVGenerationEquipment;
-	#chargeControllers: DCCoupledPVGenerationEquipment;
-	#generator: DieselGenerator | null;
-	#shouldTurnGeneratorOn: (soc: number, t: number) => boolean;
-	#shouldTurnGeneratorOff: (soc: number, t: number) => boolean;
-	#acBus: number;
+	#batteryInverter: BatteryInverter
+	#batteryBank: BatteryBank
+	#pvInverters: ACCoupledPVGenerationEquipment
+	#chargeControllers: DCCoupledPVGenerationEquipment
+	#generator: DieselGenerator | null
+	#shouldTurnGeneratorOn: (soc: number, t: number) => boolean
+	#shouldTurnGeneratorOff: (soc: number, t: number) => boolean
+	#acBus: number
 
 	/**
 	 * All of the equipment at a generation site.
@@ -758,23 +758,23 @@ class GenerationSite {
 		shouldTurnGeneratorOn: (soc: number, t: number) => boolean = (soc: number, t: number) => false,
 		shouldTurnGeneratorOff: (soc: number, t: number) => boolean = (soc: number, t: number) => false)
 	{
-		this.#batteryInverter = batteryInverter;
-		this.#batteryBank = batteryBank;
-		this.#pvInverters = pvInverters;
-		this.#chargeControllers = chargeControllers;
-		this.#generator = generator;
-		this.#shouldTurnGeneratorOn = shouldTurnGeneratorOn;
-		this.#shouldTurnGeneratorOff = shouldTurnGeneratorOff;
+		this.#batteryInverter = batteryInverter
+		this.#batteryBank = batteryBank
+		this.#pvInverters = pvInverters
+		this.#chargeControllers = chargeControllers
+		this.#generator = generator
+		this.#shouldTurnGeneratorOn = shouldTurnGeneratorOn
+		this.#shouldTurnGeneratorOff = shouldTurnGeneratorOff
 	
-		this.#batteryInverter.connectBatteryBank(this.#batteryBank);
-		this.#acBus = 0;
+		this.#batteryInverter.connectBatteryBank(this.#batteryBank)
+		this.#acBus = 0
 	}
 
-	get batteryInverter() { return this.#batteryInverter; }
-	get batteryBank() { return this.#batteryBank; }
-	get pvInverters() { return this.#pvInverters; }
-	get chargeControllers () { return this.#chargeControllers; }
-	get generator() { return this.#generator; }
+	get batteryInverter() { return this.#batteryInverter }
+	get batteryBank() { return this.#batteryBank }
+	get pvInverters() { return this.#pvInverters }
+	get chargeControllers () { return this.#chargeControllers }
+	get generator() { return this.#generator }
 
 	/**
 	 * Runs the generation site for one unit of time
@@ -799,59 +799,59 @@ class GenerationSite {
 	 * - wastedSolar {number} Solar energy not used due to inefficiencies [kWh].
 	 */
 	operate(t: number, dt: number, dcArrayOutputkWhPerkWp: number, load: number): GenerationSiteOperationStep {
-		var wastedSolar: number = 0;
-		var energySentToLoad: number = 0;
-		var generatorLoad: number = 0;
-		var generatorFuelConsumption: number = 0;
+		var wastedSolar: number = 0
+		var energySentToLoad: number = 0
+		var generatorLoad: number = 0
+		var generatorFuelConsumption: number = 0
 
 		// Charge the batteries from the charge controllers
-		var availableDCFromCCs: number = this.chargeControllers.getEnergy(dcArrayOutputkWhPerkWp, this.batteryBank.outputVoltage, dt);
-		var ccSolarToBattery: number = this.batteryBank.requestCharge(availableDCFromCCs);
-		wastedSolar+= availableDCFromCCs - ccSolarToBattery;
+		var availableDCFromCCs: number = this.chargeControllers.getEnergy(dcArrayOutputkWhPerkWp, this.batteryBank.outputVoltage, dt)
+		var ccSolarToBattery: number = this.batteryBank.requestCharge(availableDCFromCCs)
+		wastedSolar+= availableDCFromCCs - ccSolarToBattery
 
 		if (this.generator !== null) {
 			// If the generator is on but should be off, turn it off.
 			if (this.generator.isOn && this.#shouldTurnGeneratorOff(this.batteryBank.soc, t)) {
-				this.generator.turnOff();
+				this.generator.turnOff()
 			}
 			// If the generator is off but should be on, turn it on.
 			if (!this.generator.isOn && this.#shouldTurnGeneratorOn(this.batteryBank.soc, t)) {
-				this.generator.turnOn();
+				this.generator.turnOn()
 			}
 			// If the generator is still on, use it to charge the batteries.
 			// Note: this commands the generator to charge the batteries at 100% generator loading fraction.
 			if (this.generator.isOn) {
-				let generatorResponse: GeneratorResponse = this.generator.supply(this.generator.ratedPower, dt);
-				generatorLoad = generatorResponse.energy;
-				generatorFuelConsumption = generatorResponse.diesel;
-				this.#batteryInverter.requestChargeBatteries(generatorLoad, dt);
+				let generatorResponse: GeneratorResponse = this.generator.supply(this.generator.ratedPower, dt)
+				generatorLoad = generatorResponse.energy
+				generatorFuelConsumption = generatorResponse.diesel
+				this.#batteryInverter.requestChargeBatteries(generatorLoad, dt)
 			}
 		}
 
-		var availableACFromPVInverters: number = this.pvInverters.getEnergy(dcArrayOutputkWhPerkWp, dt);
+		var availableACFromPVInverters: number = this.pvInverters.getEnergy(dcArrayOutputkWhPerkWp, dt)
 
-		var totalSolarToLoad: number = 0;
-		var totalBatteryToLoad: number = 0;
-		var totalSolarToBattery: number = ccSolarToBattery;
+		var totalSolarToLoad: number = 0
+		var totalBatteryToLoad: number = 0
+		var totalSolarToBattery: number = ccSolarToBattery
 		
 		// If the PV inverters can supply the load
 		if (load <= availableACFromPVInverters) {
 			// Fulfill entire load
-			totalSolarToLoad+= load;
-			energySentToLoad+= totalSolarToLoad;
+			totalSolarToLoad+= load
+			energySentToLoad+= totalSolarToLoad
 
 			// Send the excess to the batteries
-			var extraACFromPVInverters: number = load - availableACFromPVInverters;
-			var energyStored: number = this.batteryInverter.requestChargeBatteries(extraACFromPVInverters, dt);
-			totalSolarToBattery+= energyStored;
-			wastedSolar+= extraACFromPVInverters - energyStored;	// Note: this counts energy lost due to battery inverter inefficiency as wasted solar. As of now, I don't count losses due to inverting battery DC as wasted energy.
+			var extraACFromPVInverters: number = load - availableACFromPVInverters
+			var energyStored: number = this.batteryInverter.requestChargeBatteries(extraACFromPVInverters, dt)
+			totalSolarToBattery+= energyStored
+			wastedSolar+= extraACFromPVInverters - energyStored	// Note: this counts energy lost due to battery inverter inefficiency as wasted solar. As of now, I don't count losses due to inverting battery DC as wasted energy.
 
 		// If the PV inverters can't supply the load, request the remainder from the batteries
 		} else {
-			totalSolarToLoad+= availableACFromPVInverters;
-			energySentToLoad+= totalSolarToLoad;
+			totalSolarToLoad+= availableACFromPVInverters
+			energySentToLoad+= totalSolarToLoad
 			totalBatteryToLoad = this.batteryInverter.requestAC(load-energySentToLoad, dt)
-			energySentToLoad+= totalBatteryToLoad;
+			energySentToLoad+= totalBatteryToLoad
 		}
 
 		return {
@@ -868,68 +868,68 @@ class GenerationSite {
 			generatorFuelConsumption: generatorFuelConsumption,
 			remainingLoad: load-energySentToLoad,
 			wastedSolar: wastedSolar
-		};
+		}
 	}
 }
 
 interface MiniGridOperationStep extends GenerationSiteOperationStep {
-	load: number;
-	remainingLoadWithDxLosses: number;
-	remainingLoad: number;
+	load: number
+	remainingLoadWithDxLosses: number
+	remainingLoad: number
 }
 
 class MiniGrid {
-	#customers: Customer[];
-	#tariff: (name: string, t: number) => number;
-	#dxLosses: number;
-	#dcArrayOutputkWhPerkWpFn: (t: number) => number;
-	#generationSite: GenerationSite;
+	#customers: Customer[]
+	#tariff: (name: string, t: number) => number
+	#dxLosses: number
+	#dcArrayOutputkWhPerkWpFn: (t: number) => number
+	#generationSite: GenerationSite
 
 	constructor(customers: Customer[], tariff: (name: string, t: number) => number, dxLosses: number) {
-		this.#customers = customers;
-		this.#tariff = tariff;
-		this.#dxLosses = dxLosses;
+		this.#customers = customers
+		this.#tariff = tariff
+		this.#dxLosses = dxLosses
 	}
 
 	place(latitude: number, longitude: number, roofMounted: boolean = false, PVWATTS_API_KEY: string) {
-		const url: string = `https://developer.nrel.gov/api/pvwatts/v8.json?api_key=${PVWATTS_API_KEY}&lat=${latitude}&lon=${longitude}&system_capacity=1&module_type=0&losses=0&array_type=${roofMounted ? 1 : 0}&tilt=10&azimuth=180&timeframe=hourly&dataset=intl`;
+		const url: string = `https://developer.nrel.gov/api/pvwatts/v8.json?api_key=${PVWATTS_API_KEY}&lat=${latitude}&lon=${longitude}&system_capacity=1&module_type=0&losses=0&array_type=${roofMounted ? 1 : 0}&tilt=10&azimuth=180&timeframe=hourly&dataset=intl`
 
 		return new Promise((resolve, reject) => {
-			const request: XMLHttpRequest = new XMLHttpRequest();
-			request.open('GET', url);
+			const request: XMLHttpRequest = new XMLHttpRequest()
+			request.open('GET', url)
 			request.onload = () => {
 				if (request.status === 200) {
-					var dcArrayOutputkWhPerkWpArr: number[] = [...JSON.parse(request.response).outputs.dc];
-					this.#dcArrayOutputkWhPerkWpFn = t => dcArrayOutputkWhPerkWpArr[Math.round(t) % (HR_PER_DAY*DAYS_PER_YR)];
-					resolve(JSON.parse(request.response));
+					var dcArrayOutputkWhPerkWpArr: number[] = [...JSON.parse(request.response).outputs.dc]
+					this.#dcArrayOutputkWhPerkWpFn = t => dcArrayOutputkWhPerkWpArr[Math.round(t) % (HR_PER_DAY*DAYS_PER_YR)]
+					resolve(JSON.parse(request.response))
 				} else {
-					reject(Error(request.statusText));
+					reject(Error(request.statusText))
 				}
-			};
+			}
 			request.onerror = () => {
-				reject(Error('Network Error'));
-			};
-			request.send();
-		});
+				reject(Error('Network Error'))
+			}
+			request.send()
+		})
 	}
 
 	buildGenerationSite(generationSite) {
-		this.#generationSite = generationSite;
+		this.#generationSite = generationSite
 	}
 
 	getDCArrayOutputkWhPerkWp(t: number) {
-		return this.#dcArrayOutputkWhPerkWpFn(t);
+		return this.#dcArrayOutputkWhPerkWpFn(t)
 	}
 
 	operate(t: number, dt: number): MiniGridOperationStep {
-		var dcArrayOutputkWhPerkWp: number = this.getDCArrayOutputkWhPerkWp(t);
+		var dcArrayOutputkWhPerkWp: number = this.getDCArrayOutputkWhPerkWp(t)
 
-		var load: number = 0;
+		var load: number = 0
 		this.#customers.forEach(customer => {
-			load+= customer.getTotalLoad(this.#tariff(customer.name, t), t);
-		});
+			load+= customer.getTotalLoad(this.#tariff(customer.name, t), t)
+		})
 
-		var result: GenerationSiteOperationStep = this.#generationSite.operate(t, dt, dcArrayOutputkWhPerkWp, load/(1-this.#dxLosses));
+		var result: GenerationSiteOperationStep = this.#generationSite.operate(t, dt, dcArrayOutputkWhPerkWp, load/(1-this.#dxLosses))
 		return {
 			availableACFromPVInverters: result.availableACFromPVInverters,
 			availableDCFromCCs: result.availableDCFromCCs,
@@ -946,7 +946,7 @@ class MiniGrid {
 			load: load,
 			remainingLoadWithDxLosses: result.remainingLoad,
 			remainingLoad: load-result.totalEnergyToLoad*(1-this.#dxLosses)
-		};
+		}
 	}
 }
 
@@ -957,105 +957,137 @@ class MiniGrid {
  * @param {number} dt - The time interval between simulation steps [hr].
  * @param {number} latitude - The latitude of the generation site.
  * @param {number} longitude - The longitude of the generation site.
+ * @param {string} PVWATTS_API_KEY - Alphanumeric key for PV Watts API
+ * @param {number} panelsPerStringCC - Number of panels in one string connected to a charge controller
+ * @param {number} stringsPerSubarrayCC - Number of strings in one subarray connected to a charge controller
+ * @param {number} numChargeControllers - Number of charge controllers at site
+ * @param {number} numBatteries - Number of batteries at site
  */
 async function simulate(t: number, dt: number, latitude: number, longitude: number, PVWATTS_API_KEY: string, panelsPerStringCC: number, stringsPerSubarrayCC: number, numChargeControllers: number, numBatteries: number) {
-	var genericCustomer: Customer = new Customer(
-		'generic',
-		t => 30,
-		2
-	);
-	var customers: Customer[] = [genericCustomer];
+	
 
-	var minigrid: MiniGrid = new MiniGrid(customers, (name, t) => 1, 0.1);
-
-	await minigrid.place(latitude, longitude, false, PVWATTS_API_KEY);
-
-	var jkm445m: Panel = new Panel(0.445, 49.07, 41.17, 11.46, 10.81, 445*0.2630);
-	var panels: Panel[] = [];
+	var jkm445m: Panel = new Panel(0.445, 49.07, 41.17, 11.46, 10.81, 445*0.2630)
+	var panels: Panel[] = []
 	for (let p: number =0; p<panelsPerStringCC; p++) {
-		panels.push(jkm445m.copy());
+		panels.push(jkm445m.copy())
 	}
 
-	var pvString: PVString = new PVString(panels);
-	var pvStrings: PVString[] = [];
+	var pvString: PVString = new PVString(panels)
+	var pvStrings: PVString[] = []
 	for (let s: number =0; s<stringsPerSubarrayCC; s++) {
-		pvStrings.push(pvString.copy());
+		pvStrings.push(pvString.copy())
 	}
 
-	var subarray:Subarray = new Subarray(pvStrings, 0.1);
-	var pvInput: PVInput = new PVInput(60, 245, 60, 245, 70, 70, 4.9);
-	pvInput.connectSubarray(subarray);
+	var subarray:Subarray = new Subarray(pvStrings, 0.1)
+	var pvInput: PVInput = new PVInput(60, 245, 60, 245, 70, 70, 4.9)
+	pvInput.connectSubarray(subarray)
 
-	var cc: ChargeController = new ChargeController(85, [pvInput], 588.88);
-	var ccs: ChargeController[] = [];
+	var cc: ChargeController = new ChargeController(85, [pvInput], 588.88)
+	var ccs: ChargeController[] = []
 	for (let c: number =0; c<numChargeControllers; c++) {
-		ccs.push(cc.copy());
+		ccs.push(cc.copy())
 	}
 
-	var ccGroup: DCCoupledPVGenerationEquipment = new DCCoupledPVGenerationEquipment(ccs);
+	var ccGroup: DCCoupledPVGenerationEquipment = new DCCoupledPVGenerationEquipment(ccs)
 
-	var pvInvGroup: ACCoupledPVGenerationEquipment = new ACCoupledPVGenerationEquipment([]);
+	var pvInvGroup: ACCoupledPVGenerationEquipment = new ACCoupledPVGenerationEquipment([])
 
-	var smd143: Battery = new Battery(14.3, 0.1, 0, 0, 1000);
-	var batteries: Battery[] = [];
+	var smd143: Battery = new Battery(14.3, 0.1, 0, 0, 1000)
+	var batteries: Battery[] = []
 	for (let b: number =0; b<numBatteries; b++) {
-		batteries.push(smd143.copy());
+		batteries.push(smd143.copy())
 	}
 
-	var batteryBank: BatteryBank = new BatteryBank(batteries, 48);
+	var batteryBank: BatteryBank = new BatteryBank(batteries, 48)
 
-	var batteryInv: BatteryInverter = new BatteryInverter(15, .95, .95, 1000);
+	var batteryInv: BatteryInverter = new BatteryInverter(15, .95, .95, 1000)
 
-	var site: GenerationSite = new GenerationSite(batteryInv, batteryBank, pvInvGroup, ccGroup, null);
-	minigrid.buildGenerationSite(site);
+	var site: GenerationSite = new GenerationSite(batteryInv, batteryBank, pvInvGroup, ccGroup, null)
+	// minigrid.buildGenerationSite(site)
 	
 	for (let t: number =0; t<12; t++){
-		console.log(minigrid.operate(t, 1));
+		// console.log(minigrid.operate(t, 1))
 	}
 }
 
 interface Credentials {
-	PVWATTS_API_KEY: string;
+	PVWATTS_API_KEY: string
 }
 
 interface RadioOption {
-	label: string;
-	value: string;
+	label: string
+	value: string
 }
 
 interface Question {
-	label: string;
-	key: string;
-	type: string;
-	default: string | number;
-	options: Array<RadioOption>;
+	label: string
+	key: string
+	type: string
+	default: string | number
+	options: Array<RadioOption>
 }
 
 interface FormSection {
-	header: string;
-	key: string;
-	questions: Array<Question>;
+	header: string
+	key: string
+	questions: Array<Question>
 }
 
 async function run() {
 	// Get credentials
-	var creds: Credentials;
-	const credFileInput = document.getElementById('cred-file');
-	if (!credFileInput || !(credFileInput instanceof HTMLInputElement))
-  		throw Error('Could not retrieve file input element');
-	const fr = new FileReader();
-	fr.onload = (e: Event) => {
-		const contents: string = fr.result as string;
-		creds = JSON.parse(contents);
-	};
-	fr.readAsText(credFileInput.files[0]);
+	var creds: Credentials
+	const loadCredFile = new Promise((resolve, reject) => {
+		const credFileInput = <HTMLInputElement> document.getElementById('cred-file')
+		const credsFR = new FileReader()
+		credsFR.onload = (e: Event) => {
+			const contents: string = credsFR.result as string
+			creds = JSON.parse(contents)
+			resolve(null)
+		}
+		credsFR.readAsText(credFileInput.files[0])
+	})
+	await loadCredFile
 
-	// Load form
-	const formEl = document.getElementById('form-from-json');
+	// Get customers
+	var customers: Customer[]
+	const loadCustomerFile = new Promise((resolve, reject) => {
+		const custFileInput = <HTMLInputElement> document.getElementById('customers_customers')
+		const custFR = new FileReader()
+		custFR.onload = (e:Event) => {
+			const contents: string = custFR.result as string
+			const rows: string[] = contents.split('\r\n')
+			const custTypes: string[] = rows[0].split(',').slice(1)
+			for (let c:number =0; c<custTypes.length; c++) {
+				var loadProfileArr: { (tariff: number): number }[] = new Array(HR_PER_DAY*DAYS_PER_YR)
+				for (let t=0; t<HR_PER_DAY*DAYS_PER_YR; t++) {
+					const load: string = rows[t+3].split(',')[c+1]
+					console.log(load)
+					resolve(null)
+				}
+			}
+			resolve(null)
+		}
+		custFR.readAsText(custFileInput.files[0])
+	})
+	await loadCustomerFile
 
 	// TODO: Extract data from form
+	const latitude = (<HTMLInputElement>document.getElementById('location_lat')).value
+	const longitude = (<HTMLInputElement>document.getElementById('location_lat')).value
 
 	// TODO: Pick battery inverter and genset to be barely big enough to handle load
+
+	// Initialize Mini-Grid
+	var genericCustomer: Customer = new Customer(
+		'generic',
+		t => 30,
+		2
+	)
+	var customers: Customer[] = [genericCustomer]
+
+	var minigrid: MiniGrid = new MiniGrid(customers, (name, t) => 1, 0.1)
+
+	// await minigrid.place(latitude, longitude, false, PVWATTS_API_KEY)
 
 	// TODO: Optimization loop
 		// For each combination of decision variables

@@ -38,6 +38,9 @@ h1 {
 input, textarea {
 	padding: var(--textarea-padding);
 }
+input[type=number] {
+	width: 6em;
+}
 label {
     font-size: large;
 }
