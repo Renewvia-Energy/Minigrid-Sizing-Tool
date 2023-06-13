@@ -24,18 +24,14 @@
 			"Min Vmp (V)": 580,
 			"Max Vmp (V)": 1000,
 			"Max Isc (A)": 71.6,
-			"Max Imp (A)": 44.2,
-			"Max Output Current (A)": 36.2,
-			"Max PV Power (Wp)": 37800
+			"Max Imp (A)": 44.2
 		},{
 			"Min Voc (V)": 580,
 			"Max Voc (V)": 1000,
 			"Min Vmp (V)": 580,
 			"Max Vmp (V)": 1000,
 			"Max Isc (A)": 71.6,
-			"Max Imp (A)": 47.7,
-			"Max Output Current (A)": 39.1,
-			"Max PV Power (Wp)": 37800
+			"Max Imp (A)": 47.7
 		}
 	],
 	"Charge Controller Inputs": [
@@ -45,18 +41,14 @@
 			"Min Vmp (V)": 60,
 			"Max Vmp (V)": 245,
 			"Max Isc (A)": 70,
-			"Max Imp (A)": 70,
-			"Max Output Current (A)": 85,
-			"Max PV Power (Wp)": 4900
+			"Max Imp (A)": 70
 		},{
 			"Min Voc (V)": 60,
 			"Max Voc (V)": 245,
 			"Min Vmp (V)": 60,
 			"Max Vmp (V)": 245,
 			"Max Isc (A)": 70,
-			"Max Imp (A)": 70,
-			"Max Output Current (A)": 100,
-			"Max PV Power (Wp)": 5800
+			"Max Imp (A)": 70
 		}
 	]
 }
