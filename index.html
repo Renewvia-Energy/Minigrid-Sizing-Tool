@@ -115,7 +115,7 @@
 
 										// If the section is missing a key, create one from the header
 										if (!('key' in section)) {
-											section.key = section['header'].toLowerCase().replace(' ','-')
+											section.key = section['header'].toLowerCase().replaceAll(' ','-')
 										}
 
 										for (let question of section.questions) {
@@ -126,7 +126,7 @@
 
 											// If a question is missing a key, create one from the label
 											if (!('key' in question)) {
-												question.key = question['label'].toLowerCase().replace(' ','-')
+												question.key = question['label'].toLowerCase().replaceAll(' ','-')
 											}
 										}
 									}
