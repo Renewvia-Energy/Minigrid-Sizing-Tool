@@ -200,6 +200,12 @@
 						"label": "Size (kVA)",
 						"type": "number"
 					},{
+						"label": "Charging Efficiency (%)",
+						"type": "number"
+					},{
+						"label": "Discharging Efficiency (%)",
+						"type": "number"
+					},{
 						"label": "Maximum Quantity",
 						"type": "number"
 					}
