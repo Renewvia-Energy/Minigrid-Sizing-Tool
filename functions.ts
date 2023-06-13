@@ -223,7 +223,7 @@ abstract class PVInverterCC {
 			Pmp+= pvinput.Pmp
 		})
 		if (Pmp>this.#maxPVPower) {
-			throw new Error('Too much PV input power connected')
+			throw new Error(`Too much PV input power connected. ${Pmp}>${this.#maxPVPower}`)
 		}
 	}
 
@@ -537,6 +537,10 @@ class BatteryInverter {
 
 	canSupply(energy: number, time: number): boolean {
 		return energy/time<=this.ratedPower
+	}
+
+	toString() {
+		return `${this.#ratedPower} battery inverter costing ${this.#price}`
 	}
 }
 
@@ -986,6 +990,7 @@ interface FormSection {
 }
 
 async function run() {
+	console.log('start')
 	// Get credentials
 	var creds: Credentials
 	const loadCredFile = new Promise((resolve, reject) => {
@@ -999,9 +1004,10 @@ async function run() {
 		credsFR.readAsText(credFileInput.files[0])
 	})
 	await loadCredFile
+	console.log('got creds')
 
 	// Get customers
-	var customers: Customer[]
+	var customers: Customer[] = []
 	var defaultTariffs: number[]
 	const loadCustomerFile = new Promise((resolve, reject) => {
 		const custFileInput = <HTMLInputElement> document.getElementById('customers_customers')
@@ -1028,11 +1034,11 @@ async function run() {
 				}
 
 				// Construct new customer profile and add to the array
-				customers[c] = new Customer(
+				customers.push(new Customer(
 					custTypes[c],
 					Number(rows[1].split(',')[c+1]),
-					(tariff: number, t: number) => loadProfileArr[Math.round(t)](tariff),
-					Number(rows[2].split(',')[c+1]))
+					(tariff: number, t: number) => loadProfileArr[Math.round(t)](tariff), // XXX: can't use loadProfileArr here :(
+					Number(rows[2].split(',')[c+1])))
 				defaultTariffs[c] = Number(rows[3].split(',')[c+1])
 			}
 
@@ -1041,12 +1047,14 @@ async function run() {
 		custFR.readAsText(custFileInput.files[0])
 	})
 	await loadCustomerFile
+	console.log('got customers')
 
 	// Initialize Mini-Grid
 	const latitude = Number((<HTMLInputElement>document.getElementById('location_lat')).value)
-	const longitude = Number((<HTMLInputElement>document.getElementById('location_lat')).value)
+	const longitude = Number((<HTMLInputElement>document.getElementById('location_lon')).value)
 	var minigrid: MiniGrid = new MiniGrid(customers, (name, t) => 1, 0.1)
 	await minigrid.place(latitude, longitude, false, creds.PVWATTS_API_KEY)
+	console.log('initialized minigrid')
 
 	// Construct panel
 	const pvPmp = Number((<HTMLInputElement>document.getElementById('pv_Pmp')).value)
@@ -1057,10 +1065,11 @@ async function run() {
 		Number((<HTMLInputElement>document.getElementById('pv_Isc')).value),
 		Number((<HTMLInputElement>document.getElementById('pv_Imp')).value),
 		pvPmp*Number((<HTMLInputElement>document.getElementById('pv_price')).value))
+	console.log('constructed panel')
 
 	// Charge controller: assemble panels into string
 	var ccPanels: Panel[] = []
-	const panelsPerStringCC = Number((<HTMLInputElement>document.getElementById('ccs_panels-per-string')).value)
+	const panelsPerStringCC = 3 // TODO: autostringing
 	for (let p: number =0; p<panelsPerStringCC; p++) {
 		ccPanels.push(panel.copy())
 	}
@@ -1068,7 +1077,7 @@ async function run() {
 	// Charge controller: assemble strings into subarray
 	var pvString: PVString = new PVString(ccPanels)
 	var ccStrings: PVString[] = []
-	const stringsPerSubarrayCC = Number((<HTMLInputElement>document.getElementById('ccs-strings')).value)
+	const stringsPerSubarrayCC = 3 // TODO: autostringing
 	for (let s: number =0; s<stringsPerSubarrayCC; s++) {
 		ccStrings.push(pvString.copy())
 	}
@@ -1090,10 +1099,11 @@ async function run() {
 		))
 	}
 	ccPVInputs[0].connectSubarray(ccSubarray)// TODO: add support for multiple PV inputs. Needs auto stringing
+	console.log('finished CCs')
 
 	// PV inverters: assemble panels into string
 	var pvinvPanels: Panel[] = []
-	const panelsPerStringPVInv = Number((<HTMLInputElement>document.getElementById('pvinv_panels-per-string')).value)
+	const panelsPerStringPVInv = 19 // TODO: autostringing
 	for (let p: number =0; p<panelsPerStringPVInv; p++) {
 		pvinvPanels.push(panel.copy())
 	}
@@ -1101,7 +1111,7 @@ async function run() {
 	// PV inverters: assemble strings into subarray
 	pvString = new PVString(pvinvPanels)
 	var pvinvStrings: PVString[] = []
-	const stringsPerSubarrayPVInv = Number((<HTMLInputElement>document.getElementById('pvinv-strings')).value)
+	const stringsPerSubarrayPVInv = 4 // TODO: autostringing
 	for (let s: number =0; s<stringsPerSubarrayPVInv; s++) {
 		pvinvStrings.push(pvString.copy())
 	}
@@ -1122,6 +1132,7 @@ async function run() {
 		))
 	}
 	pvinvPVInputs[0].connectSubarray(pvinvSubarray)// TODO: add support for multiple PV inputs. Needs auto stringing
+	console.log('finished PV inverters')
 
 	// Battery inverters
 	var indivBattInvs: BatteryInverter[] = []
@@ -1141,7 +1152,7 @@ async function run() {
 	var battInvSizes: number[] = []
 	var battInvPrices: number[] = []
 	for (let b=0; b<indivBattInvs.length; b++) {
-		for (let qty=1; b<=battInvMaxQtys[b]; qty++) {
+		for (let qty=1; qty<=battInvMaxQtys[b]; qty++) {
 			let battInv = new BatteryInverter(
 				indivBattInvs[b].ratedPower*qty,
 				indivBattInvs[b].inverterEfficiency,
@@ -1169,7 +1180,7 @@ async function run() {
 			}
 		}
 	}
-	console.log(battInvs)
+	console.log(battInvs[0].ratedPower)
 
 	// Other constants from form
 	const ccBatteryChargeCurrent = Number((<HTMLInputElement>document.getElementById('ccs_max-output-current')).value)
