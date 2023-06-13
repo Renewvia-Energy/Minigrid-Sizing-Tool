@@ -208,7 +208,7 @@ class PVInverterCC {
             Pmp += pvinput.Pmp;
         });
         if (Pmp > __classPrivateFieldGet(this, _PVInverterCC_maxPVPower, "f")) {
-            throw new Error('Too much PV input power connected');
+            throw new Error(`Too much PV input power connected. ${Pmp}>${__classPrivateFieldGet(this, _PVInverterCC_maxPVPower, "f")}`);
         }
     }
     copy() {
@@ -469,6 +469,9 @@ class BatteryInverter {
     }
     canSupply(energy, time) {
         return energy / time <= this.ratedPower;
+    }
+    toString() {
+        return `${__classPrivateFieldGet(this, _BatteryInverter_ratedPower, "f")} battery inverter costing ${__classPrivateFieldGet(this, _BatteryInverter_price, "f")}`;
     }
 }
 _BatteryInverter_ratedPower = new WeakMap(), _BatteryInverter_inverterEfficiency = new WeakMap(), _BatteryInverter_chargerEfficiency = new WeakMap(), _BatteryInverter_price = new WeakMap(), _BatteryInverter_batteryBank = new WeakMap();
@@ -826,6 +829,7 @@ class MiniGrid {
 }
 _MiniGrid_customers = new WeakMap(), _MiniGrid_tariff = new WeakMap(), _MiniGrid_dxLosses = new WeakMap(), _MiniGrid_dcArrayOutputkWhPerkWpFn = new WeakMap(), _MiniGrid_generationSite = new WeakMap();
 async function run() {
+    console.log('start');
     // Get credentials
     var creds;
     const loadCredFile = new Promise((resolve, reject) => {
@@ -839,8 +843,9 @@ async function run() {
         credsFR.readAsText(credFileInput.files[0]);
     });
     await loadCredFile;
+    console.log('got creds');
     // Get customers
-    var customers;
+    var customers = [];
     var defaultTariffs;
     const loadCustomerFile = new Promise((resolve, reject) => {
         const custFileInput = document.getElementById('customers_customers');
@@ -865,7 +870,8 @@ async function run() {
                     }
                 }
                 // Construct new customer profile and add to the array
-                customers[c] = new Customer(custTypes[c], Number(rows[1].split(',')[c + 1]), (tariff, t) => loadProfileArr[Math.round(t)](tariff), Number(rows[2].split(',')[c + 1]));
+                customers.push(new Customer(custTypes[c], Number(rows[1].split(',')[c + 1]), (tariff, t) => loadProfileArr[Math.round(t)](tariff), // XXX: can't use loadProfileArr here :(
+                Number(rows[2].split(',')[c + 1])));
                 defaultTariffs[c] = Number(rows[3].split(',')[c + 1]);
             }
             resolve(null);
@@ -873,24 +879,27 @@ async function run() {
         custFR.readAsText(custFileInput.files[0]);
     });
     await loadCustomerFile;
+    console.log('got customers');
     // Initialize Mini-Grid
     const latitude = Number(document.getElementById('location_lat').value);
-    const longitude = Number(document.getElementById('location_lat').value);
+    const longitude = Number(document.getElementById('location_lon').value);
     var minigrid = new MiniGrid(customers, (name, t) => 1, 0.1);
     await minigrid.place(latitude, longitude, false, creds.PVWATTS_API_KEY);
+    console.log('initialized minigrid');
     // Construct panel
     const pvPmp = Number(document.getElementById('pv_Pmp').value);
     var panel = new Panel(pvPmp, Number(document.getElementById('pv_Voc').value), Number(document.getElementById('pv_Vmp').value), Number(document.getElementById('pv_Isc').value), Number(document.getElementById('pv_Imp').value), pvPmp * Number(document.getElementById('pv_price').value));
+    console.log('constructed panel');
     // Charge controller: assemble panels into string
     var ccPanels = [];
-    const panelsPerStringCC = Number(document.getElementById('ccs_panels-per-string').value);
+    const panelsPerStringCC = 3; // TODO: autostringing
     for (let p = 0; p < panelsPerStringCC; p++) {
         ccPanels.push(panel.copy());
     }
     // Charge controller: assemble strings into subarray
     var pvString = new PVString(ccPanels);
     var ccStrings = [];
-    const stringsPerSubarrayCC = Number(document.getElementById('ccs-strings').value);
+    const stringsPerSubarrayCC = 3; // TODO: autostringing
     for (let s = 0; s < stringsPerSubarrayCC; s++) {
         ccStrings.push(pvString.copy());
     }
@@ -904,16 +913,17 @@ async function run() {
         ccPVInputs.push(new PVInput(Number(cells[1].innerHTML), Number(cells[2].innerHTML), Number(cells[3].innerHTML), Number(cells[4].innerHTML), Number(cells[5].innerHTML), Number(cells[6].innerHTML)));
     }
     ccPVInputs[0].connectSubarray(ccSubarray); // TODO: add support for multiple PV inputs. Needs auto stringing
+    console.log('finished CCs');
     // PV inverters: assemble panels into string
     var pvinvPanels = [];
-    const panelsPerStringPVInv = Number(document.getElementById('pvinv_panels-per-string').value);
+    const panelsPerStringPVInv = 19; // TODO: autostringing
     for (let p = 0; p < panelsPerStringPVInv; p++) {
         pvinvPanels.push(panel.copy());
     }
     // PV inverters: assemble strings into subarray
     pvString = new PVString(pvinvPanels);
     var pvinvStrings = [];
-    const stringsPerSubarrayPVInv = Number(document.getElementById('pvinv-strings').value);
+    const stringsPerSubarrayPVInv = 4; // TODO: autostringing
     for (let s = 0; s < stringsPerSubarrayPVInv; s++) {
         pvinvStrings.push(pvString.copy());
     }
@@ -926,6 +936,7 @@ async function run() {
         pvinvPVInputs.push(new PVInput(Number(cells[1].innerHTML), Number(cells[2].innerHTML), Number(cells[3].innerHTML), Number(cells[4].innerHTML), Number(cells[5].innerHTML), Number(cells[6].innerHTML)));
     }
     pvinvPVInputs[0].connectSubarray(pvinvSubarray); // TODO: add support for multiple PV inputs. Needs auto stringing
+    console.log('finished PV inverters');
     // Battery inverters
     var indivBattInvs = [];
     var battInvMaxQtys = [];
@@ -939,7 +950,7 @@ async function run() {
     var battInvSizes = [];
     var battInvPrices = [];
     for (let b = 0; b < indivBattInvs.length; b++) {
-        for (let qty = 1; b <= battInvMaxQtys[b]; qty++) {
+        for (let qty = 1; qty <= battInvMaxQtys[b]; qty++) {
             let battInv = new BatteryInverter(indivBattInvs[b].ratedPower * qty, indivBattInvs[b].inverterEfficiency, indivBattInvs[b].chargerEfficiency, indivBattInvs[b].price * qty);
             let i = battInvSizes.indexOf(battInv.ratedPower);
             if (i == -1) { // if there is no battery inverter combination of that size yet, add it
@@ -964,7 +975,7 @@ async function run() {
             }
         }
     }
-    console.log(battInvs);
+    console.log(battInvs[0].ratedPower);
     // Other constants from form
     const ccBatteryChargeCurrent = Number(document.getElementById('ccs_max-output-current').value);
     const ccMaxPVPower = Number(document.getElementById('ccs_max-pv-power').value);
