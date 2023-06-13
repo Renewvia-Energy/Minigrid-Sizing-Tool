@@ -431,13 +431,6 @@
 				"label": "Materials",
 				"type": "header"
 			},{
-				"label": "Number of Strings",
-				"key": "strings",
-				"default": 30
-			},{
-				"label": "Panels per String",
-				"default": 3
-			},{
 				"label": "Panel Price",
 				"key": "price",
 				"default": 0.255,
@@ -521,6 +514,14 @@
 					}
 				]
 			},{
+				"label": "Number of Strings per PV Inverter",
+				"key": "strings",
+				"default": 4
+			},{
+				"label": "Panels per PV-Inverter String",
+				"key": "panels-per-string",
+				"default": 19
+			},{
 				"label": "Sites in Shipment",
 				"key": "sites-count",
 				"default": 1
@@ -588,6 +589,14 @@
 						"type": "number"
 					}
 				]
+			},{
+				"label": "Number of Strings per Charge Controller",
+				"key": "strings",
+				"default": 3
+			},{
+				"label": "Panels per Charge-Controller String",
+				"key": "panels-per-string",
+				"default": 3
 			},{
 				"label": "Sites in Shipment",
 				"key": "sites-count",

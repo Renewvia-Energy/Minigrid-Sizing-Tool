@@ -966,11 +966,7 @@ class MiniGrid {
 async function simulate(t: number, dt: number, latitude: number, longitude: number, PVWATTS_API_KEY: string, panelsPerStringCC: number, stringsPerSubarrayCC: number, numChargeControllers: number, numBatteries: number) {
 	
 
-	var jkm445m: Panel = new Panel(0.445, 49.07, 41.17, 11.46, 10.81, 445*0.2630)
-	var panels: Panel[] = []
-	for (let p: number =0; p<panelsPerStringCC; p++) {
-		panels.push(jkm445m.copy())
-	}
+	
 
 	var pvString: PVString = new PVString(panels)
 	var pvStrings: PVString[] = []
@@ -1050,6 +1046,7 @@ async function run() {
 
 	// Get customers
 	var customers: Customer[]
+	var defaultTariffs: number[]
 	const loadCustomerFile = new Promise((resolve, reject) => {
 		const custFileInput = <HTMLInputElement> document.getElementById('customers_customers')
 		const custFR = new FileReader()
@@ -1057,37 +1054,61 @@ async function run() {
 			const contents: string = custFR.result as string
 			const rows: string[] = contents.split('\r\n')
 			const custTypes: string[] = rows[0].split(',').slice(1)
+			defaultTariffs = new Array(custTypes.length)
+			
+			// For each customer
 			for (let c:number =0; c<custTypes.length; c++) {
 				var loadProfileArr: { (tariff: number): number }[] = new Array(HR_PER_DAY*DAYS_PER_YR)
+
+				// Iterate through each hour of the year
 				for (let t=0; t<HR_PER_DAY*DAYS_PER_YR; t++) {
 					const load: string = rows[t+3].split(',')[c+1]
-					console.log(load)
-					resolve(null)
+					if (isNaN(Number(load))) {
+						// TODO tariff optimization
+						reject('Tariff optimization not yet supported')
+					} else {
+						loadProfileArr.push((tariff: number) => Number(load))
+					}
 				}
+
+				// Construct new customer profile and add to the array
+				customers[c] = new Customer(
+					custTypes[c],
+					(tariff: number, t: number) => loadProfileArr[Math.round(t)](tariff),
+					Number(rows[1].split(',')[c+1]))
+				defaultTariffs[c] = Number(rows[2].split(',')[c+1])
 			}
+
 			resolve(null)
 		}
 		custFR.readAsText(custFileInput.files[0])
 	})
 	await loadCustomerFile
 
-	// TODO: Extract data from form
-	const latitude = (<HTMLInputElement>document.getElementById('location_lat')).value
-	const longitude = (<HTMLInputElement>document.getElementById('location_lat')).value
+	// Initialize Mini-Grid
+	const latitude = Number((<HTMLInputElement>document.getElementById('location_lat')).value)
+	const longitude = Number((<HTMLInputElement>document.getElementById('location_lat')).value)
+	var minigrid: MiniGrid = new MiniGrid(customers, (name, t) => 1, 0.1)
+	await minigrid.place(latitude, longitude, false, creds.PVWATTS_API_KEY)
+
+	// Assemble panels into string
+	const pvPmp = Number((<HTMLInputElement>document.getElementById('pv_Pmp')).value)
+	var panel: Panel = new Panel(
+		pvPmp,
+		Number((<HTMLInputElement>document.getElementById('pv_Voc')).value),
+		Number((<HTMLInputElement>document.getElementById('pv_Vmp')).value),
+		Number((<HTMLInputElement>document.getElementById('pv_Isc')).value),
+		Number((<HTMLInputElement>document.getElementById('pv_Imp')).value),
+		pvPmp*Number((<HTMLInputElement>document.getElementById('pv_price')).value),
+		)
+	var panels: Panel[] = []
+	const panelsPerStringCC = Number((<HTMLInputElement>document.getElementById('pv_panels-per-string')).value);
+	for (let p: number =0; p<panelsPerStringCC; p++) {
+		panels.push(panel.copy())
+	}
 
 	// TODO: Pick battery inverter and genset to be barely big enough to handle load
 
-	// Initialize Mini-Grid
-	var genericCustomer: Customer = new Customer(
-		'generic',
-		t => 30,
-		2
-	)
-	var customers: Customer[] = [genericCustomer]
-
-	var minigrid: MiniGrid = new MiniGrid(customers, (name, t) => 1, 0.1)
-
-	// await minigrid.place(latitude, longitude, false, PVWATTS_API_KEY)
 
 	// TODO: Optimization loop
 		// For each combination of decision variables
