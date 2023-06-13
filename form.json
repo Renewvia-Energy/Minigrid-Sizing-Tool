@@ -505,11 +505,11 @@
 				"type": "header"
 			},{
 				"label": "Max Output Power",
-				"default": 3000,
+				"default": 25000,
 				"unit": "VA"
 			},{
 				"label": "Max PV Power",
-				"default": 6000,
+				"default": 37800,
 				"unit": "Wp"
 			},{
 				"label": "PV Inverter Inputs",
