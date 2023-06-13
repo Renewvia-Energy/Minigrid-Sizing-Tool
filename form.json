@@ -484,6 +484,17 @@
 		"key": "pvinv",
 		"questions": [
 			{
+				"label": "Technical Specifications",
+				"type": "header"
+			},{
+				"label": "Max Output Power",
+				"default": 3000,
+				"unit": "VA"
+			},{
+				"label": "Max PV Power",
+				"default": 6000,
+				"unit": "Wp"
+			},{
 				"label": "PV Inverter Inputs",
 				"type": "table",
 				"attributes": [
@@ -505,22 +516,11 @@
 					},{
 						"label": "Max Imp (A)",
 						"type": "number"
-					},{
-						"label": "Max Output Current (A)",
-						"type": "number"
-					},{
-						"label": "Max PV Power (Wp)",
-						"type": "number"
 					}
 				]
 			},{
-				"label": "Number of Strings per PV Inverter",
-				"key": "strings",
-				"default": 4
-			},{
-				"label": "Panels per PV-Inverter String",
-				"key": "panels-per-string",
-				"default": 19
+				"label": "Materials and Shipping",
+				"type": "header"
 			},{
 				"label": "Sites in Shipment",
 				"key": "sites-count",
@@ -560,6 +560,17 @@
 		"key": "ccs",
 		"questions": [
 			{
+				"label": "Technical Specifications",
+				"type": "header"
+			},{
+				"label": "Max Output Current",
+				"default": 85,
+				"unit": "A"
+			},{
+				"label": "Max PV Power",
+				"default": 4900,
+				"unit": "Wp"
+			},{
 				"label": "Charge Controller Inputs",
 				"type": "table",
 				"attributes": [
@@ -581,22 +592,11 @@
 					},{
 						"label": "Max Imp (A)",
 						"type": "number"
-					},{
-						"label": "Max Output Current (A)",
-						"type": "number"
-					},{
-						"label": "Max PV Power (Wp)",
-						"type": "number"
 					}
 				]
 			},{
-				"label": "Number of Strings per Charge Controller",
-				"key": "strings",
-				"default": 3
-			},{
-				"label": "Panels per Charge-Controller String",
-				"key": "panels-per-string",
-				"default": 3
+				"label": "Materials and Shipping",
+				"type": "header"
 			},{
 				"label": "Sites in Shipment",
 				"key": "sites-count",

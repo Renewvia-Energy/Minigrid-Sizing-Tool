@@ -968,21 +968,7 @@ async function simulate(t: number, dt: number, latitude: number, longitude: numb
 
 	
 
-	var pvString: PVString = new PVString(panels)
-	var pvStrings: PVString[] = []
-	for (let s: number =0; s<stringsPerSubarrayCC; s++) {
-		pvStrings.push(pvString.copy())
-	}
-
-	var subarray:Subarray = new Subarray(pvStrings, 0.1)
-	var pvInput: PVInput = new PVInput(60, 245, 60, 245, 70, 70, 4.9)
-	pvInput.connectSubarray(subarray)
-
-	var cc: ChargeController = new ChargeController(85, [pvInput], 588.88)
-	var ccs: ChargeController[] = []
-	for (let c: number =0; c<numChargeControllers; c++) {
-		ccs.push(cc.copy())
-	}
+	
 
 	var ccGroup: DCCoupledPVGenerationEquipment = new DCCoupledPVGenerationEquipment(ccs)
 
@@ -1091,7 +1077,7 @@ async function run() {
 	var minigrid: MiniGrid = new MiniGrid(customers, (name, t) => 1, 0.1)
 	await minigrid.place(latitude, longitude, false, creds.PVWATTS_API_KEY)
 
-	// Assemble panels into string
+	// Construct panel
 	const pvPmp = Number((<HTMLInputElement>document.getElementById('pv_Pmp')).value)
 	var panel: Panel = new Panel(
 		pvPmp,
@@ -1099,25 +1085,102 @@ async function run() {
 		Number((<HTMLInputElement>document.getElementById('pv_Vmp')).value),
 		Number((<HTMLInputElement>document.getElementById('pv_Isc')).value),
 		Number((<HTMLInputElement>document.getElementById('pv_Imp')).value),
-		pvPmp*Number((<HTMLInputElement>document.getElementById('pv_price')).value),
-		)
-	var panels: Panel[] = []
-	const panelsPerStringCC = Number((<HTMLInputElement>document.getElementById('pv_panels-per-string')).value);
+		pvPmp*Number((<HTMLInputElement>document.getElementById('pv_price')).value))
+
+	// Charge controller: assemble panels into string
+	var ccPanels: Panel[] = []
+	const panelsPerStringCC = Number((<HTMLInputElement>document.getElementById('ccs_panels-per-string')).value)
 	for (let p: number =0; p<panelsPerStringCC; p++) {
-		panels.push(panel.copy())
+		ccPanels.push(panel.copy())
 	}
 
-	// TODO: Pick battery inverter and genset to be barely big enough to handle load
+	// Charge controller: assemble strings into subarray
+	var pvString: PVString = new PVString(ccPanels)
+	var ccStrings: PVString[] = []
+	const stringsPerSubarrayCC = Number((<HTMLInputElement>document.getElementById('ccs-strings')).value)
+	for (let s: number =0; s<stringsPerSubarrayCC; s++) {
+		ccStrings.push(pvString.copy())
+	}
+	const arrayLosses = Number((<HTMLInputElement>document.getElementById('overview_array-losses')).value)
+	var ccSubarray: Subarray = new Subarray(ccStrings, arrayLosses)
 
+	// Charge controller: connect subarray to PV input
+	var ccPVInputs: PVInput[] = []
+	const ccInTable = <HTMLTableElement>document.getElementById('ccs_charge-controller-inputs')
+	for (let r=1; r<ccInTable.rows.length-1; r++) {
+		const cells = ccInTable.rows.item(r).cells
+		ccPVInputs.push(new PVInput(
+			Number(cells[1].innerHTML),
+			Number(cells[2].innerHTML),
+			Number(cells[3].innerHTML),
+			Number(cells[4].innerHTML),
+			Number(cells[5].innerHTML),
+			Number(cells[6].innerHTML),
+			Number(cells[7].innerHTML)
+		))
+	}
+	ccPVInputs[0].connectSubarray(ccSubarray)// TODO: add support for multiple PV inputs. Needs auto stringing
+
+	// PV inverters: assemble panels into string
+	var pvinvPanels: Panel[] = []
+	const panelsPerStringPVInv = Number((<HTMLInputElement>document.getElementById('pvinv_panels-per-string')).value)
+	for (let p: number =0; p<panelsPerStringPVInv; p++) {
+		pvinvPanels.push(panel.copy())
+	}
+
+	// PV inverters: assemble strings into subarray
+	pvString = new PVString(pvinvPanels)
+	var pvinvStrings: PVString[] = []
+	const stringsPerSubarrayPVInv = Number((<HTMLInputElement>document.getElementById('pvinv-strings')).value)
+	for (let s: number =0; s<stringsPerSubarrayPVInv; s++) {
+		pvinvStrings.push(pvString.copy())
+	}
+	var pvinvSubarray: Subarray = new Subarray(pvinvStrings, arrayLosses)
+
+	// PV inverters: connect subarray to PV input
+	var pvinvPVInputs: PVInput[] = []
+	const pvinvInTable = <HTMLTableElement>document.getElementById('pvinv_pv-inverter-inputs')
+	for (let r=1; r<pvinvInTable.rows.length-1; r++) {
+		const cells = pvinvInTable.rows.item(r).cells
+		pvinvPVInputs.push(new PVInput(
+			Number(cells[1].innerHTML),
+			Number(cells[2].innerHTML),
+			Number(cells[3].innerHTML),
+			Number(cells[4].innerHTML),
+			Number(cells[5].innerHTML),
+			Number(cells[6].innerHTML),
+			Number(cells[7].innerHTML)
+		))
+	}
+	pvinvPVInputs[0].connectSubarray(pvinvSubarray)// TODO: add support for multiple PV inputs. Needs auto stringing
 
 	// TODO: Optimization loop
+	var decisionVariables = {
+		numChargeControllers: 1,
+		numPVInverters: 1,
+		numBatteries: 1
+	}
+	while (true) {
 		// For each combination of decision variables
+
+			// TODO: Pick battery inverter and genset to be barely big enough to handle load
+
+			// Construct charge controllers
+			var cc: ChargeController = new ChargeController(85, ccPVInputs, 588.88)
+			var ccs: ChargeController[] = []
+			for (let c: number =0; c<decisionVariables.numChargeControllers; c++) {
+				ccs.push(cc.copy())
+			}
+
 			// TODO: Simulate
 
 			// TODO: Create BOQ
 
 			// TODO: Compute IRR
 		// Move in the direction of steepest IRR ascent
+
+		break	// TODO: remove. I just added this so it wouldn't hang during testing.
+	}
 }
 
 document.getElementById('run').addEventListener('click', run)
