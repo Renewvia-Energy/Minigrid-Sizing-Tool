@@ -1,7 +1,9 @@
-const L_PER_GAL: number = 4.54609
-const HR_PER_DAY: number = 24
-const DAYS_PER_YR: number = 365
-const LV_VOLTAGE: number = 240
+const L_PER_GAL = 4.54609
+const HR_PER_DAY = 24
+const DAYS_PER_YR = 365
+const LV_VOLTAGE = 240
+const CUSTOMER_CSV_HEADER_ROWS = 4
+const FOS_MAX_LOAD = 2
 
 class Panel {
 	#Pmp: number
@@ -147,18 +149,16 @@ class PVInput {
 	#Vmp_max: number
 	#Isc_max: number
 	#Imp_max: number
-	#PVPowerMax: number
 	#price: number
 	#subarray: Subarray
 
-	constructor(Voc_min: number, Voc_max: number, Vmp_min: number, Vmp_max: number, Isc_max: number, Imp_max: number, PVPowerMax: number) {
+	constructor(Voc_min: number, Voc_max: number, Vmp_min: number, Vmp_max: number, Isc_max: number, Imp_max: number) {
 		this.#Voc_min = Voc_min
 		this.#Voc_max = Voc_max
 		this.#Vmp_min = Vmp_min
 		this.#Vmp_max = Vmp_max
 		this.#Isc_max = Isc_max
 		this.#Imp_max = Imp_max
-		this.#PVPowerMax = PVPowerMax
 		this.#price = 0
 	}
 
@@ -177,21 +177,20 @@ class PVInput {
 		if (this.#subarray.Imp>this.#Imp_max) {
 			throw new Error(`Subarray Imp ${this.#subarray.Imp} is greater than the charge controller Imp_max ${this.#Imp_max}`)
 		}
-		if (this.#subarray.Pmp>this.#PVPowerMax) {
-			throw new Error(`Subarray Pmp ${this.#subarray.Pmp} is greater than the charge controller PVPowerMax ${this.#PVPowerMax}`)
-		}
 
 		this.#price = this.#subarray.price
 	}
 
+
 	copy(): PVInput {
 		var copiedSubarray: Subarray = this.#subarray.copy()
-		var copiedPVInput: PVInput = new PVInput(this.#Voc_min, this.#Voc_max, this.#Vmp_min, this.#Vmp_max, this.#Isc_max, this.#Imp_max, this.#PVPowerMax)
+		var copiedPVInput: PVInput = new PVInput(this.#Voc_min, this.#Voc_max, this.#Vmp_min, this.#Vmp_max, this.#Isc_max, this.#Imp_max)
 		copiedPVInput.connectSubarray(copiedSubarray)
 		return copiedPVInput
 	}
 
 	get price() { return this.#price }
+	get Pmp() { return this.#subarray.Pmp }
 
 	getEnergy(dcArrayOutputkWhPerkWp: number): number {
 		return this.#subarray.getEnergy(dcArrayOutputkWhPerkWp)
@@ -200,6 +199,7 @@ class PVInput {
 
 abstract class PVInverterCC {
 	#pvInputs: PVInput[]
+	#maxPVPower: number
 	#price: number
 	#subarrayPrice: number
 
@@ -207,17 +207,24 @@ abstract class PVInverterCC {
 	 * A customer archetype and quantity.
 	 *
 	 * @param {Array<PVInput>} pvInputs - Array of PVInputs of device.
+	 * @param {number} maxPVPower - Maximum PV generator power.
 	 * @param {number} price - Price of device.
 	 * @constructor
 	 */
-	constructor(pvInputs: PVInput[], price: number) {
+	constructor(pvInputs: PVInput[], maxPVPower: number, price: number) {
 		this.#pvInputs = pvInputs
+		this.#maxPVPower = maxPVPower
 		this.#price = price
 
 		this.#subarrayPrice = 0
+		var Pmp = 0
 		this.#pvInputs.forEach(pvinput => {
 			this.#subarrayPrice+= pvinput.price
+			Pmp+= pvinput.Pmp
 		})
+		if (Pmp>this.#maxPVPower) {
+			throw new Error('Too much PV input power connected')
+		}
 	}
 
 	copy(): PVInverterCC {
@@ -225,6 +232,7 @@ abstract class PVInverterCC {
 	}
 
 	get PVInputs() { return this.#pvInputs }
+	get maxPVPower() { return this.#maxPVPower }
 	get price() { return this.#price }
 	get totalPrice() { return this.#subarrayPrice + this.#price }
 
@@ -244,14 +252,14 @@ abstract class PVInverterCC {
 class ChargeController extends PVInverterCC {
 	#batteryChargeCurrent: number
 
-	constructor(batteryChargeCurrent: number, pvInputs: PVInput[], price: number) {
-		super(pvInputs, price)
+	constructor(batteryChargeCurrent: number, maxPVPower: number, pvInputs: PVInput[], price: number) {
+		super(pvInputs, maxPVPower, price)
 		this.#batteryChargeCurrent = batteryChargeCurrent
 	}
 
 	copy(): ChargeController {
 		var copiedPVInputs: PVInput[] = this.PVInputs.map(pvInput => pvInput.copy())
-		return new ChargeController(this.#batteryChargeCurrent, copiedPVInputs, this.price)
+		return new ChargeController(this.#batteryChargeCurrent, this.maxPVPower, copiedPVInputs, this.price)
 	}
 
 	get batteryChargeCurrent() { return this.#batteryChargeCurrent }
@@ -264,14 +272,14 @@ class ChargeController extends PVInverterCC {
 class PVInverter extends PVInverterCC {
 	#ratedPower: number
 
-	constructor(ratedPower: number, pvInputs: PVInput[], price: number) {
-		super(pvInputs, price)
+	constructor(ratedPower: number, maxPVPower: number, pvInputs: PVInput[], price: number) {
+		super(pvInputs, maxPVPower, price)
 		this.#ratedPower = ratedPower
 	}
 
 	copy(): PVInverter {
 		var copiedPVInputs: PVInput[] = this.PVInputs.map(pvInput => pvInput.copy())
-		return new PVInverter(this.#ratedPower, copiedPVInputs, this.price)
+		return new PVInverter(this.#ratedPower, this.maxPVPower, copiedPVInputs, this.price)
 	}
 
 	get ratedPower() { return this.#ratedPower }
@@ -676,6 +684,7 @@ class DieselGenerator {
 
 class Customer {
 	#name: string
+	#maxLoad: number
 	#loadProfile: (tariff: number, t: number) => number
 	#qty: number
 
@@ -683,19 +692,22 @@ class Customer {
 	 * A customer archetype and quantity.
 	 *
 	 * @param {string} name - Unique name for the class of customer, e.g. "residential" or "commercial"
+	 * @param {number} maxLoad - Maximum instantaneous load of a single customer [W]
 	 * @param {(tariff: number, t: number) => number} loadProfile - Energy needs of a single customer [kWh/hr] given the tariff and time since commissioning [hr].
 	 * @param {number} qty - Quantity of customers of that archetype.
 	 * @constructor
 	 */
-	constructor(name: string, loadProfile: (tariff: number, t: number) => number, qty: number) {
+	constructor(name: string, maxLoad: number, loadProfile: (tariff: number, t: number) => number, qty: number) {
 		this.#name = name
+		this.#maxLoad = maxLoad
 		this.#loadProfile = loadProfile
 		this.#qty = qty
 	}
 
 	get name() { return this.#name }
+	get maxLoad() { return this.#maxLoad }
+	get totalMaxLoad() { return this.#maxLoad*this.#qty }
 	get loadProfile() { return this.#loadProfile }
-
 	get totalLoadProfile() {
 		return (tariff: number, t: number) => this.loadProfile(tariff, t)*this.#qty
 	}
@@ -950,48 +962,6 @@ class MiniGrid {
 	}
 }
 
-/**
- * Simulate mini-grid performance over time.
- *
- * @param {number} t - The total amount of time to simulate [hr].
- * @param {number} dt - The time interval between simulation steps [hr].
- * @param {number} latitude - The latitude of the generation site.
- * @param {number} longitude - The longitude of the generation site.
- * @param {string} PVWATTS_API_KEY - Alphanumeric key for PV Watts API
- * @param {number} panelsPerStringCC - Number of panels in one string connected to a charge controller
- * @param {number} stringsPerSubarrayCC - Number of strings in one subarray connected to a charge controller
- * @param {number} numChargeControllers - Number of charge controllers at site
- * @param {number} numBatteries - Number of batteries at site
- */
-async function simulate(t: number, dt: number, latitude: number, longitude: number, PVWATTS_API_KEY: string, panelsPerStringCC: number, stringsPerSubarrayCC: number, numChargeControllers: number, numBatteries: number) {
-	
-
-	
-
-	
-
-	var ccGroup: DCCoupledPVGenerationEquipment = new DCCoupledPVGenerationEquipment(ccs)
-
-	var pvInvGroup: ACCoupledPVGenerationEquipment = new ACCoupledPVGenerationEquipment([])
-
-	var smd143: Battery = new Battery(14.3, 0.1, 0, 0, 1000)
-	var batteries: Battery[] = []
-	for (let b: number =0; b<numBatteries; b++) {
-		batteries.push(smd143.copy())
-	}
-
-	var batteryBank: BatteryBank = new BatteryBank(batteries, 48)
-
-	var batteryInv: BatteryInverter = new BatteryInverter(15, .95, .95, 1000)
-
-	var site: GenerationSite = new GenerationSite(batteryInv, batteryBank, pvInvGroup, ccGroup, null)
-	// minigrid.buildGenerationSite(site)
-	
-	for (let t: number =0; t<12; t++){
-		// console.log(minigrid.operate(t, 1))
-	}
-}
-
 interface Credentials {
 	PVWATTS_API_KEY: string
 }
@@ -1048,7 +1018,7 @@ async function run() {
 
 				// Iterate through each hour of the year
 				for (let t=0; t<HR_PER_DAY*DAYS_PER_YR; t++) {
-					const load: string = rows[t+3].split(',')[c+1]
+					const load: string = rows[t+CUSTOMER_CSV_HEADER_ROWS].split(',')[c+1]
 					if (isNaN(Number(load))) {
 						// TODO tariff optimization
 						reject('Tariff optimization not yet supported')
@@ -1060,9 +1030,10 @@ async function run() {
 				// Construct new customer profile and add to the array
 				customers[c] = new Customer(
 					custTypes[c],
+					Number(rows[1].split(',')[c+1]),
 					(tariff: number, t: number) => loadProfileArr[Math.round(t)](tariff),
-					Number(rows[1].split(',')[c+1]))
-				defaultTariffs[c] = Number(rows[2].split(',')[c+1])
+					Number(rows[2].split(',')[c+1]))
+				defaultTariffs[c] = Number(rows[3].split(',')[c+1])
 			}
 
 			resolve(null)
@@ -1115,8 +1086,7 @@ async function run() {
 			Number(cells[3].innerHTML),
 			Number(cells[4].innerHTML),
 			Number(cells[5].innerHTML),
-			Number(cells[6].innerHTML),
-			Number(cells[7].innerHTML)
+			Number(cells[6].innerHTML)
 		))
 	}
 	ccPVInputs[0].connectSubarray(ccSubarray)// TODO: add support for multiple PV inputs. Needs auto stringing
@@ -1139,7 +1109,7 @@ async function run() {
 
 	// PV inverters: connect subarray to PV input
 	var pvinvPVInputs: PVInput[] = []
-	const pvinvInTable = <HTMLTableElement>document.getElementById('pvinv_pv-inverter-inputs')
+	const pvinvInTable = <HTMLTableElement> document.getElementById('pvinv_pv-inverter-inputs')
 	for (let r=1; r<pvinvInTable.rows.length-1; r++) {
 		const cells = pvinvInTable.rows.item(r).cells
 		pvinvPVInputs.push(new PVInput(
@@ -1148,35 +1118,136 @@ async function run() {
 			Number(cells[3].innerHTML),
 			Number(cells[4].innerHTML),
 			Number(cells[5].innerHTML),
-			Number(cells[6].innerHTML),
-			Number(cells[7].innerHTML)
+			Number(cells[6].innerHTML)
 		))
 	}
 	pvinvPVInputs[0].connectSubarray(pvinvSubarray)// TODO: add support for multiple PV inputs. Needs auto stringing
 
-	// TODO: Optimization loop
+	// Battery inverters
+	var indivBattInvs: BatteryInverter[] = []
+	var battInvMaxQtys: number[] = []
+	const battInvTable = <HTMLTableElement> document.getElementById('batt-inv_options')
+	for (let r=1; r<battInvTable.rows.length-1; r++) {
+		const cells = battInvTable.rows.item(r).cells
+		indivBattInvs.push(new BatteryInverter(
+			Number(cells[3].innerHTML),
+			Number(cells[5].innerHTML),
+			Number(cells[4].innerHTML),
+			Number(cells[2].innerHTML)
+		))
+		battInvMaxQtys.push(Number(cells[6].innerHTML))
+	}
+	var battInvs: BatteryInverter[] = []
+	var battInvSizes: number[] = []
+	var battInvPrices: number[] = []
+	for (let b=0; b<indivBattInvs.length; b++) {
+		for (let qty=1; b<=battInvMaxQtys[b]; qty++) {
+			let battInv = new BatteryInverter(
+				indivBattInvs[b].ratedPower*qty,
+				indivBattInvs[b].inverterEfficiency,
+				indivBattInvs[b].chargerEfficiency,
+				indivBattInvs[b].price*qty
+			)
+			let i = battInvSizes.indexOf(battInv.ratedPower)
+			if (i == -1) {	// if there is no battery inverter combination of that size yet, add it
+				let low = 0
+				let high = battInvSizes.length
+
+				while (low < high) {
+					let mid = (low + high) >>> 1;
+					if (battInvSizes[mid] < battInv.ratedPower) low = mid + 1;
+					else high = mid;
+				}
+				battInvs.splice(low, 0, battInv)
+				battInvPrices.splice(low, 0, battInv.price)
+				battInvSizes.splice(low, 0, battInv.ratedPower)
+			} else {	// if there is already a battery inverter combination of that size, replace it iff cheaper
+				if (battInvPrices[i]>battInv.price) {
+					battInvs[i] = battInv
+					battInvPrices[i] = battInv.price
+				}
+			}
+		}
+	}
+	console.log(battInvs)
+
+	// Other constants from form
+	const ccBatteryChargeCurrent = Number((<HTMLInputElement>document.getElementById('ccs_max-output-current')).value)
+	const ccMaxPVPower = Number((<HTMLInputElement>document.getElementById('ccs_max-pv-power')).value)
+	const ccPrice = Number((<HTMLInputElement>document.getElementById('ccs_price')).value)
+	const vac = Number((<HTMLInputElement>document.getElementById('overview_vac')).value)
+	const pvinvBatteryChargeCurrent = Number((<HTMLInputElement>document.getElementById('pvinv_max-output-power')).value)/vac
+	const pvinvMaxPVPower = Number((<HTMLInputElement>document.getElementById('pvinv_max-pv-power')).value)
+	const pvinvPrice = Number((<HTMLInputElement>document.getElementById('pvinv_price')).value)
+	const battCapacity = Number((<HTMLInputElement>document.getElementById('batt_capacity')).value)
+	const minSOC = Number((<HTMLInputElement>document.getElementById('batt_minSOC')).value)
+	const cRate = Number((<HTMLInputElement>document.getElementById('batt_c-rate')).value)
+	const battPrice = Number((<HTMLInputElement>document.getElementById('batt_price')).value)
+	const battDCV = Number((<HTMLInputElement>document.getElementById('batt_dcv')).value)
+	const dxLosses = Number((<HTMLInputElement>document.getElementById('dx_losses')).value)/100
+
+	// Assemble decision variables
 	var decisionVariables = {
-		numChargeControllers: 1,
-		numPVInverters: 1,
-		numBatteries: 1
+		numChargeControllers: { value: 1, step: 1 },
+		numPVInverters: { value: 1, step: 1 },
+		numBatteries: { value: 1, step: 1 }
+	}
+	for (let c=0; c<customers.length; c++) {
+		decisionVariables[`tariff${c}`] = defaultTariffs[c]
 	}
 	while (true) {
-		// For each combination of decision variables
+		// Construct charge controllers
+		var cc: ChargeController = new ChargeController(ccBatteryChargeCurrent, ccMaxPVPower, ccPVInputs, ccPrice)
+		var ccs: ChargeController[] = []
+		for (let c=0; c<decisionVariables.numChargeControllers.value; c++) {
+			ccs.push(cc.copy())
+		}
+		var ccGroup: DCCoupledPVGenerationEquipment = new DCCoupledPVGenerationEquipment(ccs)
 
-			// TODO: Pick battery inverter and genset to be barely big enough to handle load
+		// Construct PV inverters
+		var pvinv: PVInverter = new PVInverter(pvinvBatteryChargeCurrent, pvinvMaxPVPower, pvinvPVInputs, pvinvPrice)
+		var pvInvs: PVInverter[] = []
+		for (let p=0; p<decisionVariables.numPVInverters.value; p++) {
+			pvInvs.push(pvinv.copy())
+		}
+		var pvInvGroup: ACCoupledPVGenerationEquipment = new ACCoupledPVGenerationEquipment(pvInvs)
 
-			// Construct charge controllers
-			var cc: ChargeController = new ChargeController(85, ccPVInputs, 588.88)
-			var ccs: ChargeController[] = []
-			for (let c: number =0; c<decisionVariables.numChargeControllers; c++) {
-				ccs.push(cc.copy())
+		// Construct battery bank
+		var batt = new Battery(battCapacity, minSOC, cRate, cRate, battPrice)
+		var batteries: Battery[] = []
+		for (let b=0; b<decisionVariables.numBatteries.value; b++) {
+			batteries.push(batt.copy())
+		}
+		var batteryBank: BatteryBank = new BatteryBank(batteries, battDCV)
+
+		// Pick battery inverter to handle max load
+		var maxLoad = customers.reduce((sum, customer) => customer.totalMaxLoad + sum, 0)/(1-dxLosses)*FOS_MAX_LOAD
+		var battInv: BatteryInverter
+		for (let newBattInv of battInvs) {
+			if (newBattInv.ratedPower>=maxLoad) {
+				battInv = newBattInv
+				break
 			}
+		}
+		if (typeof battInv === 'undefined') {
+			throw new Error('No battery inverter is big enough')
+		}
 
-			// TODO: Simulate
+		// TODO: Genset optimization
 
-			// TODO: Create BOQ
+		// Build generation site
+		var site: GenerationSite = new GenerationSite(battInv, batteryBank, pvInvGroup, ccGroup, null)
+		minigrid.buildGenerationSite(site)
 
-			// TODO: Compute IRR
+		// TODO: Simulate
+		for (let t=0; t<12; t++){
+			console.log(minigrid.operate(t, 1))
+		}
+
+		// TODO: Create BOQ
+
+		// TODO: Compute IRR
+
 		// Move in the direction of steepest IRR ascent
 
 		break	// TODO: remove. I just added this so it wouldn't hang during testing.

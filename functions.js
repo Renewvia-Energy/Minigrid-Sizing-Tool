@@ -9,11 +9,13 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _Panel_Pmp, _Panel_Voc, _Panel_Vmp, _Panel_Isc, _Panel_Imp, _Panel_price, _PVString_panels, _PVString_Pmp, _PVString_Voc, _PVString_Vmp, _PVString_Isc, _PVString_Imp, _PVString_price, _Subarray_pvStrings, _Subarray_arrayLosses, _Subarray_Voc, _Subarray_Vmp, _Subarray_Pmp, _Subarray_Isc, _Subarray_Imp, _Subarray_price, _PVInput_Voc_min, _PVInput_Voc_max, _PVInput_Vmp_min, _PVInput_Vmp_max, _PVInput_Isc_max, _PVInput_Imp_max, _PVInput_PVPowerMax, _PVInput_price, _PVInput_subarray, _PVInverterCC_pvInputs, _PVInverterCC_price, _PVInverterCC_subarrayPrice, _ChargeController_batteryChargeCurrent, _PVInverter_ratedPower, _ACDCCoupledEquipmentGroup_equipmentGroup, _DCCoupledPVGenerationEquipment_equipmentGroup, _ACCoupledPVGenerationEquipment_equipmentGroup, _Battery_capacity, _Battery_minSOC, _Battery_cRate, _Battery_dRate, _Battery_price, _BatteryBank_batteries, _BatteryBank_outputVoltage, _BatteryBank_minSOC, _BatteryBank_cRate, _BatteryBank_dRate, _BatteryBank_price, _BatteryBank_capacity, _BatteryBank_energy, _BatteryBank_cumE, _BatteryInverter_ratedPower, _BatteryInverter_inverterEfficiency, _BatteryInverter_chargerEfficiency, _BatteryInverter_price, _BatteryInverter_batteryBank, _DieselGenerator_ratedPower, _DieselGenerator_price, _DieselGenerator_runHours, _DieselGenerator_dieselConsumed, _DieselGenerator_turnedOn, _DieselGenerator_currentOutput, _DieselGenerator_generatorRow, _Customer_name, _Customer_loadProfile, _Customer_qty, _GenerationSite_batteryInverter, _GenerationSite_batteryBank, _GenerationSite_pvInverters, _GenerationSite_chargeControllers, _GenerationSite_generator, _GenerationSite_shouldTurnGeneratorOn, _GenerationSite_shouldTurnGeneratorOff, _GenerationSite_acBus, _MiniGrid_customers, _MiniGrid_tariff, _MiniGrid_dxLosses, _MiniGrid_dcArrayOutputkWhPerkWpFn, _MiniGrid_generationSite;
+var _Panel_Pmp, _Panel_Voc, _Panel_Vmp, _Panel_Isc, _Panel_Imp, _Panel_price, _PVString_panels, _PVString_Pmp, _PVString_Voc, _PVString_Vmp, _PVString_Isc, _PVString_Imp, _PVString_price, _Subarray_pvStrings, _Subarray_arrayLosses, _Subarray_Voc, _Subarray_Vmp, _Subarray_Pmp, _Subarray_Isc, _Subarray_Imp, _Subarray_price, _PVInput_Voc_min, _PVInput_Voc_max, _PVInput_Vmp_min, _PVInput_Vmp_max, _PVInput_Isc_max, _PVInput_Imp_max, _PVInput_price, _PVInput_subarray, _PVInverterCC_pvInputs, _PVInverterCC_maxPVPower, _PVInverterCC_price, _PVInverterCC_subarrayPrice, _ChargeController_batteryChargeCurrent, _PVInverter_ratedPower, _ACDCCoupledEquipmentGroup_equipmentGroup, _DCCoupledPVGenerationEquipment_equipmentGroup, _ACCoupledPVGenerationEquipment_equipmentGroup, _Battery_capacity, _Battery_minSOC, _Battery_cRate, _Battery_dRate, _Battery_price, _BatteryBank_batteries, _BatteryBank_outputVoltage, _BatteryBank_minSOC, _BatteryBank_cRate, _BatteryBank_dRate, _BatteryBank_price, _BatteryBank_capacity, _BatteryBank_energy, _BatteryBank_cumE, _BatteryInverter_ratedPower, _BatteryInverter_inverterEfficiency, _BatteryInverter_chargerEfficiency, _BatteryInverter_price, _BatteryInverter_batteryBank, _DieselGenerator_ratedPower, _DieselGenerator_price, _DieselGenerator_runHours, _DieselGenerator_dieselConsumed, _DieselGenerator_turnedOn, _DieselGenerator_currentOutput, _DieselGenerator_generatorRow, _Customer_name, _Customer_maxLoad, _Customer_loadProfile, _Customer_qty, _GenerationSite_batteryInverter, _GenerationSite_batteryBank, _GenerationSite_pvInverters, _GenerationSite_chargeControllers, _GenerationSite_generator, _GenerationSite_shouldTurnGeneratorOn, _GenerationSite_shouldTurnGeneratorOff, _GenerationSite_acBus, _MiniGrid_customers, _MiniGrid_tariff, _MiniGrid_dxLosses, _MiniGrid_dcArrayOutputkWhPerkWpFn, _MiniGrid_generationSite;
 const L_PER_GAL = 4.54609;
 const HR_PER_DAY = 24;
 const DAYS_PER_YR = 365;
 const LV_VOLTAGE = 240;
+const CUSTOMER_CSV_HEADER_ROWS = 4;
+const FOS_MAX_LOAD = 2;
 class Panel {
     constructor(Pmp, Voc, Vmp, Isc, Imp, price) {
         _Panel_Pmp.set(this, void 0);
@@ -136,14 +138,13 @@ class Subarray {
 }
 _Subarray_pvStrings = new WeakMap(), _Subarray_arrayLosses = new WeakMap(), _Subarray_Voc = new WeakMap(), _Subarray_Vmp = new WeakMap(), _Subarray_Pmp = new WeakMap(), _Subarray_Isc = new WeakMap(), _Subarray_Imp = new WeakMap(), _Subarray_price = new WeakMap();
 class PVInput {
-    constructor(Voc_min, Voc_max, Vmp_min, Vmp_max, Isc_max, Imp_max, PVPowerMax) {
+    constructor(Voc_min, Voc_max, Vmp_min, Vmp_max, Isc_max, Imp_max) {
         _PVInput_Voc_min.set(this, void 0);
         _PVInput_Voc_max.set(this, void 0);
         _PVInput_Vmp_min.set(this, void 0);
         _PVInput_Vmp_max.set(this, void 0);
         _PVInput_Isc_max.set(this, void 0);
         _PVInput_Imp_max.set(this, void 0);
-        _PVInput_PVPowerMax.set(this, void 0);
         _PVInput_price.set(this, void 0);
         _PVInput_subarray.set(this, void 0);
         __classPrivateFieldSet(this, _PVInput_Voc_min, Voc_min, "f");
@@ -152,7 +153,6 @@ class PVInput {
         __classPrivateFieldSet(this, _PVInput_Vmp_max, Vmp_max, "f");
         __classPrivateFieldSet(this, _PVInput_Isc_max, Isc_max, "f");
         __classPrivateFieldSet(this, _PVInput_Imp_max, Imp_max, "f");
-        __classPrivateFieldSet(this, _PVInput_PVPowerMax, PVPowerMax, "f");
         __classPrivateFieldSet(this, _PVInput_price, 0, "f");
     }
     connectSubarray(subarray) {
@@ -169,46 +169,53 @@ class PVInput {
         if (__classPrivateFieldGet(this, _PVInput_subarray, "f").Imp > __classPrivateFieldGet(this, _PVInput_Imp_max, "f")) {
             throw new Error(`Subarray Imp ${__classPrivateFieldGet(this, _PVInput_subarray, "f").Imp} is greater than the charge controller Imp_max ${__classPrivateFieldGet(this, _PVInput_Imp_max, "f")}`);
         }
-        if (__classPrivateFieldGet(this, _PVInput_subarray, "f").Pmp > __classPrivateFieldGet(this, _PVInput_PVPowerMax, "f")) {
-            throw new Error(`Subarray Pmp ${__classPrivateFieldGet(this, _PVInput_subarray, "f").Pmp} is greater than the charge controller PVPowerMax ${__classPrivateFieldGet(this, _PVInput_PVPowerMax, "f")}`);
-        }
         __classPrivateFieldSet(this, _PVInput_price, __classPrivateFieldGet(this, _PVInput_subarray, "f").price, "f");
     }
     copy() {
         var copiedSubarray = __classPrivateFieldGet(this, _PVInput_subarray, "f").copy();
-        var copiedPVInput = new PVInput(__classPrivateFieldGet(this, _PVInput_Voc_min, "f"), __classPrivateFieldGet(this, _PVInput_Voc_max, "f"), __classPrivateFieldGet(this, _PVInput_Vmp_min, "f"), __classPrivateFieldGet(this, _PVInput_Vmp_max, "f"), __classPrivateFieldGet(this, _PVInput_Isc_max, "f"), __classPrivateFieldGet(this, _PVInput_Imp_max, "f"), __classPrivateFieldGet(this, _PVInput_PVPowerMax, "f"));
+        var copiedPVInput = new PVInput(__classPrivateFieldGet(this, _PVInput_Voc_min, "f"), __classPrivateFieldGet(this, _PVInput_Voc_max, "f"), __classPrivateFieldGet(this, _PVInput_Vmp_min, "f"), __classPrivateFieldGet(this, _PVInput_Vmp_max, "f"), __classPrivateFieldGet(this, _PVInput_Isc_max, "f"), __classPrivateFieldGet(this, _PVInput_Imp_max, "f"));
         copiedPVInput.connectSubarray(copiedSubarray);
         return copiedPVInput;
     }
     get price() { return __classPrivateFieldGet(this, _PVInput_price, "f"); }
+    get Pmp() { return __classPrivateFieldGet(this, _PVInput_subarray, "f").Pmp; }
     getEnergy(dcArrayOutputkWhPerkWp) {
         return __classPrivateFieldGet(this, _PVInput_subarray, "f").getEnergy(dcArrayOutputkWhPerkWp);
     }
 }
-_PVInput_Voc_min = new WeakMap(), _PVInput_Voc_max = new WeakMap(), _PVInput_Vmp_min = new WeakMap(), _PVInput_Vmp_max = new WeakMap(), _PVInput_Isc_max = new WeakMap(), _PVInput_Imp_max = new WeakMap(), _PVInput_PVPowerMax = new WeakMap(), _PVInput_price = new WeakMap(), _PVInput_subarray = new WeakMap();
+_PVInput_Voc_min = new WeakMap(), _PVInput_Voc_max = new WeakMap(), _PVInput_Vmp_min = new WeakMap(), _PVInput_Vmp_max = new WeakMap(), _PVInput_Isc_max = new WeakMap(), _PVInput_Imp_max = new WeakMap(), _PVInput_price = new WeakMap(), _PVInput_subarray = new WeakMap();
 class PVInverterCC {
     /**
      * A customer archetype and quantity.
      *
      * @param {Array<PVInput>} pvInputs - Array of PVInputs of device.
+     * @param {number} maxPVPower - Maximum PV generator power.
      * @param {number} price - Price of device.
      * @constructor
      */
-    constructor(pvInputs, price) {
+    constructor(pvInputs, maxPVPower, price) {
         _PVInverterCC_pvInputs.set(this, void 0);
+        _PVInverterCC_maxPVPower.set(this, void 0);
         _PVInverterCC_price.set(this, void 0);
         _PVInverterCC_subarrayPrice.set(this, void 0);
         __classPrivateFieldSet(this, _PVInverterCC_pvInputs, pvInputs, "f");
+        __classPrivateFieldSet(this, _PVInverterCC_maxPVPower, maxPVPower, "f");
         __classPrivateFieldSet(this, _PVInverterCC_price, price, "f");
         __classPrivateFieldSet(this, _PVInverterCC_subarrayPrice, 0, "f");
+        var Pmp = 0;
         __classPrivateFieldGet(this, _PVInverterCC_pvInputs, "f").forEach(pvinput => {
             __classPrivateFieldSet(this, _PVInverterCC_subarrayPrice, __classPrivateFieldGet(this, _PVInverterCC_subarrayPrice, "f") + pvinput.price, "f");
+            Pmp += pvinput.Pmp;
         });
+        if (Pmp > __classPrivateFieldGet(this, _PVInverterCC_maxPVPower, "f")) {
+            throw new Error('Too much PV input power connected');
+        }
     }
     copy() {
         throw new Error('Must implement');
     }
     get PVInputs() { return __classPrivateFieldGet(this, _PVInverterCC_pvInputs, "f"); }
+    get maxPVPower() { return __classPrivateFieldGet(this, _PVInverterCC_maxPVPower, "f"); }
     get price() { return __classPrivateFieldGet(this, _PVInverterCC_price, "f"); }
     get totalPrice() { return __classPrivateFieldGet(this, _PVInverterCC_subarrayPrice, "f") + __classPrivateFieldGet(this, _PVInverterCC_price, "f"); }
     getUnlimitedEnergy(dcArrayOutputkWhPerkWp) {
@@ -222,16 +229,16 @@ class PVInverterCC {
         throw new Error('Need to implement.');
     }
 }
-_PVInverterCC_pvInputs = new WeakMap(), _PVInverterCC_price = new WeakMap(), _PVInverterCC_subarrayPrice = new WeakMap();
+_PVInverterCC_pvInputs = new WeakMap(), _PVInverterCC_maxPVPower = new WeakMap(), _PVInverterCC_price = new WeakMap(), _PVInverterCC_subarrayPrice = new WeakMap();
 class ChargeController extends PVInverterCC {
-    constructor(batteryChargeCurrent, pvInputs, price) {
-        super(pvInputs, price);
+    constructor(batteryChargeCurrent, maxPVPower, pvInputs, price) {
+        super(pvInputs, maxPVPower, price);
         _ChargeController_batteryChargeCurrent.set(this, void 0);
         __classPrivateFieldSet(this, _ChargeController_batteryChargeCurrent, batteryChargeCurrent, "f");
     }
     copy() {
         var copiedPVInputs = this.PVInputs.map(pvInput => pvInput.copy());
-        return new ChargeController(__classPrivateFieldGet(this, _ChargeController_batteryChargeCurrent, "f"), copiedPVInputs, this.price);
+        return new ChargeController(__classPrivateFieldGet(this, _ChargeController_batteryChargeCurrent, "f"), this.maxPVPower, copiedPVInputs, this.price);
     }
     get batteryChargeCurrent() { return __classPrivateFieldGet(this, _ChargeController_batteryChargeCurrent, "f"); }
     getEnergy(dcArrayOutputkWhPerkWp, outputVoltage, dt) {
@@ -240,14 +247,14 @@ class ChargeController extends PVInverterCC {
 }
 _ChargeController_batteryChargeCurrent = new WeakMap();
 class PVInverter extends PVInverterCC {
-    constructor(ratedPower, pvInputs, price) {
-        super(pvInputs, price);
+    constructor(ratedPower, maxPVPower, pvInputs, price) {
+        super(pvInputs, maxPVPower, price);
         _PVInverter_ratedPower.set(this, void 0);
         __classPrivateFieldSet(this, _PVInverter_ratedPower, ratedPower, "f");
     }
     copy() {
         var copiedPVInputs = this.PVInputs.map(pvInput => pvInput.copy());
-        return new PVInverter(__classPrivateFieldGet(this, _PVInverter_ratedPower, "f"), copiedPVInputs, this.price);
+        return new PVInverter(__classPrivateFieldGet(this, _PVInverter_ratedPower, "f"), this.maxPVPower, copiedPVInputs, this.price);
     }
     get ratedPower() { return __classPrivateFieldGet(this, _PVInverter_ratedPower, "f"); }
     getEnergy(dcArrayOutputkWhPerkWp, outputVoltage, dt) {
@@ -596,19 +603,24 @@ class Customer {
      * A customer archetype and quantity.
      *
      * @param {string} name - Unique name for the class of customer, e.g. "residential" or "commercial"
+     * @param {number} maxLoad - Maximum instantaneous load of a single customer [W]
      * @param {(tariff: number, t: number) => number} loadProfile - Energy needs of a single customer [kWh/hr] given the tariff and time since commissioning [hr].
      * @param {number} qty - Quantity of customers of that archetype.
      * @constructor
      */
-    constructor(name, loadProfile, qty) {
+    constructor(name, maxLoad, loadProfile, qty) {
         _Customer_name.set(this, void 0);
+        _Customer_maxLoad.set(this, void 0);
         _Customer_loadProfile.set(this, void 0);
         _Customer_qty.set(this, void 0);
         __classPrivateFieldSet(this, _Customer_name, name, "f");
+        __classPrivateFieldSet(this, _Customer_maxLoad, maxLoad, "f");
         __classPrivateFieldSet(this, _Customer_loadProfile, loadProfile, "f");
         __classPrivateFieldSet(this, _Customer_qty, qty, "f");
     }
     get name() { return __classPrivateFieldGet(this, _Customer_name, "f"); }
+    get maxLoad() { return __classPrivateFieldGet(this, _Customer_maxLoad, "f"); }
+    get totalMaxLoad() { return __classPrivateFieldGet(this, _Customer_maxLoad, "f") * __classPrivateFieldGet(this, _Customer_qty, "f"); }
     get loadProfile() { return __classPrivateFieldGet(this, _Customer_loadProfile, "f"); }
     get totalLoadProfile() {
         return (tariff, t) => this.loadProfile(tariff, t) * __classPrivateFieldGet(this, _Customer_qty, "f");
@@ -621,7 +633,7 @@ class Customer {
         return this.totalLoadProfile(tariff, t);
     }
 }
-_Customer_name = new WeakMap(), _Customer_loadProfile = new WeakMap(), _Customer_qty = new WeakMap();
+_Customer_name = new WeakMap(), _Customer_maxLoad = new WeakMap(), _Customer_loadProfile = new WeakMap(), _Customer_qty = new WeakMap();
 class GenerationSite {
     /**
      * All of the equipment at a generation site.
@@ -813,53 +825,6 @@ class MiniGrid {
     }
 }
 _MiniGrid_customers = new WeakMap(), _MiniGrid_tariff = new WeakMap(), _MiniGrid_dxLosses = new WeakMap(), _MiniGrid_dcArrayOutputkWhPerkWpFn = new WeakMap(), _MiniGrid_generationSite = new WeakMap();
-/**
- * Simulate mini-grid performance over time.
- *
- * @param {number} t - The total amount of time to simulate [hr].
- * @param {number} dt - The time interval between simulation steps [hr].
- * @param {number} latitude - The latitude of the generation site.
- * @param {number} longitude - The longitude of the generation site.
- * @param {string} PVWATTS_API_KEY - Alphanumeric key for PV Watts API
- * @param {number} panelsPerStringCC - Number of panels in one string connected to a charge controller
- * @param {number} stringsPerSubarrayCC - Number of strings in one subarray connected to a charge controller
- * @param {number} numChargeControllers - Number of charge controllers at site
- * @param {number} numBatteries - Number of batteries at site
- */
-async function simulate(t, dt, latitude, longitude, PVWATTS_API_KEY, panelsPerStringCC, stringsPerSubarrayCC, numChargeControllers, numBatteries) {
-    var jkm445m = new Panel(0.445, 49.07, 41.17, 11.46, 10.81, 445 * 0.2630);
-    var panels = [];
-    for (let p = 0; p < panelsPerStringCC; p++) {
-        panels.push(jkm445m.copy());
-    }
-    var pvString = new PVString(panels);
-    var pvStrings = [];
-    for (let s = 0; s < stringsPerSubarrayCC; s++) {
-        pvStrings.push(pvString.copy());
-    }
-    var subarray = new Subarray(pvStrings, 0.1);
-    var pvInput = new PVInput(60, 245, 60, 245, 70, 70, 4.9);
-    pvInput.connectSubarray(subarray);
-    var cc = new ChargeController(85, [pvInput], 588.88);
-    var ccs = [];
-    for (let c = 0; c < numChargeControllers; c++) {
-        ccs.push(cc.copy());
-    }
-    var ccGroup = new DCCoupledPVGenerationEquipment(ccs);
-    var pvInvGroup = new ACCoupledPVGenerationEquipment([]);
-    var smd143 = new Battery(14.3, 0.1, 0, 0, 1000);
-    var batteries = [];
-    for (let b = 0; b < numBatteries; b++) {
-        batteries.push(smd143.copy());
-    }
-    var batteryBank = new BatteryBank(batteries, 48);
-    var batteryInv = new BatteryInverter(15, .95, .95, 1000);
-    var site = new GenerationSite(batteryInv, batteryBank, pvInvGroup, ccGroup, null);
-    // minigrid.buildGenerationSite(site)
-    for (let t = 0; t < 12; t++) {
-        // console.log(minigrid.operate(t, 1))
-    }
-}
 async function run() {
     // Get credentials
     var creds;
@@ -876,6 +841,7 @@ async function run() {
     await loadCredFile;
     // Get customers
     var customers;
+    var defaultTariffs;
     const loadCustomerFile = new Promise((resolve, reject) => {
         const custFileInput = document.getElementById('customers_customers');
         const custFR = new FileReader();
@@ -883,33 +849,191 @@ async function run() {
             const contents = custFR.result;
             const rows = contents.split('\r\n');
             const custTypes = rows[0].split(',').slice(1);
+            defaultTariffs = new Array(custTypes.length);
+            // For each customer
             for (let c = 0; c < custTypes.length; c++) {
                 var loadProfileArr = new Array(HR_PER_DAY * DAYS_PER_YR);
+                // Iterate through each hour of the year
                 for (let t = 0; t < HR_PER_DAY * DAYS_PER_YR; t++) {
-                    const load = rows[t + 3].split(',')[c + 1];
-                    console.log(load);
-                    resolve(null);
+                    const load = rows[t + CUSTOMER_CSV_HEADER_ROWS].split(',')[c + 1];
+                    if (isNaN(Number(load))) {
+                        // TODO tariff optimization
+                        reject('Tariff optimization not yet supported');
+                    }
+                    else {
+                        loadProfileArr.push((tariff) => Number(load));
+                    }
                 }
+                // Construct new customer profile and add to the array
+                customers[c] = new Customer(custTypes[c], Number(rows[1].split(',')[c + 1]), (tariff, t) => loadProfileArr[Math.round(t)](tariff), Number(rows[2].split(',')[c + 1]));
+                defaultTariffs[c] = Number(rows[3].split(',')[c + 1]);
             }
             resolve(null);
         };
         custFR.readAsText(custFileInput.files[0]);
     });
     await loadCustomerFile;
-    // TODO: Extract data from form
-    const latitude = document.getElementById('location_lat').value;
-    const longitude = document.getElementById('location_lat').value;
-    // TODO: Pick battery inverter and genset to be barely big enough to handle load
     // Initialize Mini-Grid
-    var genericCustomer = new Customer('generic', t => 30, 2);
-    var customers = [genericCustomer];
+    const latitude = Number(document.getElementById('location_lat').value);
+    const longitude = Number(document.getElementById('location_lat').value);
     var minigrid = new MiniGrid(customers, (name, t) => 1, 0.1);
-    // await minigrid.place(latitude, longitude, false, PVWATTS_API_KEY)
-    // TODO: Optimization loop
-    // For each combination of decision variables
-    // TODO: Simulate
-    // TODO: Create BOQ
-    // TODO: Compute IRR
-    // Move in the direction of steepest IRR ascent
+    await minigrid.place(latitude, longitude, false, creds.PVWATTS_API_KEY);
+    // Construct panel
+    const pvPmp = Number(document.getElementById('pv_Pmp').value);
+    var panel = new Panel(pvPmp, Number(document.getElementById('pv_Voc').value), Number(document.getElementById('pv_Vmp').value), Number(document.getElementById('pv_Isc').value), Number(document.getElementById('pv_Imp').value), pvPmp * Number(document.getElementById('pv_price').value));
+    // Charge controller: assemble panels into string
+    var ccPanels = [];
+    const panelsPerStringCC = Number(document.getElementById('ccs_panels-per-string').value);
+    for (let p = 0; p < panelsPerStringCC; p++) {
+        ccPanels.push(panel.copy());
+    }
+    // Charge controller: assemble strings into subarray
+    var pvString = new PVString(ccPanels);
+    var ccStrings = [];
+    const stringsPerSubarrayCC = Number(document.getElementById('ccs-strings').value);
+    for (let s = 0; s < stringsPerSubarrayCC; s++) {
+        ccStrings.push(pvString.copy());
+    }
+    const arrayLosses = Number(document.getElementById('overview_array-losses').value);
+    var ccSubarray = new Subarray(ccStrings, arrayLosses);
+    // Charge controller: connect subarray to PV input
+    var ccPVInputs = [];
+    const ccInTable = document.getElementById('ccs_charge-controller-inputs');
+    for (let r = 1; r < ccInTable.rows.length - 1; r++) {
+        const cells = ccInTable.rows.item(r).cells;
+        ccPVInputs.push(new PVInput(Number(cells[1].innerHTML), Number(cells[2].innerHTML), Number(cells[3].innerHTML), Number(cells[4].innerHTML), Number(cells[5].innerHTML), Number(cells[6].innerHTML)));
+    }
+    ccPVInputs[0].connectSubarray(ccSubarray); // TODO: add support for multiple PV inputs. Needs auto stringing
+    // PV inverters: assemble panels into string
+    var pvinvPanels = [];
+    const panelsPerStringPVInv = Number(document.getElementById('pvinv_panels-per-string').value);
+    for (let p = 0; p < panelsPerStringPVInv; p++) {
+        pvinvPanels.push(panel.copy());
+    }
+    // PV inverters: assemble strings into subarray
+    pvString = new PVString(pvinvPanels);
+    var pvinvStrings = [];
+    const stringsPerSubarrayPVInv = Number(document.getElementById('pvinv-strings').value);
+    for (let s = 0; s < stringsPerSubarrayPVInv; s++) {
+        pvinvStrings.push(pvString.copy());
+    }
+    var pvinvSubarray = new Subarray(pvinvStrings, arrayLosses);
+    // PV inverters: connect subarray to PV input
+    var pvinvPVInputs = [];
+    const pvinvInTable = document.getElementById('pvinv_pv-inverter-inputs');
+    for (let r = 1; r < pvinvInTable.rows.length - 1; r++) {
+        const cells = pvinvInTable.rows.item(r).cells;
+        pvinvPVInputs.push(new PVInput(Number(cells[1].innerHTML), Number(cells[2].innerHTML), Number(cells[3].innerHTML), Number(cells[4].innerHTML), Number(cells[5].innerHTML), Number(cells[6].innerHTML)));
+    }
+    pvinvPVInputs[0].connectSubarray(pvinvSubarray); // TODO: add support for multiple PV inputs. Needs auto stringing
+    // Battery inverters
+    var indivBattInvs = [];
+    var battInvMaxQtys = [];
+    const battInvTable = document.getElementById('batt-inv_options');
+    for (let r = 1; r < battInvTable.rows.length - 1; r++) {
+        const cells = battInvTable.rows.item(r).cells;
+        indivBattInvs.push(new BatteryInverter(Number(cells[3].innerHTML), Number(cells[5].innerHTML), Number(cells[4].innerHTML), Number(cells[2].innerHTML)));
+        battInvMaxQtys.push(Number(cells[6].innerHTML));
+    }
+    var battInvs = [];
+    var battInvSizes = [];
+    var battInvPrices = [];
+    for (let b = 0; b < indivBattInvs.length; b++) {
+        for (let qty = 1; b <= battInvMaxQtys[b]; qty++) {
+            let battInv = new BatteryInverter(indivBattInvs[b].ratedPower * qty, indivBattInvs[b].inverterEfficiency, indivBattInvs[b].chargerEfficiency, indivBattInvs[b].price * qty);
+            let i = battInvSizes.indexOf(battInv.ratedPower);
+            if (i == -1) { // if there is no battery inverter combination of that size yet, add it
+                let low = 0;
+                let high = battInvSizes.length;
+                while (low < high) {
+                    let mid = (low + high) >>> 1;
+                    if (battInvSizes[mid] < battInv.ratedPower)
+                        low = mid + 1;
+                    else
+                        high = mid;
+                }
+                battInvs.splice(low, 0, battInv);
+                battInvPrices.splice(low, 0, battInv.price);
+                battInvSizes.splice(low, 0, battInv.ratedPower);
+            }
+            else { // if there is already a battery inverter combination of that size, replace it iff cheaper
+                if (battInvPrices[i] > battInv.price) {
+                    battInvs[i] = battInv;
+                    battInvPrices[i] = battInv.price;
+                }
+            }
+        }
+    }
+    console.log(battInvs);
+    // Other constants from form
+    const ccBatteryChargeCurrent = Number(document.getElementById('ccs_max-output-current').value);
+    const ccMaxPVPower = Number(document.getElementById('ccs_max-pv-power').value);
+    const ccPrice = Number(document.getElementById('ccs_price').value);
+    const vac = Number(document.getElementById('overview_vac').value);
+    const pvinvBatteryChargeCurrent = Number(document.getElementById('pvinv_max-output-power').value) / vac;
+    const pvinvMaxPVPower = Number(document.getElementById('pvinv_max-pv-power').value);
+    const pvinvPrice = Number(document.getElementById('pvinv_price').value);
+    const battCapacity = Number(document.getElementById('batt_capacity').value);
+    const minSOC = Number(document.getElementById('batt_minSOC').value);
+    const cRate = Number(document.getElementById('batt_c-rate').value);
+    const battPrice = Number(document.getElementById('batt_price').value);
+    const battDCV = Number(document.getElementById('batt_dcv').value);
+    const dxLosses = Number(document.getElementById('dx_losses').value) / 100;
+    // Assemble decision variables
+    var decisionVariables = {
+        numChargeControllers: { value: 1, step: 1 },
+        numPVInverters: { value: 1, step: 1 },
+        numBatteries: { value: 1, step: 1 }
+    };
+    for (let c = 0; c < customers.length; c++) {
+        decisionVariables[`tariff${c}`] = defaultTariffs[c];
+    }
+    while (true) {
+        // Construct charge controllers
+        var cc = new ChargeController(ccBatteryChargeCurrent, ccMaxPVPower, ccPVInputs, ccPrice);
+        var ccs = [];
+        for (let c = 0; c < decisionVariables.numChargeControllers.value; c++) {
+            ccs.push(cc.copy());
+        }
+        var ccGroup = new DCCoupledPVGenerationEquipment(ccs);
+        // Construct PV inverters
+        var pvinv = new PVInverter(pvinvBatteryChargeCurrent, pvinvMaxPVPower, pvinvPVInputs, pvinvPrice);
+        var pvInvs = [];
+        for (let p = 0; p < decisionVariables.numPVInverters.value; p++) {
+            pvInvs.push(pvinv.copy());
+        }
+        var pvInvGroup = new ACCoupledPVGenerationEquipment(pvInvs);
+        // Construct battery bank
+        var batt = new Battery(battCapacity, minSOC, cRate, cRate, battPrice);
+        var batteries = [];
+        for (let b = 0; b < decisionVariables.numBatteries.value; b++) {
+            batteries.push(batt.copy());
+        }
+        var batteryBank = new BatteryBank(batteries, battDCV);
+        // Pick battery inverter to handle max load
+        var maxLoad = customers.reduce((sum, customer) => customer.totalMaxLoad + sum, 0) / (1 - dxLosses) * FOS_MAX_LOAD;
+        var battInv;
+        for (let newBattInv of battInvs) {
+            if (newBattInv.ratedPower >= maxLoad) {
+                battInv = newBattInv;
+                break;
+            }
+        }
+        if (typeof battInv === 'undefined') {
+            throw new Error('No battery inverter is big enough');
+        }
+        // TODO: Genset optimization
+        // Build generation site
+        var site = new GenerationSite(battInv, batteryBank, pvInvGroup, ccGroup, null);
+        minigrid.buildGenerationSite(site);
+        // TODO: Simulate
+        for (let t = 0; t < 12; t++) {
+            console.log(minigrid.operate(t, 1));
+        }
+        // TODO: Create BOQ
+        // TODO: Compute IRR
+        // Move in the direction of steepest IRR ascent
+        break; // TODO: remove. I just added this so it wouldn't hang during testing.
+    }
 }
 document.getElementById('run').addEventListener('click', run);
