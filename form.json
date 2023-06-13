@@ -84,6 +84,7 @@
 		]
 	},{
 		"header": "Batteries",
+		"key": "batt",
 		"questions": [
 			{
 				"label": "Technical Specifications",
