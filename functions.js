@@ -820,12 +820,13 @@ _MiniGrid_customers = new WeakMap(), _MiniGrid_tariff = new WeakMap(), _MiniGrid
  * @param {number} dt - The time interval between simulation steps [hr].
  * @param {number} latitude - The latitude of the generation site.
  * @param {number} longitude - The longitude of the generation site.
+ * @param {string} PVWATTS_API_KEY - Alphanumeric key for PV Watts API
+ * @param {number} panelsPerStringCC - Number of panels in one string connected to a charge controller
+ * @param {number} stringsPerSubarrayCC - Number of strings in one subarray connected to a charge controller
+ * @param {number} numChargeControllers - Number of charge controllers at site
+ * @param {number} numBatteries - Number of batteries at site
  */
 async function simulate(t, dt, latitude, longitude, PVWATTS_API_KEY, panelsPerStringCC, stringsPerSubarrayCC, numChargeControllers, numBatteries) {
-    var genericCustomer = new Customer('generic', t => 30, 2);
-    var customers = [genericCustomer];
-    var minigrid = new MiniGrid(customers, (name, t) => 1, 0.1);
-    await minigrid.place(latitude, longitude, false, PVWATTS_API_KEY);
     var jkm445m = new Panel(0.445, 49.07, 41.17, 11.46, 10.81, 445 * 0.2630);
     var panels = [];
     for (let p = 0; p < panelsPerStringCC; p++) {
@@ -854,27 +855,56 @@ async function simulate(t, dt, latitude, longitude, PVWATTS_API_KEY, panelsPerSt
     var batteryBank = new BatteryBank(batteries, 48);
     var batteryInv = new BatteryInverter(15, .95, .95, 1000);
     var site = new GenerationSite(batteryInv, batteryBank, pvInvGroup, ccGroup, null);
-    minigrid.buildGenerationSite(site);
+    // minigrid.buildGenerationSite(site)
     for (let t = 0; t < 12; t++) {
-        console.log(minigrid.operate(t, 1));
+        // console.log(minigrid.operate(t, 1))
     }
 }
 async function run() {
     // Get credentials
     var creds;
-    const credFileInput = document.getElementById('cred-file');
-    if (!credFileInput || !(credFileInput instanceof HTMLInputElement))
-        throw Error('Could not retrieve file input element');
-    const fr = new FileReader();
-    fr.onload = (e) => {
-        const contents = fr.result;
-        creds = JSON.parse(contents);
-    };
-    fr.readAsText(credFileInput.files[0]);
-    // Load form
-    const formEl = document.getElementById('form-from-json');
+    const loadCredFile = new Promise((resolve, reject) => {
+        const credFileInput = document.getElementById('cred-file');
+        const credsFR = new FileReader();
+        credsFR.onload = (e) => {
+            const contents = credsFR.result;
+            creds = JSON.parse(contents);
+            resolve(null);
+        };
+        credsFR.readAsText(credFileInput.files[0]);
+    });
+    await loadCredFile;
+    // Get customers
+    var customers;
+    const loadCustomerFile = new Promise((resolve, reject) => {
+        const custFileInput = document.getElementById('customers_customers');
+        const custFR = new FileReader();
+        custFR.onload = (e) => {
+            const contents = custFR.result;
+            const rows = contents.split('\r\n');
+            const custTypes = rows[0].split(',').slice(1);
+            for (let c = 0; c < custTypes.length; c++) {
+                var loadProfileArr = new Array(HR_PER_DAY * DAYS_PER_YR);
+                for (let t = 0; t < HR_PER_DAY * DAYS_PER_YR; t++) {
+                    const load = rows[t + 3].split(',')[c + 1];
+                    console.log(load);
+                    resolve(null);
+                }
+            }
+            resolve(null);
+        };
+        custFR.readAsText(custFileInput.files[0]);
+    });
+    await loadCustomerFile;
     // TODO: Extract data from form
+    const latitude = document.getElementById('location_lat').value;
+    const longitude = document.getElementById('location_lat').value;
     // TODO: Pick battery inverter and genset to be barely big enough to handle load
+    // Initialize Mini-Grid
+    var genericCustomer = new Customer('generic', t => 30, 2);
+    var customers = [genericCustomer];
+    var minigrid = new MiniGrid(customers, (name, t) => 1, 0.1);
+    // await minigrid.place(latitude, longitude, false, PVWATTS_API_KEY)
     // TODO: Optimization loop
     // For each combination of decision variables
     // TODO: Simulate

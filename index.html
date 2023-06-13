@@ -65,7 +65,7 @@
 							<!-- If the question is asks for a file -->
 							<div v-else-if="question.type === 'file'" class="q">
 								<label :for="createId(section, question)">{{question.label}}</label>
-								<input type="file" :id="createId(section, question)" name="createId(section, question)" :accept="question.accept" required>
+								<input type="file" :id="createId(section, question)" :name="createId(section, question)" :accept="question.accept" required>
 							</div>
 
 							<!-- If the question asks for a number, check, or text -->
@@ -78,11 +78,11 @@
 					</section>
 				</div>
 
-				<input type="submit" id="run" value="Run">
+				<button type="button" id="run">Run</button>
 			</form>
 		</main>
 
-		<!-- <script src="functions.js"></script> -->
+		<script src="functions.js"></script>
 		<script>
 			const { createApp } = Vue
 
@@ -111,12 +111,22 @@
 								.then(jsonData => {
 									formData = jsonData;
 									for (let section of jsonData) {
+										// Preprocess form data to add missing properties
+
+										// If the section is missing a key, create one from the header
 										if (!('key' in section)) {
-											section.key = section['header'].toLowerCase().replace(' ','_')
+											section.key = section['header'].toLowerCase().replace(' ','-')
 										}
+
 										for (let question of section.questions) {
+											// If a question is missing a type, assume it is 'number'
 											if (!('type' in question)) {
 												question.type = 'number'
+											}
+
+											// If a question is missing a key, create one from the label
+											if (!('key' in question)) {
+												question.key = question['label'].toLowerCase().replace(' ','-')
 											}
 										}
 									}
@@ -132,7 +142,7 @@
 				},
 				methods: {
 					createId(section, q) {
-						return section.key.concat('key' in q ? q.key : q.label.toLowerCase()).replace(' ', '_')
+						return section.key.concat('_', q.key)
 					},
 
 					removeEquipment(label, eq) {
