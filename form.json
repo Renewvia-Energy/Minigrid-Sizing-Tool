@@ -20,10 +20,15 @@
 					}
 				]
 			},{
-				"label": "AC Voltage",
+				"label": "LV AC Voltage",
 				"key": "vac",
 				"default": 230,
 				"unit": "V"
+			},{
+				"label": "Medium Voltage",
+				"key": "mv",
+				"default": 14,
+				"unit": "kV"
 			},{
 				"label": "Transmission Length",
 				"key": "tx-len",
@@ -252,6 +257,11 @@
 		"key": "dx",
 		"questions": [
 			{
+				"label": "Distribution Losses",
+				"key": "losses",
+				"default": 20,
+				"unit": "%"
+			},{
 				"label": "Are You Building Distribution Lines?",
 				"key": "buildingDX",
 				"type": "checkbox",
