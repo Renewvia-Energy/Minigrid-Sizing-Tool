@@ -3,21 +3,21 @@
 		{
 			"Name": "Generic",
 			"Price ($)": 1,
-			"Size (kVA)": 1,
+			"Size (VA)": 1,
 			"Charging Efficiency (%)": 95,
 			"Discharging Efficiency (%)": 95,
 			"Maximum Quantity": 1
 		},{
 			"Name": "Victron Quattro 48/10000/140-100/100",
 			"Price ($)": 2617.36,
-			"Size (kVA)": 10,
+			"Size (VA)": 10000,
 			"Charging Efficiency (%)": 96,
 			"Discharging Efficiency (%)": 96,
 			"Maximum Quantity": 6
 		},{
 			"Name": "Victron Quattro 48/150000/200-100/100",
 			"Price ($)": 4214.58,
-			"Size (kVA)": 15,
+			"Size (VA)": 15000,
 			"Charging Efficiency (%)": 96,
 			"Discharging Efficiency (%)": 96,
 			"Maximum Quantity": 5
