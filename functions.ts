@@ -4,6 +4,7 @@ const DAYS_PER_YR = 365
 const LV_VOLTAGE = 240
 const CUSTOMER_CSV_HEADER_ROWS = 4
 const FOS_MAX_LOAD = 2
+const VERBOSE = true
 
 class Panel {
 	#Pmp: number
@@ -13,6 +14,17 @@ class Panel {
 	#Imp: number
 	#price: number
 	
+	/**
+	 * A PV panel. All specifications given for standard operating conditions (SOC).
+	 *
+	 * @param {number} Pmp - Maximum power [W].
+	 * @param {number} Voc - Open-circuit voltage [V].
+	 * @param {number} Vmp - Maximum-power voltage [V].
+	 * @param {number} Isc - Short-circuit current [A].
+	 * @param {number} Imp - Maximum-power current [A].
+	 * @param {number} price - Unit price of one panel [$].
+	 * @constructor
+	 */
 	constructor(Pmp: number, Voc: number, Vmp: number, Isc: number, Imp: number, price: number) {
 		this.#Pmp = Pmp
 		this.#Voc = Voc
@@ -32,7 +44,13 @@ class Panel {
 	get Isc() { return this.#Isc }
 	get Imp() { return this.#Imp }
 	get price() { return this.#price }
-
+	
+	/**
+	 * Compute the amount of energy produced in one unit of time.
+	 *
+	 * @param {number} dcArrayOutputkWhPerkWp - Amount of energy [kWh] a 1-kWp panel could output during the time interval.
+	 * @returns {number} Amount of energy [Wh] produced by the panel over the time interval.
+	 */
 	getEnergy(dcArrayOutputkWhPerkWp: number): number {
 		return dcArrayOutputkWhPerkWp*this.#Pmp
 	}
@@ -907,6 +925,12 @@ class MiniGrid {
 		this.#dxLosses = dxLosses
 	}
 
+	get customers() { return this.#customers }
+	get tariff() { return this.#tariff }
+	get dxLosses() { return this.#dxLosses }
+	get dcArrayOutputkWhPerkWpFn() { return this.#dcArrayOutputkWhPerkWpFn }
+	get generationSite() { return this.#generationSite }
+
 	place(latitude: number, longitude: number, roofMounted: boolean = false, PVWATTS_API_KEY: string) {
 		const url: string = `https://developer.nrel.gov/api/pvwatts/v8.json?api_key=${PVWATTS_API_KEY}&lat=${latitude}&lon=${longitude}&system_capacity=1&module_type=0&losses=0&array_type=${roofMounted ? 1 : 0}&tilt=10&azimuth=180&timeframe=hourly&dataset=intl`
 
@@ -970,27 +994,8 @@ interface Credentials {
 	PVWATTS_API_KEY: string
 }
 
-interface RadioOption {
-	label: string
-	value: string
-}
-
-interface Question {
-	label: string
-	key: string
-	type: string
-	default: string | number
-	options: Array<RadioOption>
-}
-
-interface FormSection {
-	header: string
-	key: string
-	questions: Array<Question>
-}
-
 async function run() {
-	console.log('start')
+	console.time('setup')
 	// Get credentials
 	var creds: Credentials
 	const loadCredFile = new Promise((resolve, reject) => {
@@ -1004,13 +1009,12 @@ async function run() {
 		credsFR.readAsText(credFileInput.files[0])
 	})
 	await loadCredFile
-	console.log('got creds')
 
 	// Get customers
 	var customers: Customer[] = []
 	var defaultTariffs: number[]
 	const loadCustomerFile = new Promise((resolve, reject) => {
-		const custFileInput = <HTMLInputElement> document.getElementById('customers_customers')
+		const custFileInput = <HTMLInputElement> document.getElementById('cust-file')
 		const custFR = new FileReader()
 		custFR.onload = (e:Event) => {
 			const contents: string = custFR.result as string
@@ -1029,7 +1033,7 @@ async function run() {
 						// TODO tariff optimization
 						reject('Tariff optimization not yet supported')
 					} else {
-						loadProfileArr.push((tariff: number) => Number(load))
+						loadProfileArr[t] = (tariff: number) => Number(load)
 					}
 				}
 
@@ -1037,7 +1041,7 @@ async function run() {
 				customers.push(new Customer(
 					custTypes[c],
 					Number(rows[1].split(',')[c+1]),
-					(tariff: number, t: number) => loadProfileArr[Math.round(t)](tariff), // XXX: can't use loadProfileArr here :(
+					(tariff: number, t: number) => loadProfileArr[Math.round(t)](tariff),
 					Number(rows[2].split(',')[c+1])))
 				defaultTariffs[c] = Number(rows[3].split(',')[c+1])
 			}
@@ -1047,14 +1051,12 @@ async function run() {
 		custFR.readAsText(custFileInput.files[0])
 	})
 	await loadCustomerFile
-	console.log('got customers')
 
 	// Initialize Mini-Grid
 	const latitude = Number((<HTMLInputElement>document.getElementById('location_lat')).value)
 	const longitude = Number((<HTMLInputElement>document.getElementById('location_lon')).value)
 	var minigrid: MiniGrid = new MiniGrid(customers, (name, t) => 1, 0.1)
 	await minigrid.place(latitude, longitude, false, creds.PVWATTS_API_KEY)
-	console.log('initialized minigrid')
 
 	// Construct panel
 	const pvPmp = Number((<HTMLInputElement>document.getElementById('pv_Pmp')).value)
@@ -1065,7 +1067,6 @@ async function run() {
 		Number((<HTMLInputElement>document.getElementById('pv_Isc')).value),
 		Number((<HTMLInputElement>document.getElementById('pv_Imp')).value),
 		pvPmp*Number((<HTMLInputElement>document.getElementById('pv_price')).value))
-	console.log('constructed panel')
 
 	// Charge controller: assemble panels into string
 	var ccPanels: Panel[] = []
@@ -1099,7 +1100,6 @@ async function run() {
 		))
 	}
 	ccPVInputs[0].connectSubarray(ccSubarray)// TODO: add support for multiple PV inputs. Needs auto stringing
-	console.log('finished CCs')
 
 	// PV inverters: assemble panels into string
 	var pvinvPanels: Panel[] = []
@@ -1132,7 +1132,6 @@ async function run() {
 		))
 	}
 	pvinvPVInputs[0].connectSubarray(pvinvSubarray)// TODO: add support for multiple PV inputs. Needs auto stringing
-	console.log('finished PV inverters')
 
 	// Battery inverters
 	var indivBattInvs: BatteryInverter[] = []
@@ -1180,7 +1179,6 @@ async function run() {
 			}
 		}
 	}
-	console.log(battInvs[0].ratedPower)
 
 	// Other constants from form
 	const ccBatteryChargeCurrent = Number((<HTMLInputElement>document.getElementById('ccs_max-output-current')).value)
@@ -1206,6 +1204,8 @@ async function run() {
 	for (let c=0; c<customers.length; c++) {
 		decisionVariables[`tariff${c}`] = defaultTariffs[c]
 	}
+	console.timeEnd('setup')
+	console.time('opt')
 	while (true) {
 		// Construct charge controllers
 		var cc: ChargeController = new ChargeController(ccBatteryChargeCurrent, ccMaxPVPower, ccPVInputs, ccPrice)
@@ -1251,7 +1251,8 @@ async function run() {
 		minigrid.buildGenerationSite(site)
 
 		// TODO: Simulate
-		for (let t=0; t<12; t++){
+		for (let t=0; t<1; t++){
+			console.log(minigrid.generationSite.batteryBank.soc)
 			console.log(minigrid.operate(t, 1))
 		}
 
@@ -1263,6 +1264,7 @@ async function run() {
 
 		break	// TODO: remove. I just added this so it wouldn't hang during testing.
 	}
+	console.timeEnd('opt')
 }
 
 document.getElementById('run').addEventListener('click', run)

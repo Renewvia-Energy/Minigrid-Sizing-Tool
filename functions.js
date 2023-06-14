@@ -16,7 +16,19 @@ const DAYS_PER_YR = 365;
 const LV_VOLTAGE = 240;
 const CUSTOMER_CSV_HEADER_ROWS = 4;
 const FOS_MAX_LOAD = 2;
+const VERBOSE = true;
 class Panel {
+    /**
+     * A PV panel. All specifications given for standard operating conditions (SOC).
+     *
+     * @param {number} Pmp - Maximum power [W].
+     * @param {number} Voc - Open-circuit voltage [V].
+     * @param {number} Vmp - Maximum-power voltage [V].
+     * @param {number} Isc - Short-circuit current [A].
+     * @param {number} Imp - Maximum-power current [A].
+     * @param {number} price - Unit price of one panel [$].
+     * @constructor
+     */
     constructor(Pmp, Voc, Vmp, Isc, Imp, price) {
         _Panel_Pmp.set(this, void 0);
         _Panel_Voc.set(this, void 0);
@@ -40,6 +52,12 @@ class Panel {
     get Isc() { return __classPrivateFieldGet(this, _Panel_Isc, "f"); }
     get Imp() { return __classPrivateFieldGet(this, _Panel_Imp, "f"); }
     get price() { return __classPrivateFieldGet(this, _Panel_price, "f"); }
+    /**
+     * Compute the amount of energy produced in one unit of time.
+     *
+     * @param {number} dcArrayOutputkWhPerkWp - Amount of energy [kWh] a 1-kWp panel could output during the time interval.
+     * @returns {number} Amount of energy [Wh] produced by the panel over the time interval.
+     */
     getEnergy(dcArrayOutputkWhPerkWp) {
         return dcArrayOutputkWhPerkWp * __classPrivateFieldGet(this, _Panel_Pmp, "f");
     }
@@ -774,6 +792,11 @@ class MiniGrid {
         __classPrivateFieldSet(this, _MiniGrid_tariff, tariff, "f");
         __classPrivateFieldSet(this, _MiniGrid_dxLosses, dxLosses, "f");
     }
+    get customers() { return __classPrivateFieldGet(this, _MiniGrid_customers, "f"); }
+    get tariff() { return __classPrivateFieldGet(this, _MiniGrid_tariff, "f"); }
+    get dxLosses() { return __classPrivateFieldGet(this, _MiniGrid_dxLosses, "f"); }
+    get dcArrayOutputkWhPerkWpFn() { return __classPrivateFieldGet(this, _MiniGrid_dcArrayOutputkWhPerkWpFn, "f"); }
+    get generationSite() { return __classPrivateFieldGet(this, _MiniGrid_generationSite, "f"); }
     place(latitude, longitude, roofMounted = false, PVWATTS_API_KEY) {
         const url = `https://developer.nrel.gov/api/pvwatts/v8.json?api_key=${PVWATTS_API_KEY}&lat=${latitude}&lon=${longitude}&system_capacity=1&module_type=0&losses=0&array_type=${roofMounted ? 1 : 0}&tilt=10&azimuth=180&timeframe=hourly&dataset=intl`;
         return new Promise((resolve, reject) => {
@@ -829,7 +852,7 @@ class MiniGrid {
 }
 _MiniGrid_customers = new WeakMap(), _MiniGrid_tariff = new WeakMap(), _MiniGrid_dxLosses = new WeakMap(), _MiniGrid_dcArrayOutputkWhPerkWpFn = new WeakMap(), _MiniGrid_generationSite = new WeakMap();
 async function run() {
-    console.log('start');
+    console.time('setup');
     // Get credentials
     var creds;
     const loadCredFile = new Promise((resolve, reject) => {
@@ -843,12 +866,11 @@ async function run() {
         credsFR.readAsText(credFileInput.files[0]);
     });
     await loadCredFile;
-    console.log('got creds');
     // Get customers
     var customers = [];
     var defaultTariffs;
     const loadCustomerFile = new Promise((resolve, reject) => {
-        const custFileInput = document.getElementById('customers_customers');
+        const custFileInput = document.getElementById('cust-file');
         const custFR = new FileReader();
         custFR.onload = (e) => {
             const contents = custFR.result;
@@ -866,12 +888,11 @@ async function run() {
                         reject('Tariff optimization not yet supported');
                     }
                     else {
-                        loadProfileArr.push((tariff) => Number(load));
+                        loadProfileArr[t] = (tariff) => Number(load);
                     }
                 }
                 // Construct new customer profile and add to the array
-                customers.push(new Customer(custTypes[c], Number(rows[1].split(',')[c + 1]), (tariff, t) => loadProfileArr[Math.round(t)](tariff), // XXX: can't use loadProfileArr here :(
-                Number(rows[2].split(',')[c + 1])));
+                customers.push(new Customer(custTypes[c], Number(rows[1].split(',')[c + 1]), (tariff, t) => loadProfileArr[Math.round(t)](tariff), Number(rows[2].split(',')[c + 1])));
                 defaultTariffs[c] = Number(rows[3].split(',')[c + 1]);
             }
             resolve(null);
@@ -879,17 +900,14 @@ async function run() {
         custFR.readAsText(custFileInput.files[0]);
     });
     await loadCustomerFile;
-    console.log('got customers');
     // Initialize Mini-Grid
     const latitude = Number(document.getElementById('location_lat').value);
     const longitude = Number(document.getElementById('location_lon').value);
     var minigrid = new MiniGrid(customers, (name, t) => 1, 0.1);
     await minigrid.place(latitude, longitude, false, creds.PVWATTS_API_KEY);
-    console.log('initialized minigrid');
     // Construct panel
     const pvPmp = Number(document.getElementById('pv_Pmp').value);
     var panel = new Panel(pvPmp, Number(document.getElementById('pv_Voc').value), Number(document.getElementById('pv_Vmp').value), Number(document.getElementById('pv_Isc').value), Number(document.getElementById('pv_Imp').value), pvPmp * Number(document.getElementById('pv_price').value));
-    console.log('constructed panel');
     // Charge controller: assemble panels into string
     var ccPanels = [];
     const panelsPerStringCC = 3; // TODO: autostringing
@@ -913,7 +931,6 @@ async function run() {
         ccPVInputs.push(new PVInput(Number(cells[1].innerHTML), Number(cells[2].innerHTML), Number(cells[3].innerHTML), Number(cells[4].innerHTML), Number(cells[5].innerHTML), Number(cells[6].innerHTML)));
     }
     ccPVInputs[0].connectSubarray(ccSubarray); // TODO: add support for multiple PV inputs. Needs auto stringing
-    console.log('finished CCs');
     // PV inverters: assemble panels into string
     var pvinvPanels = [];
     const panelsPerStringPVInv = 19; // TODO: autostringing
@@ -936,7 +953,6 @@ async function run() {
         pvinvPVInputs.push(new PVInput(Number(cells[1].innerHTML), Number(cells[2].innerHTML), Number(cells[3].innerHTML), Number(cells[4].innerHTML), Number(cells[5].innerHTML), Number(cells[6].innerHTML)));
     }
     pvinvPVInputs[0].connectSubarray(pvinvSubarray); // TODO: add support for multiple PV inputs. Needs auto stringing
-    console.log('finished PV inverters');
     // Battery inverters
     var indivBattInvs = [];
     var battInvMaxQtys = [];
@@ -975,7 +991,6 @@ async function run() {
             }
         }
     }
-    console.log(battInvs[0].ratedPower);
     // Other constants from form
     const ccBatteryChargeCurrent = Number(document.getElementById('ccs_max-output-current').value);
     const ccMaxPVPower = Number(document.getElementById('ccs_max-pv-power').value);
@@ -999,6 +1014,8 @@ async function run() {
     for (let c = 0; c < customers.length; c++) {
         decisionVariables[`tariff${c}`] = defaultTariffs[c];
     }
+    console.timeEnd('setup');
+    console.time('opt');
     while (true) {
         // Construct charge controllers
         var cc = new ChargeController(ccBatteryChargeCurrent, ccMaxPVPower, ccPVInputs, ccPrice);
@@ -1038,7 +1055,8 @@ async function run() {
         var site = new GenerationSite(battInv, batteryBank, pvInvGroup, ccGroup, null);
         minigrid.buildGenerationSite(site);
         // TODO: Simulate
-        for (let t = 0; t < 12; t++) {
+        for (let t = 0; t < 1; t++) {
+            console.log(minigrid.generationSite.batteryBank.soc);
             console.log(minigrid.operate(t, 1));
         }
         // TODO: Create BOQ
@@ -1046,5 +1064,6 @@ async function run() {
         // Move in the direction of steepest IRR ascent
         break; // TODO: remove. I just added this so it wouldn't hang during testing.
     }
+    console.timeEnd('opt');
 }
 document.getElementById('run').addEventListener('click', run);

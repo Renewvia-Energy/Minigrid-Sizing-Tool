@@ -329,15 +329,10 @@
 			}
 		]
 	},{
-		"header": "Customers",
-		"key": "customers",
+		"header": "Meters",
+		"key": "Meters",
 		"questions": [
 			{
-				"label": "Upload Customer Details",
-				"key": "customers",
-				"type": "file",
-				"accept": ".csv"
-			},{
 				"label": "Meter Materials",
 				"type": "header"
 			},{
