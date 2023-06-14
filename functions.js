@@ -1,3 +1,11 @@
+/**
+ * In this file, the units are:
+ * - Energy: Wh
+ * - Power: W
+ * - Voltage: V
+ * - Current: A
+ * - Time: hr
+ */
 var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
     if (kind === "m") throw new TypeError("Private method is not writable");
     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
@@ -9,11 +17,10 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _Panel_Pmp, _Panel_Voc, _Panel_Vmp, _Panel_Isc, _Panel_Imp, _Panel_price, _PVString_panels, _PVString_Pmp, _PVString_Voc, _PVString_Vmp, _PVString_Isc, _PVString_Imp, _PVString_price, _Subarray_pvStrings, _Subarray_arrayLosses, _Subarray_Voc, _Subarray_Vmp, _Subarray_Pmp, _Subarray_Isc, _Subarray_Imp, _Subarray_price, _PVInput_Voc_min, _PVInput_Voc_max, _PVInput_Vmp_min, _PVInput_Vmp_max, _PVInput_Isc_max, _PVInput_Imp_max, _PVInput_price, _PVInput_subarray, _PVInverterCC_pvInputs, _PVInverterCC_maxPVPower, _PVInverterCC_price, _PVInverterCC_subarrayPrice, _ChargeController_batteryChargeCurrent, _PVInverter_ratedPower, _ACDCCoupledEquipmentGroup_equipmentGroup, _DCCoupledPVGenerationEquipment_equipmentGroup, _ACCoupledPVGenerationEquipment_equipmentGroup, _Battery_capacity, _Battery_minSOC, _Battery_cRate, _Battery_dRate, _Battery_price, _BatteryBank_batteries, _BatteryBank_outputVoltage, _BatteryBank_minSOC, _BatteryBank_cRate, _BatteryBank_dRate, _BatteryBank_price, _BatteryBank_capacity, _BatteryBank_energy, _BatteryBank_cumE, _BatteryInverter_ratedPower, _BatteryInverter_inverterEfficiency, _BatteryInverter_chargerEfficiency, _BatteryInverter_price, _BatteryInverter_batteryBank, _DieselGenerator_ratedPower, _DieselGenerator_price, _DieselGenerator_runHours, _DieselGenerator_dieselConsumed, _DieselGenerator_turnedOn, _DieselGenerator_currentOutput, _DieselGenerator_generatorRow, _Customer_name, _Customer_maxLoad, _Customer_loadProfile, _Customer_qty, _GenerationSite_batteryInverter, _GenerationSite_batteryBank, _GenerationSite_pvInverters, _GenerationSite_chargeControllers, _GenerationSite_generator, _GenerationSite_shouldTurnGeneratorOn, _GenerationSite_shouldTurnGeneratorOff, _GenerationSite_acBus, _MiniGrid_customers, _MiniGrid_tariff, _MiniGrid_dxLosses, _MiniGrid_dcArrayOutputkWhPerkWpFn, _MiniGrid_generationSite;
+var _Panel_Pmp, _Panel_Voc, _Panel_Vmp, _Panel_Isc, _Panel_Imp, _Panel_price, _PVString_panels, _PVString_Pmp, _PVString_Voc, _PVString_Vmp, _PVString_Isc, _PVString_Imp, _PVString_price, _Subarray_pvStrings, _Subarray_arrayLosses, _Subarray_Voc, _Subarray_Vmp, _Subarray_Pmp, _Subarray_Isc, _Subarray_Imp, _Subarray_price, _PVInput_Voc_min, _PVInput_Voc_max, _PVInput_Vmp_min, _PVInput_Vmp_max, _PVInput_Isc_max, _PVInput_Imp_max, _PVInput_price, _PVInput_subarray, _PVInverterCC_pvInputs, _PVInverterCC_maxPVPower, _PVInverterCC_price, _PVInverterCC_subarrayPrice, _ChargeController_batteryChargeCurrent, _PVInverter_ratedPower, _ACDCCoupledEquipmentGroup_equipmentGroup, _DCCoupledPVGenerationEquipment_equipmentGroup, _ACCoupledPVGenerationEquipment_equipmentGroup, _Battery_capacity, _Battery_minSOC, _Battery_cRate, _Battery_dRate, _Battery_price, _BatteryBank_batteries, _BatteryBank_outputVoltage, _BatteryBank_minSOC, _BatteryBank_cRate, _BatteryBank_dRate, _BatteryBank_price, _BatteryBank_capacity, _BatteryBank_energy, _BatteryBank_cumE, _BatteryInverter_ratedPower, _BatteryInverter_inverterEfficiency, _BatteryInverter_chargerEfficiency, _BatteryInverter_price, _BatteryInverter_batteryBank, _DieselGenerator_ratedPower, _DieselGenerator_price, _DieselGenerator_runHours, _DieselGenerator_dieselConsumed, _DieselGenerator_turnedOn, _DieselGenerator_currentOutput, _DieselGenerator_generatorRow, _Customer_name, _Customer_maxLoad, _Customer_loadProfile, _Customer_qty, _GenerationSite_batteryInverter, _GenerationSite_batteryBank, _GenerationSite_pvInverters, _GenerationSite_chargeControllers, _GenerationSite_generator, _GenerationSite_shouldTurnGeneratorOn, _GenerationSite_shouldTurnGeneratorOff, _GenerationSite_vac, _GenerationSite_acBus, _MiniGrid_customers, _MiniGrid_tariff, _MiniGrid_dxLosses, _MiniGrid_dcArrayOutputWhPerWpFn, _MiniGrid_generationSite, _Budget_exchangeRateToUSD, _Budget_vatRate, _Budget_lineItems;
 const L_PER_GAL = 4.54609;
 const HR_PER_DAY = 24;
 const DAYS_PER_YR = 365;
-const LV_VOLTAGE = 240;
 const CUSTOMER_CSV_HEADER_ROWS = 4;
 const FOS_MAX_LOAD = 2;
 const VERBOSE = true;
@@ -55,11 +62,13 @@ class Panel {
     /**
      * Compute the amount of energy produced in one unit of time.
      *
-     * @param {number} dcArrayOutputkWhPerkWp - Amount of energy [kWh] a 1-kWp panel could output during the time interval.
+     * @param {number} dcArrayOutputWhPerWp - Amount of energy [Wh] a 1-Wp panel could output during the time interval.
      * @returns {number} Amount of energy [Wh] produced by the panel over the time interval.
      */
-    getEnergy(dcArrayOutputkWhPerkWp) {
-        return dcArrayOutputkWhPerkWp * __classPrivateFieldGet(this, _Panel_Pmp, "f");
+    getEnergy(dcArrayOutputWhPerWp) {
+        var energy = dcArrayOutputWhPerWp * __classPrivateFieldGet(this, _Panel_Pmp, "f");
+        console.assert(energy >= 0, `Energy generated by panel ${energy} from DC Output ratio ${dcArrayOutputWhPerWp} and Pmp ${__classPrivateFieldGet(this, _Panel_Pmp, "f")} should be nonnegative.`);
+        return energy;
     }
 }
 _Panel_Pmp = new WeakMap(), _Panel_Voc = new WeakMap(), _Panel_Vmp = new WeakMap(), _Panel_Isc = new WeakMap(), _Panel_Imp = new WeakMap(), _Panel_price = new WeakMap();
@@ -99,10 +108,10 @@ class PVString {
     get Isc() { return __classPrivateFieldGet(this, _PVString_Isc, "f"); }
     get Imp() { return __classPrivateFieldGet(this, _PVString_Imp, "f"); }
     get price() { return __classPrivateFieldGet(this, _PVString_price, "f"); }
-    getEnergy(dcArrayOutputkWhPerkWp) {
+    getEnergy(dcArrayOutputWhPerWp) {
         var energy = 0;
         this.panels.forEach(panel => {
-            energy += panel.getEnergy(dcArrayOutputkWhPerkWp);
+            energy += panel.getEnergy(dcArrayOutputWhPerWp);
         });
         return energy;
     }
@@ -121,6 +130,7 @@ class Subarray {
         __classPrivateFieldSet(this, _Subarray_pvStrings, pvStrings, "f");
         // TODO: confirm all strings same
         __classPrivateFieldSet(this, _Subarray_arrayLosses, arrayLosses, "f");
+        console.assert(arrayLosses >= 0 && arrayLosses <= 1, `Array losses ${arrayLosses} must be in [0,1]`);
         // NOTE: this breaks if strings have different voltages
         __classPrivateFieldSet(this, _Subarray_Voc, __classPrivateFieldGet(this, _Subarray_pvStrings, "f")[0].Voc, "f");
         __classPrivateFieldSet(this, _Subarray_Vmp, __classPrivateFieldGet(this, _Subarray_pvStrings, "f")[0].Vmp, "f");
@@ -146,10 +156,10 @@ class Subarray {
     get Isc() { return __classPrivateFieldGet(this, _Subarray_Isc, "f"); }
     get Imp() { return __classPrivateFieldGet(this, _Subarray_Imp, "f"); }
     get price() { return __classPrivateFieldGet(this, _Subarray_price, "f"); }
-    getEnergy(dcArrayOutputkWhPerkWp) {
+    getEnergy(dcArrayOutputWhPerWp) {
         var energy = 0;
         __classPrivateFieldGet(this, _Subarray_pvStrings, "f").forEach(pvString => {
-            energy += pvString.getEnergy(dcArrayOutputkWhPerkWp);
+            energy += pvString.getEnergy(dcArrayOutputWhPerWp);
         });
         return energy * (1 - __classPrivateFieldGet(this, _Subarray_arrayLosses, "f"));
     }
@@ -197,8 +207,14 @@ class PVInput {
     }
     get price() { return __classPrivateFieldGet(this, _PVInput_price, "f"); }
     get Pmp() { return __classPrivateFieldGet(this, _PVInput_subarray, "f").Pmp; }
-    getEnergy(dcArrayOutputkWhPerkWp) {
-        return __classPrivateFieldGet(this, _PVInput_subarray, "f").getEnergy(dcArrayOutputkWhPerkWp);
+    /**
+     * Energy generated by the subarray connected to this PV inverter
+     * @param {number} dcArrayOutputWhPerWp
+     * @returns {number}
+     */
+    getEnergy(dcArrayOutputWhPerWp) {
+        var energy = __classPrivateFieldGet(this, _PVInput_subarray, "f").getEnergy(dcArrayOutputWhPerWp);
+        return energy;
     }
 }
 _PVInput_Voc_min = new WeakMap(), _PVInput_Voc_max = new WeakMap(), _PVInput_Vmp_min = new WeakMap(), _PVInput_Vmp_max = new WeakMap(), _PVInput_Isc_max = new WeakMap(), _PVInput_Imp_max = new WeakMap(), _PVInput_price = new WeakMap(), _PVInput_subarray = new WeakMap();
@@ -207,8 +223,8 @@ class PVInverterCC {
      * A customer archetype and quantity.
      *
      * @param {Array<PVInput>} pvInputs - Array of PVInputs of device.
-     * @param {number} maxPVPower - Maximum PV generator power.
-     * @param {number} price - Price of device.
+     * @param {number} maxPVPower - Maximum PV generator power [Wp].
+     * @param {number} price - Price of device [$].
      * @constructor
      */
     constructor(pvInputs, maxPVPower, price) {
@@ -236,14 +252,20 @@ class PVInverterCC {
     get maxPVPower() { return __classPrivateFieldGet(this, _PVInverterCC_maxPVPower, "f"); }
     get price() { return __classPrivateFieldGet(this, _PVInverterCC_price, "f"); }
     get totalPrice() { return __classPrivateFieldGet(this, _PVInverterCC_subarrayPrice, "f") + __classPrivateFieldGet(this, _PVInverterCC_price, "f"); }
-    getUnlimitedEnergy(dcArrayOutputkWhPerkWp) {
+    /**
+     * The amount of energy that could be generated by the attached PV if the PVInverterCC had no output power limit.
+     * @param {number} dcArrayOutputWhPerWp
+     * @returns {number}
+     */
+    getUnlimitedEnergy(dcArrayOutputWhPerWp) {
         var energy = 0;
         __classPrivateFieldGet(this, _PVInverterCC_pvInputs, "f").forEach(pvinput => {
-            energy += pvinput.getEnergy(dcArrayOutputkWhPerkWp);
+            energy += pvinput.getEnergy(dcArrayOutputWhPerWp);
         });
+        console.assert(energy >= 0, `Energy generated by PV panels connected to PVInverterCharger ${energy} must be >=0`);
         return energy;
     }
-    getEnergy(dcArrayOutputkWhPerkWp, outputVoltage, dt) {
+    getEnergy(dcArrayOutputWhPerWp, outputVoltage, dt) {
         throw new Error('Need to implement.');
     }
 }
@@ -259,8 +281,10 @@ class ChargeController extends PVInverterCC {
         return new ChargeController(__classPrivateFieldGet(this, _ChargeController_batteryChargeCurrent, "f"), this.maxPVPower, copiedPVInputs, this.price);
     }
     get batteryChargeCurrent() { return __classPrivateFieldGet(this, _ChargeController_batteryChargeCurrent, "f"); }
-    getEnergy(dcArrayOutputkWhPerkWp, outputVoltage, dt) {
-        return Math.min(super.getUnlimitedEnergy(dcArrayOutputkWhPerkWp), outputVoltage * __classPrivateFieldGet(this, _ChargeController_batteryChargeCurrent, "f") * dt);
+    getEnergy(dcArrayOutputWhPerWp, outputVoltage, dt) {
+        var energy = Math.min(super.getUnlimitedEnergy(dcArrayOutputWhPerWp), outputVoltage * __classPrivateFieldGet(this, _ChargeController_batteryChargeCurrent, "f") * dt);
+        console.assert(energy >= 0, `Energy produced by CC ${energy} must be >0.\nOutput Voltage=${outputVoltage}\nBattery Charge Current=${__classPrivateFieldGet(this, _ChargeController_batteryChargeCurrent, "f")}\ndt=${dt}\nEnergy generated by connected PV=${super.getUnlimitedEnergy(dcArrayOutputWhPerWp)}`);
+        return energy;
     }
 }
 _ChargeController_batteryChargeCurrent = new WeakMap();
@@ -275,8 +299,10 @@ class PVInverter extends PVInverterCC {
         return new PVInverter(__classPrivateFieldGet(this, _PVInverter_ratedPower, "f"), this.maxPVPower, copiedPVInputs, this.price);
     }
     get ratedPower() { return __classPrivateFieldGet(this, _PVInverter_ratedPower, "f"); }
-    getEnergy(dcArrayOutputkWhPerkWp, outputVoltage, dt) {
-        return Math.min(super.getUnlimitedEnergy(dcArrayOutputkWhPerkWp), __classPrivateFieldGet(this, _PVInverter_ratedPower, "f") * dt);
+    getEnergy(dcArrayOutputWhPerWp, outputVoltage, dt) {
+        var energy = Math.min(super.getUnlimitedEnergy(dcArrayOutputWhPerWp), __classPrivateFieldGet(this, _PVInverter_ratedPower, "f") * dt);
+        console.assert(energy >= 0, `Energy produced by PV inverter ${energy} must be >0.\nRated power=${__classPrivateFieldGet(this, _PVInverter_ratedPower, "f")}\ndt=${dt}\nEnergy generated by connected PV=${super.getUnlimitedEnergy(dcArrayOutputWhPerWp)}`);
+        return energy;
     }
 }
 _PVInverter_ratedPower = new WeakMap();
@@ -307,10 +333,10 @@ class DCCoupledPVGenerationEquipment extends ACDCCoupledEquipmentGroup {
         var copiedEquipmentGroup = __classPrivateFieldGet(this, _DCCoupledPVGenerationEquipment_equipmentGroup, "f").map(equipment => equipment.copy());
         return new DCCoupledPVGenerationEquipment(copiedEquipmentGroup);
     }
-    getEnergy(dcArrayOutputkWhPerkWp, outputVoltage, dt) {
+    getEnergy(dcArrayOutputWhPerWp, outputVoltage, dt) {
         var energy = 0;
         this.equipmentGroup.forEach((cc) => {
-            energy += cc.getEnergy(dcArrayOutputkWhPerkWp, outputVoltage, dt);
+            energy += cc.getEnergy(dcArrayOutputWhPerWp, outputVoltage, dt);
         });
         return energy;
     }
@@ -325,16 +351,25 @@ class ACCoupledPVGenerationEquipment extends ACDCCoupledEquipmentGroup {
         var copiedEquipmentGroup = __classPrivateFieldGet(this, _ACCoupledPVGenerationEquipment_equipmentGroup, "f").map(equipment => equipment.copy());
         return new ACCoupledPVGenerationEquipment(copiedEquipmentGroup);
     }
-    getEnergy(dcArrayOutputkWhPerkWp, dt) {
+    getEnergy(dcArrayOutputWhPerWp, outputVoltage, dt) {
         var energy = 0;
         this.equipmentGroup.forEach((inverter) => {
-            energy += inverter.getEnergy(dcArrayOutputkWhPerkWp, LV_VOLTAGE, dt);
+            energy += inverter.getEnergy(dcArrayOutputWhPerWp, outputVoltage, dt);
         });
         return energy;
     }
 }
 _ACCoupledPVGenerationEquipment_equipmentGroup = new WeakMap();
 class Battery {
+    /**
+     * One battery, to be connected into a battery bank.
+     *
+     * @param {number} capacity - Total battery energy storage capacity [Wh]
+     * @param {number} minSOC - Minimum acceptable state of charge [0-1]
+     * @param {number} cRate - Minimum complete charge time in hours
+     * @param {number} dRate - Minimum complete discharge time in hours
+     * @param {number} price - Unit cost of battery, exclusive of shipping, clearing, labor, etc. [$]
+     */
     constructor(capacity, minSOC, cRate, dRate, price) {
         _Battery_capacity.set(this, void 0);
         _Battery_minSOC.set(this, void 0);
@@ -343,6 +378,7 @@ class Battery {
         _Battery_price.set(this, void 0);
         __classPrivateFieldSet(this, _Battery_capacity, capacity, "f");
         __classPrivateFieldSet(this, _Battery_minSOC, minSOC, "f");
+        console.assert(minSOC >= 0 && minSOC <= 1, `MinSOC ${minSOC} must be between 0 and 1.`);
         __classPrivateFieldSet(this, _Battery_cRate, cRate, "f");
         __classPrivateFieldSet(this, _Battery_dRate, dRate, "f");
         __classPrivateFieldSet(this, _Battery_price, price, "f");
@@ -405,7 +441,7 @@ class BatteryBank {
     /**
      * Requests energy from the batteries. Updates SOC and cycles.
      *
-     * @param {number} energy - The amount of energy requested from the batteries [kWh].
+     * @param {number} energy - The amount of energy requested from the batteries [Wh].
      * @returns {number} - The amount of energy actually supplied by the batteries, limited by the min SOC
      */
     requestDischarge(energy) {
@@ -417,7 +453,7 @@ class BatteryBank {
     /**
      * Requests the batteries charge using incoming energy. Updates SOC and cycles.
      *
-     * @param {number} energy - The amount of energy requested to the batteries [kWh].
+     * @param {number} energy - The amount of energy requested to the batteries [Wh].
      * @returns {number} - The amount of energy actually used to charge the batteries, limited by the capacity
      */
     requestCharge(energy) {
@@ -447,9 +483,9 @@ class BatteryInverter {
     /**
      * Requests energy from the batteries inverted into AC. Updates SOC and cycles.
      *
-     * @param {number} ac - The amount of energy requested to the AC bus [kWh].
+     * @param {number} ac - The amount of energy requested to the AC bus [Wh].
      * @param {number} dt - The amount of time to provide the energy [hr]
-     * @returns {number} - The amount of AC actually produced, limited by the power rating and the batteries [kWh]
+     * @returns {number} - The amount of AC actually produced, limited by the power rating and the batteries [Wh]
      */
     requestAC(ac, dt) {
         if (!__classPrivateFieldGet(this, _BatteryInverter_batteryBank, "f")) {
@@ -457,9 +493,9 @@ class BatteryInverter {
         }
         // Limit AC ouptut by rated power
         ac = Math.min(ac, this.ratedPower * dt);
-        // Amount of DC needed to fulfill the load [kWh]
+        // Amount of DC needed to fulfill the load [Wh]
         var dcNeeded = ac / this.inverterEfficiency;
-        // Amount of DC drawn from the batteries [kWh]
+        // Amount of DC drawn from the batteries [Wh]
         var dcProduced = __classPrivateFieldGet(this, _BatteryInverter_batteryBank, "f").requestDischarge(dcNeeded);
         // Amount of AC actually provided
         return dcProduced * this.inverterEfficiency;
@@ -467,9 +503,9 @@ class BatteryInverter {
     /**
      * Requests excess energy to be used to charge the batteries. Updates SOC and cycles.
      *
-     * @param {number} ac - The amount of AC energy to send to the batteries [kWh].
+     * @param {number} ac - The amount of AC energy to send to the batteries [Wh].
      * @param {number} dt - The amount of time to send the energy [hr]
-     * @returns {number} - The amount of DC energy actually stored in the batteries, limited by the power rating and the batteries [kWh]
+     * @returns {number} - The amount of DC energy actually stored in the batteries, limited by the power rating and the batteries [Wh]
      */
     requestChargeBatteries(ac, dt) {
         if (!__classPrivateFieldGet(this, _BatteryInverter_batteryBank, "f")) {
@@ -625,7 +661,7 @@ class Customer {
      *
      * @param {string} name - Unique name for the class of customer, e.g. "residential" or "commercial"
      * @param {number} maxLoad - Maximum instantaneous load of a single customer [W]
-     * @param {(tariff: number, t: number) => number} loadProfile - Energy needs of a single customer [kWh/hr] given the tariff and time since commissioning [hr].
+     * @param {(tariff: number, t: number) => number} loadProfile - Energy needs of a single customer [Wh/hr] given the tariff and time since commissioning [hr].
      * @param {number} qty - Quantity of customers of that archetype.
      * @constructor
      */
@@ -666,9 +702,10 @@ class GenerationSite {
      * @param {Generator} generator - The diesel generator
      * @param {function(soc: number, t: number) => boolean} shouldTurnOnGenerator - A function to decide when to turn the generator on given battery SOC and the current time since commissioning [hr]
      * @param {function(soc: number, t: number) => boolean} shouldTurnOffGenerator - A function to decide when to turn the generator off given battery SOC and the current time since commissioning [hr]
+     * @param {number} vac - Output AC voltage
      * @constructor
      */
-    constructor(batteryInverter, batteryBank, pvInverters, chargeControllers, generator, shouldTurnGeneratorOn = (soc, t) => false, shouldTurnGeneratorOff = (soc, t) => false) {
+    constructor(batteryInverter, batteryBank, pvInverters, chargeControllers, generator, shouldTurnGeneratorOn = (soc, t) => false, shouldTurnGeneratorOff = (soc, t) => false, vac) {
         _GenerationSite_batteryInverter.set(this, void 0);
         _GenerationSite_batteryBank.set(this, void 0);
         _GenerationSite_pvInverters.set(this, void 0);
@@ -676,6 +713,7 @@ class GenerationSite {
         _GenerationSite_generator.set(this, void 0);
         _GenerationSite_shouldTurnGeneratorOn.set(this, void 0);
         _GenerationSite_shouldTurnGeneratorOff.set(this, void 0);
+        _GenerationSite_vac.set(this, void 0);
         _GenerationSite_acBus.set(this, void 0);
         __classPrivateFieldSet(this, _GenerationSite_batteryInverter, batteryInverter, "f");
         __classPrivateFieldSet(this, _GenerationSite_batteryBank, batteryBank, "f");
@@ -684,6 +722,7 @@ class GenerationSite {
         __classPrivateFieldSet(this, _GenerationSite_generator, generator, "f");
         __classPrivateFieldSet(this, _GenerationSite_shouldTurnGeneratorOn, shouldTurnGeneratorOn, "f");
         __classPrivateFieldSet(this, _GenerationSite_shouldTurnGeneratorOff, shouldTurnGeneratorOff, "f");
+        __classPrivateFieldSet(this, _GenerationSite_vac, vac, "f");
         __classPrivateFieldGet(this, _GenerationSite_batteryInverter, "f").connectBatteryBank(__classPrivateFieldGet(this, _GenerationSite_batteryBank, "f"));
         __classPrivateFieldSet(this, _GenerationSite_acBus, 0, "f");
     }
@@ -697,30 +736,34 @@ class GenerationSite {
      *
      * @param {number} t - Time since commissioning [hr]
      * @param {number} dt - The amount of time that passes [hr].
-     * @param {number} dcArrayOutputkWhPerkWp - From irradiance data [kWh].
-     * @param {number} load - Total load, including distribution losses [kWh].
+     * @param {number} dcArrayOutputWhPerWp - From irradiance data [Wh/kWp].
+     * @param {number} load - Total load, including distribution losses [Wh].
      * @returns {Object} - An object with 13 keys:
-     * - availableACFromPVInverters {number} Energy generated by PV inverters [kWh].
-     * - availableDCFromCCs {number} Energy generated by charge controllers [kWh].
-     * - loadWithDxLosses {number} The load, given as an input parameter [kWh].
-     * - batterySOCkWh {number} Amount of energy remaining in the battery bank [kWh].
-     * - batterySOC {number} SOC of the battery bank at the end of dt.
-     * - totalSolarToLoad {number} Energy sent from the PV inverters to the load [kWh].
-     * - totalSolarToBattery {number} Energy sent from the PV to the batteries [kWh].
-     * - totalBatteryToLoad {number} Energy sent from the batteries to the load [kWh].
-     * - totalEnergyToLoad {number} Energy sent from the generation site to the load [kWh].
-     * - generatorLoad {number} Energy supplied by the generator [kWh].
+     * - availableACFromPVInverters {number} Energy generated by PV inverters [Wh].
+     * - availableDCFromCCs {number} Energy generated by charge controllers [Wh].
+     * - loadWithDxLosses {number} The load, given as an input parameter [Wh].
+     * - batterySOCWhStart {number} Amount of energy remaining in the battery bank at the start of dt [Wh].
+     * - batterySOCStart {number} SOC of the battery bank at the start of dt.
+     * - batterySOCWhEnd {number} Amount of energy remaining in the battery bank at the end of dt [Wh].
+     * - batterySOCEnd {number} SOC of the battery bank at the end of dt.
+     * - totalSolarToLoad {number} Energy sent from the PV inverters to the load [Wh].
+     * - totalSolarToBattery {number} Energy sent from the PV to the batteries [Wh].
+     * - totalBatteryToLoad {number} Energy sent from the batteries to the load [Wh].
+     * - totalEnergyToLoad {number} Energy sent from the generation site to the load [Wh].
+     * - generatorLoad {number} Energy supplied by the generator [Wh].
      * - generatorFuelConsumption {number} Fuel consumed by the generator [L].
-     * - remainingLoad {number} Unmet load [kWh].
-     * - wastedSolar {number} Solar energy not used due to inefficiencies [kWh].
+     * - remainingLoad {number} Unmet load [Wh].
+     * - wastedSolar {number} Solar energy not used due to inefficiencies [Wh].
      */
-    operate(t, dt, dcArrayOutputkWhPerkWp, load) {
+    operate(t, dt, dcArrayOutputWhPerWp, load) {
         var wastedSolar = 0;
         var energySentToLoad = 0;
         var generatorLoad = 0;
         var generatorFuelConsumption = 0;
+        const batteryEnergyStart = this.batteryBank.energy;
+        const batterySOCStart = this.batteryBank.soc;
         // Charge the batteries from the charge controllers
-        var availableDCFromCCs = this.chargeControllers.getEnergy(dcArrayOutputkWhPerkWp, this.batteryBank.outputVoltage, dt);
+        var availableDCFromCCs = this.chargeControllers.getEnergy(dcArrayOutputWhPerWp, this.batteryBank.outputVoltage, dt);
         var ccSolarToBattery = this.batteryBank.requestCharge(availableDCFromCCs);
         wastedSolar += availableDCFromCCs - ccSolarToBattery;
         if (this.generator !== null) {
@@ -741,7 +784,7 @@ class GenerationSite {
                 __classPrivateFieldGet(this, _GenerationSite_batteryInverter, "f").requestChargeBatteries(generatorLoad, dt);
             }
         }
-        var availableACFromPVInverters = this.pvInverters.getEnergy(dcArrayOutputkWhPerkWp, dt);
+        var availableACFromPVInverters = this.pvInverters.getEnergy(dcArrayOutputWhPerWp, __classPrivateFieldGet(this, _GenerationSite_vac, "f"), dt);
         var totalSolarToLoad = 0;
         var totalBatteryToLoad = 0;
         var totalSolarToBattery = ccSolarToBattery;
@@ -751,7 +794,7 @@ class GenerationSite {
             totalSolarToLoad += load;
             energySentToLoad += totalSolarToLoad;
             // Send the excess to the batteries
-            var extraACFromPVInverters = load - availableACFromPVInverters;
+            var extraACFromPVInverters = availableACFromPVInverters - load;
             var energyStored = this.batteryInverter.requestChargeBatteries(extraACFromPVInverters, dt);
             totalSolarToBattery += energyStored;
             wastedSolar += extraACFromPVInverters - energyStored; // Note: this counts energy lost due to battery inverter inefficiency as wasted solar. As of now, I don't count losses due to inverting battery DC as wasted energy.
@@ -767,8 +810,10 @@ class GenerationSite {
             availableACFromPVInverters: availableACFromPVInverters,
             availableDCFromCCs: availableDCFromCCs,
             loadWithDxLosses: load,
-            batterySOCkWh: this.batteryBank.energy,
-            batterySOC: this.batteryBank.soc,
+            batterySOCWhStart: batteryEnergyStart,
+            batterySOCStart: batterySOCStart,
+            batterySOCWhEnd: this.batteryBank.energy,
+            batterySOCEnd: this.batteryBank.soc,
             totalSolarToLoad: totalSolarToLoad,
             totalSolarToBattery: totalSolarToBattery,
             totalBatteryToLoad: totalBatteryToLoad,
@@ -780,13 +825,13 @@ class GenerationSite {
         };
     }
 }
-_GenerationSite_batteryInverter = new WeakMap(), _GenerationSite_batteryBank = new WeakMap(), _GenerationSite_pvInverters = new WeakMap(), _GenerationSite_chargeControllers = new WeakMap(), _GenerationSite_generator = new WeakMap(), _GenerationSite_shouldTurnGeneratorOn = new WeakMap(), _GenerationSite_shouldTurnGeneratorOff = new WeakMap(), _GenerationSite_acBus = new WeakMap();
+_GenerationSite_batteryInverter = new WeakMap(), _GenerationSite_batteryBank = new WeakMap(), _GenerationSite_pvInverters = new WeakMap(), _GenerationSite_chargeControllers = new WeakMap(), _GenerationSite_generator = new WeakMap(), _GenerationSite_shouldTurnGeneratorOn = new WeakMap(), _GenerationSite_shouldTurnGeneratorOff = new WeakMap(), _GenerationSite_vac = new WeakMap(), _GenerationSite_acBus = new WeakMap();
 class MiniGrid {
     constructor(customers, tariff, dxLosses) {
         _MiniGrid_customers.set(this, void 0);
         _MiniGrid_tariff.set(this, void 0);
         _MiniGrid_dxLosses.set(this, void 0);
-        _MiniGrid_dcArrayOutputkWhPerkWpFn.set(this, void 0);
+        _MiniGrid_dcArrayOutputWhPerWpFn.set(this, void 0);
         _MiniGrid_generationSite.set(this, void 0);
         __classPrivateFieldSet(this, _MiniGrid_customers, customers, "f");
         __classPrivateFieldSet(this, _MiniGrid_tariff, tariff, "f");
@@ -795,7 +840,7 @@ class MiniGrid {
     get customers() { return __classPrivateFieldGet(this, _MiniGrid_customers, "f"); }
     get tariff() { return __classPrivateFieldGet(this, _MiniGrid_tariff, "f"); }
     get dxLosses() { return __classPrivateFieldGet(this, _MiniGrid_dxLosses, "f"); }
-    get dcArrayOutputkWhPerkWpFn() { return __classPrivateFieldGet(this, _MiniGrid_dcArrayOutputkWhPerkWpFn, "f"); }
+    get dcArrayOutputWhPerWpFn() { return __classPrivateFieldGet(this, _MiniGrid_dcArrayOutputWhPerWpFn, "f"); }
     get generationSite() { return __classPrivateFieldGet(this, _MiniGrid_generationSite, "f"); }
     place(latitude, longitude, roofMounted = false, PVWATTS_API_KEY) {
         const url = `https://developer.nrel.gov/api/pvwatts/v8.json?api_key=${PVWATTS_API_KEY}&lat=${latitude}&lon=${longitude}&system_capacity=1&module_type=0&losses=0&array_type=${roofMounted ? 1 : 0}&tilt=10&azimuth=180&timeframe=hourly&dataset=intl`;
@@ -804,8 +849,9 @@ class MiniGrid {
             request.open('GET', url);
             request.onload = () => {
                 if (request.status === 200) {
-                    var dcArrayOutputkWhPerkWpArr = [...JSON.parse(request.response).outputs.dc];
-                    __classPrivateFieldSet(this, _MiniGrid_dcArrayOutputkWhPerkWpFn, t => dcArrayOutputkWhPerkWpArr[Math.round(t) % (HR_PER_DAY * DAYS_PER_YR)], "f");
+                    var dcArrayOutputWhPerkWpArr = [...JSON.parse(request.response).outputs.dc];
+                    var dcArrayOutputWhPerWpArr = dcArrayOutputWhPerkWpArr.map(dcArrayOutputWhPerkWp => dcArrayOutputWhPerkWp / 1000);
+                    __classPrivateFieldSet(this, _MiniGrid_dcArrayOutputWhPerWpFn, t => dcArrayOutputWhPerWpArr[Math.round(t) % (HR_PER_DAY * DAYS_PER_YR)], "f");
                     resolve(JSON.parse(request.response));
                 }
                 else {
@@ -821,22 +867,24 @@ class MiniGrid {
     buildGenerationSite(generationSite) {
         __classPrivateFieldSet(this, _MiniGrid_generationSite, generationSite, "f");
     }
-    getDCArrayOutputkWhPerkWp(t) {
-        return __classPrivateFieldGet(this, _MiniGrid_dcArrayOutputkWhPerkWpFn, "f").call(this, t);
+    getDCArrayOutputWhPerkWp(t) {
+        return __classPrivateFieldGet(this, _MiniGrid_dcArrayOutputWhPerWpFn, "f").call(this, t);
     }
     operate(t, dt) {
-        var dcArrayOutputkWhPerkWp = this.getDCArrayOutputkWhPerkWp(t);
+        var dcArrayOutputWhPerWp = this.getDCArrayOutputWhPerkWp(t);
         var load = 0;
         __classPrivateFieldGet(this, _MiniGrid_customers, "f").forEach(customer => {
             load += customer.getTotalLoad(__classPrivateFieldGet(this, _MiniGrid_tariff, "f").call(this, customer.name, t), t);
         });
-        var result = __classPrivateFieldGet(this, _MiniGrid_generationSite, "f").operate(t, dt, dcArrayOutputkWhPerkWp, load / (1 - __classPrivateFieldGet(this, _MiniGrid_dxLosses, "f")));
+        var result = __classPrivateFieldGet(this, _MiniGrid_generationSite, "f").operate(t, dt, dcArrayOutputWhPerWp, load / (1 - __classPrivateFieldGet(this, _MiniGrid_dxLosses, "f")));
         return {
             availableACFromPVInverters: result.availableACFromPVInverters,
             availableDCFromCCs: result.availableDCFromCCs,
             loadWithDxLosses: result.loadWithDxLosses,
-            batterySOCkWh: result.batterySOCkWh,
-            batterySOC: result.batterySOC,
+            batterySOCWhStart: result.batterySOCWhStart,
+            batterySOCStart: result.batterySOCStart,
+            batterySOCWhEnd: result.batterySOCWhEnd,
+            batterySOCEnd: result.batterySOCEnd,
             totalSolarToLoad: result.totalSolarToLoad,
             totalSolarToBattery: result.totalSolarToBattery,
             totalBatteryToLoad: result.totalBatteryToLoad,
@@ -850,7 +898,38 @@ class MiniGrid {
         };
     }
 }
-_MiniGrid_customers = new WeakMap(), _MiniGrid_tariff = new WeakMap(), _MiniGrid_dxLosses = new WeakMap(), _MiniGrid_dcArrayOutputkWhPerkWpFn = new WeakMap(), _MiniGrid_generationSite = new WeakMap();
+_MiniGrid_customers = new WeakMap(), _MiniGrid_tariff = new WeakMap(), _MiniGrid_dxLosses = new WeakMap(), _MiniGrid_dcArrayOutputWhPerWpFn = new WeakMap(), _MiniGrid_generationSite = new WeakMap();
+class Budget {
+    constructor(exhangeRateToUSD, vatRate) {
+        _Budget_exchangeRateToUSD.set(this, void 0);
+        _Budget_vatRate.set(this, void 0);
+        _Budget_lineItems.set(this, void 0);
+        __classPrivateFieldSet(this, _Budget_exchangeRateToUSD, exhangeRateToUSD, "f");
+        __classPrivateFieldSet(this, _Budget_vatRate, vatRate, "f");
+        __classPrivateFieldSet(this, _Budget_lineItems, [], "f");
+    }
+    addLineItem(category, type, item, vendor, notes, currency, qty, price, budgetVAT) {
+        __classPrivateFieldGet(this, _Budget_lineItems, "f").push({
+            category: category,
+            type: type,
+            item: item,
+            vendor: vendor,
+            notes: notes,
+            currency: currency,
+            qty: qty,
+            price: price,
+            budgetVAT: budgetVAT,
+            budgetTotal: (currency === 'USD' ? 1 : __classPrivateFieldGet(this, _Budget_exchangeRateToUSD, "f")) * (budgetVAT ? 1 + __classPrivateFieldGet(this, _Budget_vatRate, "f") : 0) * qty * price
+        });
+    }
+    getLineItem(i) {
+        return __classPrivateFieldGet(this, _Budget_lineItems, "f")[i];
+    }
+    getBudgetTotal() {
+        return __classPrivateFieldGet(this, _Budget_lineItems, "f").reduce((sum, lineItem) => sum + lineItem.budgetTotal, 0);
+    }
+}
+_Budget_exchangeRateToUSD = new WeakMap(), _Budget_vatRate = new WeakMap(), _Budget_lineItems = new WeakMap();
 async function run() {
     console.time('setup');
     // Get credentials
@@ -888,7 +967,7 @@ async function run() {
                         reject('Tariff optimization not yet supported');
                     }
                     else {
-                        loadProfileArr[t] = (tariff) => Number(load);
+                        loadProfileArr[t] = (tariff) => Number(load) * 1000;
                     }
                 }
                 // Construct new customer profile and add to the array
@@ -901,12 +980,12 @@ async function run() {
     });
     await loadCustomerFile;
     // Initialize Mini-Grid
-    const latitude = Number(document.getElementById('location_lat').value);
-    const longitude = Number(document.getElementById('location_lon').value);
+    const latitude = Number(document.getElementById('location_lat').value); // [°N]
+    const longitude = Number(document.getElementById('location_lon').value); // [°E]
     var minigrid = new MiniGrid(customers, (name, t) => 1, 0.1);
     await minigrid.place(latitude, longitude, false, creds.PVWATTS_API_KEY);
     // Construct panel
-    const pvPmp = Number(document.getElementById('pv_Pmp').value);
+    const pvPmp = Number(document.getElementById('pv_Pmp').value); // [Wp]
     var panel = new Panel(pvPmp, Number(document.getElementById('pv_Voc').value), Number(document.getElementById('pv_Vmp').value), Number(document.getElementById('pv_Isc').value), Number(document.getElementById('pv_Imp').value), pvPmp * Number(document.getElementById('pv_price').value));
     // Charge controller: assemble panels into string
     var ccPanels = [];
@@ -921,14 +1000,20 @@ async function run() {
     for (let s = 0; s < stringsPerSubarrayCC; s++) {
         ccStrings.push(pvString.copy());
     }
-    const arrayLosses = Number(document.getElementById('overview_array-losses').value);
+    const arrayLosses = Number(document.getElementById('overview_array-losses').value) / 100; //[0-1]
     var ccSubarray = new Subarray(ccStrings, arrayLosses);
     // Charge controller: connect subarray to PV input
     var ccPVInputs = [];
     const ccInTable = document.getElementById('ccs_charge-controller-inputs');
     for (let r = 1; r < ccInTable.rows.length - 1; r++) {
         const cells = ccInTable.rows.item(r).cells;
-        ccPVInputs.push(new PVInput(Number(cells[1].innerHTML), Number(cells[2].innerHTML), Number(cells[3].innerHTML), Number(cells[4].innerHTML), Number(cells[5].innerHTML), Number(cells[6].innerHTML)));
+        ccPVInputs.push(new PVInput(Number(cells[1].innerHTML), // [V]
+        Number(cells[2].innerHTML), // [V]
+        Number(cells[3].innerHTML), // [V]
+        Number(cells[4].innerHTML), // [V]
+        Number(cells[5].innerHTML), // [A]
+        Number(cells[6].innerHTML) // [A]
+        ));
     }
     ccPVInputs[0].connectSubarray(ccSubarray); // TODO: add support for multiple PV inputs. Needs auto stringing
     // PV inverters: assemble panels into string
@@ -950,7 +1035,13 @@ async function run() {
     const pvinvInTable = document.getElementById('pvinv_pv-inverter-inputs');
     for (let r = 1; r < pvinvInTable.rows.length - 1; r++) {
         const cells = pvinvInTable.rows.item(r).cells;
-        pvinvPVInputs.push(new PVInput(Number(cells[1].innerHTML), Number(cells[2].innerHTML), Number(cells[3].innerHTML), Number(cells[4].innerHTML), Number(cells[5].innerHTML), Number(cells[6].innerHTML)));
+        pvinvPVInputs.push(new PVInput(Number(cells[1].innerHTML), // [V]
+        Number(cells[2].innerHTML), // [V]
+        Number(cells[3].innerHTML), // [V]
+        Number(cells[4].innerHTML), // [V]
+        Number(cells[5].innerHTML), // [A]
+        Number(cells[6].innerHTML) // [A]
+        ));
     }
     pvinvPVInputs[0].connectSubarray(pvinvSubarray); // TODO: add support for multiple PV inputs. Needs auto stringing
     // Battery inverters
@@ -959,7 +1050,11 @@ async function run() {
     const battInvTable = document.getElementById('batt-inv_options');
     for (let r = 1; r < battInvTable.rows.length - 1; r++) {
         const cells = battInvTable.rows.item(r).cells;
-        indivBattInvs.push(new BatteryInverter(Number(cells[3].innerHTML), Number(cells[5].innerHTML), Number(cells[4].innerHTML), Number(cells[2].innerHTML)));
+        indivBattInvs.push(new BatteryInverter(Number(cells[3].innerHTML), // [W]
+        Number(cells[5].innerHTML) / 100, // [0-1]
+        Number(cells[4].innerHTML) / 100, // [0-1]
+        Number(cells[2].innerHTML) // [$]
+        ));
         battInvMaxQtys.push(Number(cells[6].innerHTML));
     }
     var battInvs = [];
@@ -967,7 +1062,11 @@ async function run() {
     var battInvPrices = [];
     for (let b = 0; b < indivBattInvs.length; b++) {
         for (let qty = 1; qty <= battInvMaxQtys[b]; qty++) {
-            let battInv = new BatteryInverter(indivBattInvs[b].ratedPower * qty, indivBattInvs[b].inverterEfficiency, indivBattInvs[b].chargerEfficiency, indivBattInvs[b].price * qty);
+            let battInv = new BatteryInverter(indivBattInvs[b].ratedPower * qty, // [W]
+            indivBattInvs[b].inverterEfficiency, // [0-1]
+            indivBattInvs[b].chargerEfficiency, // [0-1]
+            indivBattInvs[b].price * qty // [$]
+            );
             let i = battInvSizes.indexOf(battInv.ratedPower);
             if (i == -1) { // if there is no battery inverter combination of that size yet, add it
                 let low = 0;
@@ -992,19 +1091,21 @@ async function run() {
         }
     }
     // Other constants from form
-    const ccBatteryChargeCurrent = Number(document.getElementById('ccs_max-output-current').value);
-    const ccMaxPVPower = Number(document.getElementById('ccs_max-pv-power').value);
-    const ccPrice = Number(document.getElementById('ccs_price').value);
-    const vac = Number(document.getElementById('overview_vac').value);
-    const pvinvBatteryChargeCurrent = Number(document.getElementById('pvinv_max-output-power').value) / vac;
-    const pvinvMaxPVPower = Number(document.getElementById('pvinv_max-pv-power').value);
-    const pvinvPrice = Number(document.getElementById('pvinv_price').value);
-    const battCapacity = Number(document.getElementById('batt_capacity').value);
-    const minSOC = Number(document.getElementById('batt_minSOC').value);
-    const cRate = Number(document.getElementById('batt_c-rate').value);
-    const battPrice = Number(document.getElementById('batt_price').value);
-    const battDCV = Number(document.getElementById('batt_dcv').value);
-    const dxLosses = Number(document.getElementById('dx_losses').value) / 100;
+    const ccBatteryChargeCurrent = Number(document.getElementById('ccs_max-output-current').value); // [A]
+    const ccMaxPVPower = Number(document.getElementById('ccs_max-pv-power').value); // [Wp]
+    const ccPrice = Number(document.getElementById('ccs_price').value); // [$]
+    const vac = Number(document.getElementById('overview_vac').value); // [V]
+    const pvinvRatedPower = Number(document.getElementById('pvinv_max-output-power').value); // [VA]
+    const pvinvMaxPVPower = Number(document.getElementById('pvinv_max-pv-power').value); // [Wp]
+    const pvinvPrice = Number(document.getElementById('pvinv_price').value); // [$]
+    const battCapacity = Number(document.getElementById('batt_capacity').value) * 1000; // [Wh]
+    const minSOC = Number(document.getElementById('batt_minSOC').value) / 100; // [0-1]
+    const cRate = Number(document.getElementById('batt_c-rate').value); // [C]
+    const battPrice = Number(document.getElementById('batt_price').value); // [$]
+    const battDCV = Number(document.getElementById('batt_dcv').value); // [V]
+    const dxLosses = Number(document.getElementById('dx_losses').value) / 100; // [0-1]
+    const exchangeRate = Number(document.getElementById('misc_toUSD').value); // [¤/$]
+    const vat = Number(document.getElementById('misc_vat').value) / 100; // [0-1]
     // Assemble decision variables
     var decisionVariables = {
         numChargeControllers: { value: 1, step: 1 },
@@ -1025,7 +1126,7 @@ async function run() {
         }
         var ccGroup = new DCCoupledPVGenerationEquipment(ccs);
         // Construct PV inverters
-        var pvinv = new PVInverter(pvinvBatteryChargeCurrent, pvinvMaxPVPower, pvinvPVInputs, pvinvPrice);
+        var pvinv = new PVInverter(pvinvRatedPower, pvinvMaxPVPower, pvinvPVInputs, pvinvPrice);
         var pvInvs = [];
         for (let p = 0; p < decisionVariables.numPVInverters.value; p++) {
             pvInvs.push(pvinv.copy());
@@ -1052,14 +1153,16 @@ async function run() {
         }
         // TODO: Genset optimization
         // Build generation site
-        var site = new GenerationSite(battInv, batteryBank, pvInvGroup, ccGroup, null);
+        var site = new GenerationSite(battInv, batteryBank, pvInvGroup, ccGroup, null, null, null, vac);
         minigrid.buildGenerationSite(site);
         // TODO: Simulate
-        for (let t = 0; t < 1; t++) {
-            console.log(minigrid.generationSite.batteryBank.soc);
-            console.log(minigrid.operate(t, 1));
+        for (let t = 0; t < HR_PER_DAY * DAYS_PER_YR; t++) {
+            minigrid.operate(t, 1);
         }
         // TODO: Create BOQ
+        var boq = new Budget(exchangeRate, vat);
+        boq.addLineItem('Batteries', 'Customs', 'Clearing Agent Fees', 'Spedag', '', 'NGN', 1, 27400, true);
+        // XXX: HERE
         // TODO: Compute IRR
         // Move in the direction of steepest IRR ascent
         break; // TODO: remove. I just added this so it wouldn't hang during testing.
