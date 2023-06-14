@@ -197,7 +197,7 @@
 						"label": "Price ($)",
 						"type": "number"
 					},{
-						"label": "Size (kVA)",
+						"label": "Size (VA)",
 						"type": "number"
 					},{
 						"label": "Charging Efficiency (%)",
