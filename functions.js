@@ -73,6 +73,12 @@ class Panel {
 }
 _Panel_Pmp = new WeakMap(), _Panel_Voc = new WeakMap(), _Panel_Vmp = new WeakMap(), _Panel_Isc = new WeakMap(), _Panel_Imp = new WeakMap(), _Panel_price = new WeakMap();
 class PVString {
+    /**
+     * A string of solar panels connected in series. Here, a "string" refers to a specific way to connect solar panels rather than an array of characters.
+     *
+     * @param {Panel[]} panels - Array of solar panels connected in series into one string
+     * @constructor
+     */
     constructor(panels) {
         _PVString_panels.set(this, void 0);
         _PVString_Pmp.set(this, void 0);
@@ -108,16 +114,26 @@ class PVString {
     get Isc() { return __classPrivateFieldGet(this, _PVString_Isc, "f"); }
     get Imp() { return __classPrivateFieldGet(this, _PVString_Imp, "f"); }
     get price() { return __classPrivateFieldGet(this, _PVString_price, "f"); }
+    /**
+     * Compute the amount of energy produced in one unit of time by every panel in the string.
+     *
+     * @param {number} dcArrayOutputWhPerWp - Amount of energy [Wh] a 1-Wp panel could output during the time interval.
+     * @returns {number} Amount of energy [Wh] produced by the string over the time interval.
+     */
     getEnergy(dcArrayOutputWhPerWp) {
-        var energy = 0;
-        this.panels.forEach(panel => {
-            energy += panel.getEnergy(dcArrayOutputWhPerWp);
-        });
+        var energy = this.panels.reduce((sum, panel) => sum + panel.getEnergy(dcArrayOutputWhPerWp), 0);
         return energy;
     }
 }
 _PVString_panels = new WeakMap(), _PVString_Pmp = new WeakMap(), _PVString_Voc = new WeakMap(), _PVString_Vmp = new WeakMap(), _PVString_Isc = new WeakMap(), _PVString_Imp = new WeakMap(), _PVString_price = new WeakMap();
 class Subarray {
+    /**
+     * A subarray of strings of solar panles connected in parallel through a combiner box to be plugged into a PV inverter or charge controller as a PV input.
+     *
+     * @param {PVString[]} pvStrings - Array of PVStrings to be connected in parallel through a combiner box.
+     * @param {number} arrayLosses - Fraction of energy produced by the panels that is lost before reaching the PV inverter or charge controller
+     * @constructor
+     */
     constructor(pvStrings, arrayLosses) {
         _Subarray_pvStrings.set(this, void 0);
         _Subarray_arrayLosses.set(this, void 0);
@@ -156,16 +172,31 @@ class Subarray {
     get Isc() { return __classPrivateFieldGet(this, _Subarray_Isc, "f"); }
     get Imp() { return __classPrivateFieldGet(this, _Subarray_Imp, "f"); }
     get price() { return __classPrivateFieldGet(this, _Subarray_price, "f"); }
+    /**
+     * Compute the amount of energy produced in one unit of time by the entire subarray.
+     *
+     * @param {number} dcArrayOutputWhPerWp - Amount of energy [Wh] a 1-Wp panel could output during the time interval.
+     * @returns {number} Amount of energy [Wh] produced by the subarray over the time interval.
+     */
     getEnergy(dcArrayOutputWhPerWp) {
-        var energy = 0;
-        __classPrivateFieldGet(this, _Subarray_pvStrings, "f").forEach(pvString => {
-            energy += pvString.getEnergy(dcArrayOutputWhPerWp);
-        });
+        var energy = __classPrivateFieldGet(this, _Subarray_pvStrings, "f").reduce((sum, pvString) => sum + pvString.getEnergy(dcArrayOutputWhPerWp), 0);
+        // var energy: number = this.#Pmp*dcArrayOutputWhPerWp
         return energy * (1 - __classPrivateFieldGet(this, _Subarray_arrayLosses, "f"));
     }
 }
 _Subarray_pvStrings = new WeakMap(), _Subarray_arrayLosses = new WeakMap(), _Subarray_Voc = new WeakMap(), _Subarray_Vmp = new WeakMap(), _Subarray_Pmp = new WeakMap(), _Subarray_Isc = new WeakMap(), _Subarray_Imp = new WeakMap(), _Subarray_price = new WeakMap();
 class PVInput {
+    /**
+     * An input into a PV inverter or charge controller. Is connected to exactly one PV subarray.
+     *
+     * @param {number} Voc_min - Minimum open-circuit voltage allowed of a connected subarray. The sum of the Vocs of all the panels in a string should be greater than or equal to this value.
+     * @param {number} Voc_max - Maximum open-circuit voltage allowed of a connected subarray.
+     * @param {number} Vmp_min - Minimum maximum-power voltage allowed of a connected subarray.
+     * @param {number} Vmp_max - Maximum maximum-power voltage allowed of a connected subarray.
+     * @param {number} Isc_max - Maximum short-circuit current allowed of a connected subarray. The sum of the Iscs of all the strings in a subarray should be less than or equal to this value.
+     * @param {number} Imp_max - Maximum maximum-power current allowed of a connected subarray.
+     * @constructor
+     */
     constructor(Voc_min, Voc_max, Vmp_min, Vmp_max, Isc_max, Imp_max) {
         _PVInput_Voc_min.set(this, void 0);
         _PVInput_Voc_max.set(this, void 0);
@@ -183,6 +214,12 @@ class PVInput {
         __classPrivateFieldSet(this, _PVInput_Imp_max, Imp_max, "f");
         __classPrivateFieldSet(this, _PVInput_price, 0, "f");
     }
+    /**
+     * Connect a single subarray of panels to this PV input. Check to make sure the subarray specs, Voc, Vmp, Isc, and Imp, are within the parameters of the PV input.
+     *
+     * @param {Subarray} subarray - The subarray to connect to the PV input.
+     * @throws An error if any of the subarray parameters, Voc, Vmp, Isc, or Imp, are outside the acceptable bounds of this PV input.
+     */
     connectSubarray(subarray) {
         __classPrivateFieldSet(this, _PVInput_subarray, subarray, "f");
         if (__classPrivateFieldGet(this, _PVInput_subarray, "f").Voc < __classPrivateFieldGet(this, _PVInput_Voc_min, "f") || __classPrivateFieldGet(this, _PVInput_subarray, "f").Voc > __classPrivateFieldGet(this, _PVInput_Voc_max, "f")) {
@@ -209,8 +246,9 @@ class PVInput {
     get Pmp() { return __classPrivateFieldGet(this, _PVInput_subarray, "f").Pmp; }
     /**
      * Energy generated by the subarray connected to this PV inverter
-     * @param {number} dcArrayOutputWhPerWp
-     * @returns {number}
+     *
+     * @param {number} dcArrayOutputWhPerWp - Amount of energy [Wh] a 1-Wp panel could output during the time interval.
+     * @returns {number} Amount of energy [Wh] produced by the subarray connected to this PV input over the time interval.
      */
     getEnergy(dcArrayOutputWhPerWp) {
         var energy = __classPrivateFieldGet(this, _PVInput_subarray, "f").getEnergy(dcArrayOutputWhPerWp);
@@ -253,24 +291,39 @@ class PVInverterCC {
     get price() { return __classPrivateFieldGet(this, _PVInverterCC_price, "f"); }
     get totalPrice() { return __classPrivateFieldGet(this, _PVInverterCC_subarrayPrice, "f") + __classPrivateFieldGet(this, _PVInverterCC_price, "f"); }
     /**
-     * The amount of energy that could be generated by the attached PV if the PVInverterCC had no output power limit.
-     * @param {number} dcArrayOutputWhPerWp
+     * The amount of energy [Wh] that could be generated by the attached PV if the PVInverterCC had no output power limit.
+     *
+     * @param {number} dcArrayOutputWhPerWp - Amount of energy [Wh] a 1-Wp panel could output during the time interval.
      * @returns {number}
      */
     getUnlimitedEnergy(dcArrayOutputWhPerWp) {
-        var energy = 0;
-        __classPrivateFieldGet(this, _PVInverterCC_pvInputs, "f").forEach(pvinput => {
-            energy += pvinput.getEnergy(dcArrayOutputWhPerWp);
-        });
+        var energy = __classPrivateFieldGet(this, _PVInverterCC_pvInputs, "f").reduce((sum, pvInput) => sum + pvInput.getEnergy(dcArrayOutputWhPerWp), 0);
         console.assert(energy >= 0, `Energy generated by PV panels connected to PVInverterCharger ${energy} must be >=0`);
         return energy;
     }
+    /**
+     * Energy [Wh] generated by the subarray connected to this PV inverter. In the abstract class, this will throw an error. This method must be implemented in the subclass.
+     *
+     * @param {number} dcArrayOutputWhPerWp - Amount of energy [Wh] a 1-Wp panel could output during the time interval.
+     * @param {number} outputVoltage - The voltage of the output of the PV inverter or charge controller. For a PV inverter, this will be the VAC of LV in the country of operation. For a charge controller, this will be the DCV of the powerhouse.
+     * @param {number} dt - The time interval [hr]
+     * @returns {number}
+     * @throws An error if called. You must re-implement this in the subclass.
+     */
     getEnergy(dcArrayOutputWhPerWp, outputVoltage, dt) {
         throw new Error('Need to implement.');
     }
 }
 _PVInverterCC_pvInputs = new WeakMap(), _PVInverterCC_maxPVPower = new WeakMap(), _PVInverterCC_price = new WeakMap(), _PVInverterCC_subarrayPrice = new WeakMap();
 class ChargeController extends PVInverterCC {
+    /**
+     * A DC-coupled power generation device.
+     *
+     * @param {number} batteryChargeCurrent - The maximum output current of the device.
+     * @param {number} maxPVPower - The maximum Pmp of all solar panels connected to the device.
+     * @param {PVInput[]} pvInputs - Array of PV inputs of the device. Each PV input should be connected to a single subarray.
+     * @param {number} price - The unit price of the device.
+     */
     constructor(batteryChargeCurrent, maxPVPower, pvInputs, price) {
         super(pvInputs, maxPVPower, price);
         _ChargeController_batteryChargeCurrent.set(this, void 0);
@@ -281,6 +334,14 @@ class ChargeController extends PVInverterCC {
         return new ChargeController(__classPrivateFieldGet(this, _ChargeController_batteryChargeCurrent, "f"), this.maxPVPower, copiedPVInputs, this.price);
     }
     get batteryChargeCurrent() { return __classPrivateFieldGet(this, _ChargeController_batteryChargeCurrent, "f"); }
+    /**
+     * Energy generated by the subarrays connected to the device.
+     *
+     * @param {number} dcArrayOutputWhPerWp - Amount of energy [Wh] a 1-Wp panel could output during the time interval.
+     * @param {number} outputVoltage - The DCV of the powerhouse.
+     * @param {number} dt - The time interval [hr]
+     * @returns {number} Amount of energy [Wh] output by the device over the time interval.
+     */
     getEnergy(dcArrayOutputWhPerWp, outputVoltage, dt) {
         var energy = Math.min(super.getUnlimitedEnergy(dcArrayOutputWhPerWp), outputVoltage * __classPrivateFieldGet(this, _ChargeController_batteryChargeCurrent, "f") * dt);
         console.assert(energy >= 0, `Energy produced by CC ${energy} must be >0.\nOutput Voltage=${outputVoltage}\nBattery Charge Current=${__classPrivateFieldGet(this, _ChargeController_batteryChargeCurrent, "f")}\ndt=${dt}\nEnergy generated by connected PV=${super.getUnlimitedEnergy(dcArrayOutputWhPerWp)}`);
@@ -289,6 +350,14 @@ class ChargeController extends PVInverterCC {
 }
 _ChargeController_batteryChargeCurrent = new WeakMap();
 class PVInverter extends PVInverterCC {
+    /**
+     * An AC-coupled power generation device.
+     *
+     * @param {number} ratedPower - The maximum output power of the device.
+     * @param {number} maxPVPower - The maximum Pmp of all solar panels connected to the device.
+     * @param {PVInput[]} pvInputs - Array of PV inputs of the device. Each PV input should be connected to a single subarray.
+     * @param {number} price - The unit price of the device.
+     */
     constructor(ratedPower, maxPVPower, pvInputs, price) {
         super(pvInputs, maxPVPower, price);
         _PVInverter_ratedPower.set(this, void 0);
@@ -299,6 +368,14 @@ class PVInverter extends PVInverterCC {
         return new PVInverter(__classPrivateFieldGet(this, _PVInverter_ratedPower, "f"), this.maxPVPower, copiedPVInputs, this.price);
     }
     get ratedPower() { return __classPrivateFieldGet(this, _PVInverter_ratedPower, "f"); }
+    /**
+     * Energy generated by the subarrays connected to the device.
+     *
+     * @param {number} dcArrayOutputWhPerWp - Amount of energy [Wh] a 1-Wp panel could output during the time interval.
+     * @param {number} outputVoltage - The AC voltage of the distribution network. This input is not actually used by this method.
+     * @param {number} dt - The time interval [hr]
+     * @returns {number} Amount of energy [Wh] output by the device over the time interval.
+     */
     getEnergy(dcArrayOutputWhPerWp, outputVoltage, dt) {
         var energy = Math.min(super.getUnlimitedEnergy(dcArrayOutputWhPerWp), __classPrivateFieldGet(this, _PVInverter_ratedPower, "f") * dt);
         console.assert(energy >= 0, `Energy produced by PV inverter ${energy} must be >0.\nRated power=${__classPrivateFieldGet(this, _PVInverter_ratedPower, "f")}\ndt=${dt}\nEnergy generated by connected PV=${super.getUnlimitedEnergy(dcArrayOutputWhPerWp)}`);
@@ -307,6 +384,11 @@ class PVInverter extends PVInverterCC {
 }
 _PVInverter_ratedPower = new WeakMap();
 class ACDCCoupledEquipmentGroup {
+    /**
+     * Group of generation equipment, either PV inverters or charge contollers.
+     *
+     * @param {PVInverterCC[]} equipmentGroup - Array of PV inverters or charge controllers.
+     */
     constructor(equipmentGroup) {
         _ACDCCoupledEquipmentGroup_equipmentGroup.set(this, void 0);
         __classPrivateFieldSet(this, _ACDCCoupledEquipmentGroup_equipmentGroup, equipmentGroup, "f");
@@ -315,16 +397,22 @@ class ACDCCoupledEquipmentGroup {
         throw new Error('Must implement');
     }
     get equipmentGroup() { return __classPrivateFieldGet(this, _ACDCCoupledEquipmentGroup_equipmentGroup, "f"); }
+    /**
+     * The price of the group equipment and all connected solar panels.
+     *
+     * @returns {number}
+     */
     get price() {
-        var price = 0;
-        __classPrivateFieldGet(this, _ACDCCoupledEquipmentGroup_equipmentGroup, "f").forEach(equipment => {
-            price += equipment.totalPrice;
-        });
-        return price;
+        return __classPrivateFieldGet(this, _ACDCCoupledEquipmentGroup_equipmentGroup, "f").reduce((sum, equipment) => sum + equipment.totalPrice, 0);
     }
 }
 _ACDCCoupledEquipmentGroup_equipmentGroup = new WeakMap();
 class DCCoupledPVGenerationEquipment extends ACDCCoupledEquipmentGroup {
+    /**
+     * Group of charge controllers.
+     *
+     * @param {ChargeController[]} chargeControllers
+     */
     constructor(chargeControllers) {
         super(chargeControllers);
         _DCCoupledPVGenerationEquipment_equipmentGroup.set(this, void 0);
@@ -333,11 +421,15 @@ class DCCoupledPVGenerationEquipment extends ACDCCoupledEquipmentGroup {
         var copiedEquipmentGroup = __classPrivateFieldGet(this, _DCCoupledPVGenerationEquipment_equipmentGroup, "f").map(equipment => equipment.copy());
         return new DCCoupledPVGenerationEquipment(copiedEquipmentGroup);
     }
+    /**
+     * Amount of energy
+     * @param dcArrayOutputWhPerWp
+     * @param outputVoltage
+     * @param dt
+     * @returns
+     */
     getEnergy(dcArrayOutputWhPerWp, outputVoltage, dt) {
-        var energy = 0;
-        this.equipmentGroup.forEach((cc) => {
-            energy += cc.getEnergy(dcArrayOutputWhPerWp, outputVoltage, dt);
-        });
+        var energy = this.equipmentGroup.reduce((sum, cc) => sum + cc.getEnergy(dcArrayOutputWhPerWp, outputVoltage, dt), 0);
         return energy;
     }
 }
@@ -352,10 +444,7 @@ class ACCoupledPVGenerationEquipment extends ACDCCoupledEquipmentGroup {
         return new ACCoupledPVGenerationEquipment(copiedEquipmentGroup);
     }
     getEnergy(dcArrayOutputWhPerWp, outputVoltage, dt) {
-        var energy = 0;
-        this.equipmentGroup.forEach((inverter) => {
-            energy += inverter.getEnergy(dcArrayOutputWhPerWp, outputVoltage, dt);
-        });
+        var energy = this.equipmentGroup.reduce((sum, inverter) => sum + inverter.getEnergy(dcArrayOutputWhPerWp, outputVoltage, dt), 0);
         return energy;
     }
 }
