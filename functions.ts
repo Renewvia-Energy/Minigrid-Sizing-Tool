@@ -462,10 +462,7 @@ class DCCoupledPVGenerationEquipment extends ACDCCoupledEquipmentGroup {
 	 * @returns 
 	 */
 	getEnergy(dcArrayOutputWhPerWp: number, outputVoltage: number, dt: number): number {
-		var energy: number = 0
-		this.equipmentGroup.forEach((cc: ChargeController) => {
-			energy+= cc.getEnergy(dcArrayOutputWhPerWp, outputVoltage, dt)
-		})
+		var energy: number = this.equipmentGroup.reduce((sum, cc) => sum+cc.getEnergy(dcArrayOutputWhPerWp, outputVoltage, dt), 0)
 		return energy
 	}
 }
@@ -483,10 +480,7 @@ class ACCoupledPVGenerationEquipment extends ACDCCoupledEquipmentGroup {
 	}
 
 	getEnergy(dcArrayOutputWhPerWp: number, outputVoltage: number, dt: number): number {
-		var energy: number = 0
-		this.equipmentGroup.forEach((inverter: PVInverter) => {
-			energy+= inverter.getEnergy(dcArrayOutputWhPerWp, outputVoltage, dt)
-		})
+		var energy: number = this.equipmentGroup.reduce((sum, inverter) => sum+inverter.getEnergy(dcArrayOutputWhPerWp, outputVoltage, dt), 0)
 		return energy
 	}
 }
