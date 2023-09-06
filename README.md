@@ -52,7 +52,7 @@ The algorithm for the optimization function is as follow
 ## DC Power Production API
 After finishing with the logic and calculations of the project, we proceeded with loading the DC power production dynamically based on the input of user by calling https://pvwatts.nrel.gov/pvwatts.php API. We call the API using longitude, latitude, system capacity, module type, PV losses, array type, titl and azimuth input from users. The code for API handler can be found in Data.js
 ```
-fetch(`https://developer.nrel.gov/api/pvwatts/v8.json?api_key=Briy4bp8imL6tXQnBtfciedtG81I0uDOerZye4m3&lat=${lat}&lon=${lon}&system_capacity=${system_capacity}&module_type=${module_type}&losses=${PVlosses}&array_type=${array_type}&tilt=${tilt}&azimuth=${azimuth}&timeframe=${timeframe}`)
+fetch(`https://developer.nrel.gov/api/pvwatts/v8.json?api_key=${API_KEY}&lat=${lat}&lon=${lon}&system_capacity=${system_capacity}&module_type=${module_type}&losses=${PVlosses}&array_type=${array_type}&tilt=${tilt}&azimuth=${azimuth}&timeframe=${timeframe}`)
     .then(response => {
         // indicates whether the response is successful (status code 200-299) or not
         if (!response.ok) {
