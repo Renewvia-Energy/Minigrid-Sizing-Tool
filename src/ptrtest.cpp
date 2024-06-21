@@ -50,11 +50,10 @@ int main() {
     try {
         std::vector<Car> cars = { Car(), Car() };
         std::vector<Bike> bikes = { Bike(), Bike(), Bike() };
-        // Uncomment the following line to see the exception handling in action
-        // cars.push_back(Bike());
 
         CarGroup carGroup(cars);
         BikeGroup bikeGroup(bikes);
+        // Uncomment the following line to see the compiler reject
 		// BikeGroup bikeGroup(cars);
 
         carGroup.displayVehicles();
