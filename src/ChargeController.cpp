@@ -1,7 +1,7 @@
 #include <vector>
 #include "PVInverterCC.h"
 
-class ChargeController : PVInverterCC {
+class ChargeController : public PVInverterCC {
 	private:
 		double batteryChargeCurrent;
 

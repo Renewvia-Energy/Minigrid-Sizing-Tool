@@ -2,7 +2,7 @@
 #include <cassert>
 #include "PVInverterCC.h"
 
-class PVInverter : PVInverterCC {
+class PVInverter : public PVInverterCC {
 	private:
 		double ratedPower;
 

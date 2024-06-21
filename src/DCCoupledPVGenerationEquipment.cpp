@@ -1,26 +1,16 @@
 #include <vector>
+#include <memory>
 #include "ACDCCoupledEquipmentGroup.h"
 #include "ChargeController.cpp"
 
-class DCCoupledPVGenerationEquipment : ACDCCoupledEquipmentGroup {
-	private:
-		std::vector<ChargeController> equipmentGroup;
-
+class DCCoupledPVGenerationEquipment : public ACDCCoupledEquipmentGroup<ChargeController> {
 	public:
 		/**
 		 * Group of charge controllers.
 		 * 
 		 * @param {ChargeController[]} chargeControllers 
 		 */
-		DCCoupledPVGenerationEquipment(std::vector<ChargeController> equipmentGroup) : ACDCCoupledEquipmentGroup(equipmentGroup) {}
-
-		DCCoupledPVGenerationEquipment* copy() const override {
-			std::vector<ChargeController> copiedEquipmentGroup;
-			for (const auto& chargeController : equipmentGroup) {
-				copiedEquipmentGroup.push_back(*chargeController.copy());
-			}
-			return new DCCoupledPVGenerationEquipment(copiedEquipmentGroup);
-		}
+		DCCoupledPVGenerationEquipment(std::vector<ChargeController> equipmentGroup) : ACDCCoupledEquipmentGroup<ChargeController>(equipmentGroup) {}
 
 		/**
 		 * Amount of energy 

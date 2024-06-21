@@ -2,24 +2,23 @@
 #define ACDCCOUPLEDEQUIPMENTGROUP_H
 
 #include <vector>
+#include <memory>
 #include "PVInverterCC.h"
 
+template <typename T, typename = std::enable_if_t<std::is_base_of<PVInverterCC, T>::value>>
 class ACDCCoupledEquipmentGroup {
-	private:
-		std::vector<PVInverterCC> equipmentGroup;
+	protected:
+		std::vector<T> equipmentGroup;
 
 	public:
-		/**
-		 * Group of generation equipment, either PV inverters or charge contollers.
-		 * 
-		 * @param {PVInverterCC[]} equipmentGroup - Array of PV inverters or charge controllers.
-		 */
-		ACDCCoupledEquipmentGroup(std::vector<PVInverterCC> equipmentGroup) : equipmentGroup(equipmentGroup) {}
+		ACDCCoupledEquipmentGroup(std::vector<T> equipmentGroup) : equipmentGroup(equipmentGroup) {}
+
+		virtual ~ACDCCoupledEquipmentGroup() = default;
 
 		virtual ACDCCoupledEquipmentGroup* copy() const = 0;
 
-		// Getters
-		std::vector<PVInverterCC> getEquipmentGroup() const { return equipmentGroup; }
+		std::vector<T> getEquipmentGroup() const { return equipmentGroup; }
+
 		double getPrice() const {
 			return std::accumulate(equipmentGroup.begin(), equipmentGroup.end(), 0.0,
 			[](double sum, const PVInverterCC& equipment) {
