@@ -25,7 +25,7 @@ class Panel {
 		Panel(double Pmp, double Voc, double Vmp, double Isc, double Imp, double price) : Pmp(Pmp), Voc(Voc), Vmp(Vmp), Isc(Isc), Imp(Imp), price(price) {}
 
 		Panel copy() const {
-			return Panel(Pmp, Voc, Vmp, Isc, Imp, price);
+			return *this;
 		}
 
 		// Getters

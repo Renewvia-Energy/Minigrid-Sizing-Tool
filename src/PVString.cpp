@@ -30,12 +30,13 @@ class PVString {
 			}
 		}
 
-		PVString copy() const {
+		PVString* copy() const {
 			std::vector<Panel> copiedPanels;
+			copiedPanels.reserve(panels.size());
 			for (const auto& panel : panels) {
 				copiedPanels.push_back(panel.copy());
 			}
-			return PVString(copiedPanels);
+			return new PVString(copiedPanels);
 		}
 
 		// Getters

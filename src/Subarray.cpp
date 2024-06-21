@@ -35,13 +35,13 @@ class Subarray {
 			}
 		}
 
-		Subarray copy() const {
+		Subarray* copy() const {
 			std::vector<PVString> copiedPVStrings;
 			copiedPVStrings.reserve(pvStrings.size());
 			for (const auto& pvString : pvStrings) {
-				copiedPVStrings.push_back(pvString.copy());
+				copiedPVStrings.push_back(*pvString.copy());
 			}
-			return Subarray(copiedPVStrings, arrayLosses);
+			return new Subarray(copiedPVStrings, arrayLosses);
 		}
 
 		// Getters
