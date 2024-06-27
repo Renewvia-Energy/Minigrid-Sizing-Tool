@@ -1,31 +1,37 @@
 #include <vector>
+#include <memory>
+#include <numeric>
 #include "Battery.cpp"
 
 class BatteryBank {
 	private:
-		std::vector<Battery> batteries;
-		double outputVoltage;
-		double minSOC;
-		double cRate;
-		double dRate;
-		double price;
-		double capacity;
+		const std::vector<std::unique_ptr<Battery>> batteries;
+		const double outputVoltage;
+		const double minSOC;
+		const double cRate;
+		const double dRate;
+		const double price;
+		const double capacity;
 		double energy;
 		double cumE;
 
 	public:
-		BatteryBank(std::vector<Battery> batteries, double outputVoltage) : batteries(batteries), outputVoltage(outputVoltage), minSOC(batteries[0].getMinSOC()), cRate(batteries[0].getCRate()), dRate(batteries[0].getDRate()), price(0), capacity(0), cumE(0) {
+		BatteryBank(std::vector<std::unique_ptr<Battery>> batteries, double outputVoltage) : 
+			batteries(batteries),
+			outputVoltage(outputVoltage),
+			minSOC(batteries[0]->getMinSOC()),
+			cRate(batteries[0]->getCRate()),
+			dRate(batteries[0]->getDRate()),
+			price(std::accumulate(batteries.begin(),batteries.end(), 0.0, [](double sum, const auto& battery) { return sum + battery->getPrice(); })),
+			capacity(std::accumulate(batteries.begin(),batteries.end(), 0.0, [](double sum, const auto& battery) { return sum + battery->getCapacity(); })),
+			cumE(0) {
 			// TODO: confirm batteries are equivalent
-			for (const auto& battery : batteries) {
-				this->capacity+= battery.getCapacity();
-				this->price+= battery.getPrice();
-			}
 
 			this->energy = this->capacity;
 		}
 
 		// Getters
-		std::vector<Battery> getBatteries() const { return batteries; }
+		std::vector<std::unique_ptr<Battery>> getBatteries() const { return batteries; }
 		double getOutputVoltage() const { return outputVoltage; }
 		double getMinSOC() const { return minSOC; }
 		double getPrice() const { return price; }

@@ -1,18 +1,19 @@
 #include <vector>
 #include <cassert>
 #include <numeric>
+#include <memory>
 #include "PVString.cpp"
 
 class Subarray {
 	private:
-		std::vector<PVString> pvStrings;
-		double arrayLosses;
-		double Voc;
-		double Vmp;
-		double Pmp;
-		double Isc;
-		double Imp;
-		double price;
+		const std::vector<std::unique_ptr<PVString>> pvStrings;
+		const double arrayLosses;
+		const double Voc;
+		const double Vmp;
+		const double Pmp;
+		const double Isc;
+		const double Imp;
+		const double price;
 
 	public:
 		/**
@@ -22,30 +23,31 @@ class Subarray {
 		 * @param {number} arrayLosses - Fraction of energy produced by the panels that is lost before reaching the PV inverter or charge controller
 		 * @constructor
 		 */
-		Subarray(std::vector<PVString> pvStrings, double arrayLosses) : pvStrings(pvStrings), arrayLosses(arrayLosses), Voc(pvStrings[0].getVoc()), Vmp(pvStrings[0].getVmp()), Pmp(0), Isc(0), Imp(0), price(0) {
+		Subarray(std::vector<std::unique_ptr<PVString>> pvStrings, double arrayLosses) : 
+			pvStrings(pvStrings),
+			arrayLosses(arrayLosses),
+			Voc(pvStrings[0]->getVoc()),
+			Vmp(pvStrings[0]->getVmp()),
+			Pmp(std::accumulate(pvStrings.begin(),pvStrings.end(), 0.0, [](double sum, const auto& pvString) { return sum + pvString->getPmp(); })),
+			Isc(std::accumulate(pvStrings.begin(),pvStrings.end(), 0.0, [](double sum, const auto& pvString) { return sum + pvString->getIsc(); })),
+			Imp(std::accumulate(pvStrings.begin(),pvStrings.end(), 0.0, [](double sum, const auto& pvString) { return sum + pvString->getImp(); })),
+			price(std::accumulate(pvStrings.begin(),pvStrings.end(), 0.0, [](double sum, const auto& pvString) { return sum + pvString->getPrice(); })) {
 			// TODO: confirm all strings same
 
 			assert(arrayLosses >= 0 && arrayLosses <= 1 && "Array losses must be in [0,1]");
-
-			for (const auto& pvString : pvStrings) {
-				Pmp+= pvString.getPmp();
-				Isc+= pvString.getIsc();
-				Imp+= pvString.getImp();
-				price+= pvString.getPrice();
-			}
 		}
 
-		Subarray* copy() const {
-			std::vector<PVString> copiedPVStrings;
+		std::unique_ptr<Subarray> copy() const {
+			std::vector<std::unique_ptr<PVString>> copiedPVStrings;
 			copiedPVStrings.reserve(pvStrings.size());
 			for (const auto& pvString : pvStrings) {
-				copiedPVStrings.push_back(*pvString.copy());
+				copiedPVStrings.push_back(std::make_unique<PVString>(pvString->copy()));
 			}
-			return new Subarray(copiedPVStrings, arrayLosses);
+			return std::make_unique<Subarray>(Subarray(copiedPVStrings, arrayLosses));
 		}
 
 		// Getters
-		std::vector<PVString> getPVStrings() const { return pvStrings; }
+		std::vector<std::unique_ptr<PVString>> getPVStrings() const { return pvStrings; }
 		double getVoc() const { return Voc; }
 		double getVmp() const { return Vmp; }
 		double getPmp() const { return Pmp; }

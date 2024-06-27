@@ -3,12 +3,12 @@
 
 class Panel {
 	private:
-		double Pmp;
-		double Voc;
-		double Vmp;
-		double Isc;
-		double Imp;
-		double price;
+		const double Pmp;
+		const double Voc;
+		const double Vmp;
+		const double Isc;
+		const double Imp;
+		const double price;
 
 	public:
 		/**

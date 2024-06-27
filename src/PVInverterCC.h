@@ -2,14 +2,16 @@
 #define PVINVERTERCC_H
 
 #include <vector>
+#include <memory>
+#include <numeric>
 #include "PVInput.cpp"
 
 class PVInverterCC {
 	private:
-		std::vector<PVInput> pvInputs;
-		double maxPVPower;
-		double price;
-		double subarrayPrice;
+		const std::vector<std::unique_ptr<PVInput>> pvInputs;
+		const double maxPVPower;
+		const double price;
+		const double subarrayPrice;
 
 	public:
 		/**
@@ -20,11 +22,14 @@ class PVInverterCC {
 		 * @param {number} price - Price of device [$].
 		 * @constructor
 		 */
-		PVInverterCC(std::vector<PVInput> pvInputs, double maxPVPower, double price) : pvInputs(pvInputs), maxPVPower(maxPVPower), price(price), subarrayPrice(0) {
+		PVInverterCC(std::vector<std::unique_ptr<PVInput>> pvInputs, double maxPVPower, double price) : 
+			pvInputs(pvInputs),
+			maxPVPower(maxPVPower),
+			price(price),
+			subarrayPrice(std::accumulate(pvInputs.begin(),pvInputs.end(), 0.0, [](double sum, const auto& pvInput) { return sum + pvInput->getPrice(); })) {
 			double Pmp = 0;
 			for (const auto& pvInput : pvInputs) {
-				subarrayPrice+= pvInput.getPrice();
-				Pmp+= pvInput.getPmp();
+				Pmp+= pvInput->getPmp();
 			}
 			if (Pmp>maxPVPower) {
 				throw std::runtime_error("Too much PV input power connected. " + std::to_string(Pmp) + ">" + std::to_string(maxPVPower));
@@ -33,10 +38,10 @@ class PVInverterCC {
 
 		virtual ~PVInverterCC() = default;
 
-		virtual PVInverterCC* copy() const = 0;
+		virtual std::unique_ptr<PVInverterCC> copy() const = 0;
 		
 		// Getters
-		std::vector<PVInput> getPVInputs() const { return pvInputs; }
+		std::vector<std::unique_ptr<PVInput>> getPVInputs() const { return pvInputs; }
 		double getMaxPVPower() const { return maxPVPower; }
 		double getPrice() const { return price; }
 		double totalPrice() const { return subarrayPrice + price; }

@@ -3,11 +3,11 @@
 
 class Battery {
 	private:
-		double capacity;
-		double minSOC;
-		double cRate;
-		double dRate;
-		double price;
+		const double capacity;
+		const double minSOC;
+		const double cRate;
+		const double dRate;
+		const double price;
 	
 	public:
 		/**
@@ -20,8 +20,7 @@ class Battery {
 		 * @param {number} price - Unit cost of battery, exclusive of shipping, clearing, labor, etc. [$]
 		 */
 		Battery(double capacity, double minSOC, double cRate, double dRate, double price) : capacity(capacity), minSOC(minSOC), cRate(cRate), dRate(dRate), price(price) {
-			std::string errorMsg = "MinSOC " + std::to_string(minSOC) + " must be between 0 and 1.";
-			assert(minSOC>=0 && minSOC<=1 && errorMsg.c_str());
+			assert(minSOC>=0 && minSOC<=1 && ("MinSOC " + std::to_string(minSOC) + " must be between 0 and 1.").c_str());
 		}
 
 		Battery copy() const {

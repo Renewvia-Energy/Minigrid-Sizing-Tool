@@ -1,16 +1,17 @@
 #include <vector>
 #include <numeric>
+#include <memory>
 #include "Panel.cpp"
 
 class PVString {
 	private:
-		double Pmp;
-		double Voc;
-		double Vmp;
-		double Isc;
-		double Imp;
-		double price;
-        std::vector<Panel> panels;
+		const double Pmp;
+		const double Voc;
+		const double Vmp;
+		const double Isc;
+		const double Imp;
+		const double price;
+        const std::vector<std::unique_ptr<Panel>> panels;
 
 	public:
 		/**
@@ -21,26 +22,26 @@ class PVString {
 		 * @param {Panel[]} panels - Array of solar panels connected in series into one string
 		 * @constructor
 		 */
-		PVString(std::vector<Panel> panels) : panels(panels), Pmp(0), Voc(0), Vmp(0), Isc(panels[0].getIsc()), Imp(panels[0].getImp()), price(0) {
-			for (const auto& panel : panels) {
-				Pmp+= panel.getPmp();
-				Voc+= panel.getVoc();
-				Vmp+= panel.getVmp();
-				price+= panel.getPrice();
-			}
-		}
+		PVString(std::vector<std::unique_ptr<Panel>> panels) : 
+			panels(panels),
+			Pmp(std::accumulate(panels.begin(),panels.end(), 0.0, [](double sum, const auto& panel) { return sum + panel->getPmp(); })),
+			Voc(std::accumulate(panels.begin(),panels.end(), 0.0, [](double sum, const auto& panel) { return sum + panel->getVoc(); })),
+			Vmp(std::accumulate(panels.begin(),panels.end(), 0.0, [](double sum, const auto& panel) { return sum + panel->getVmp(); })),
+			Isc(panels[0]->getIsc()),
+			Imp(panels[0]->getImp()),
+			price(std::accumulate(panels.begin(),panels.end(), 0.0, [](double sum, const auto& panel) { return sum + panel->getPrice(); })) {}
 
-		PVString* copy() const {
-			std::vector<Panel> copiedPanels;
+		std::unique_ptr<PVString> copy() const {
+			std::vector<std::unique_ptr<Panel>> copiedPanels;
 			copiedPanels.reserve(panels.size());
 			for (const auto& panel : panels) {
-				copiedPanels.push_back(panel.copy());
+				copiedPanels.push_back(std::make_unique<Panel>(panel->copy()));
 			}
-			return new PVString(copiedPanels);
+			return std::make_unique<PVString>(PVString(copiedPanels));
 		}
 
 		// Getters
-		std::vector<Panel> getPanels() const { return panels; }
+		std::vector<std::unique_ptr<Panel>> getPanels() const { return panels; }
 		double getPmp() const { return Pmp; }
 		double getVoc() const { return Voc; }
 		double getVmp() const { return Vmp; }

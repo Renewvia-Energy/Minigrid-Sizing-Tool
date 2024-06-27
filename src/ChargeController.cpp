@@ -3,7 +3,7 @@
 
 class ChargeController : public PVInverterCC {
 	private:
-		double batteryChargeCurrent;
+		const double batteryChargeCurrent;
 
 	public:
 		/**
@@ -14,15 +14,15 @@ class ChargeController : public PVInverterCC {
 		 * @param {PVInput[]} pvInputs - Array of PV inputs of the device. Each PV input should be connected to a single subarray. 
 		 * @param {number} price - The unit price of the device. 
 		 */
-		ChargeController(double batteryChargeCurrent, double maxPVPower, std::vector<PVInput> pvInputs, double price) : PVInverterCC(pvInputs, maxPVPower, price), batteryChargeCurrent(batteryChargeCurrent) {}
+		ChargeController(double batteryChargeCurrent, double maxPVPower, std::vector<std::unique_ptr<PVInput>> pvInputs, double price) : PVInverterCC(pvInputs, maxPVPower, price), batteryChargeCurrent(batteryChargeCurrent) {}
 
-		ChargeController* copy() const override {
-			std::vector<PVInput> copiedPVInputs;
+		std::unique_ptr<PVInverterCC> copy() const override {
+			std::vector<std::unique_ptr<PVInput>> copiedPVInputs;
 			copiedPVInputs.reserve(getPVInputs().size());
 			for (const auto& pvInput : getPVInputs()) {
-				copiedPVInputs.push_back(pvInput.copy());
+				copiedPVInputs.push_back(std::make_unique<PVInput>(pvInput->copy()));
 			}
-			return new ChargeController(batteryChargeCurrent, getMaxPVPower(), copiedPVInputs, getPrice());
+			return std::make_unique<ChargeController>(ChargeController(batteryChargeCurrent, getMaxPVPower(), copiedPVInputs, getPrice()));
 		}
 
 		// Getters

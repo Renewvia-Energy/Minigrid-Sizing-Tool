@@ -1,16 +1,16 @@
 #include <vector>
+#include <memory>
 #include "Subarray.cpp"
 
 class PVInput {
 	private:
-		double Voc_min;
-		double Voc_max;
-		double Vmp_min;
-		double Vmp_max;
-		double Isc_max;
-		double Imp_max;
-		double price;
-		Subarray* subarray;
+		const double Voc_min;
+		const double Voc_max;
+		const double Vmp_min;
+		const double Vmp_max;
+		const double Isc_max;
+		const double Imp_max;
+		std::unique_ptr<Subarray> subarray;
 
 	public:
 		/**
@@ -24,7 +24,7 @@ class PVInput {
 		 * @param {number} Imp_max - Maximum maximum-power current allowed of a connected subarray.
 		 * @constructor 
 		 */
-		PVInput(double Voc_min, double Voc_max, double Vmp_min, double Vmp_max, double Isc_max, double Imp_max) : Voc_min(Voc_min), Voc_max(Voc_max), Vmp_min(Vmp_min), Vmp_max(Vmp_max), Isc_max(Isc_max), Imp_max(Imp_max), price(0), subarray(nullptr) {}
+		PVInput(double Voc_min, double Voc_max, double Vmp_min, double Vmp_max, double Isc_max, double Imp_max) : Voc_min(Voc_min), Voc_max(Voc_max), Vmp_min(Vmp_min), Vmp_max(Vmp_max), Isc_max(Isc_max), Imp_max(Imp_max), subarray(nullptr) {}
 
 		/**
 		 * Connect a single subarray of panels to this PV input. Check to make sure the subarray specs, Voc, Vmp, Isc, and Imp, are within the parameters of the PV input.
@@ -32,8 +32,8 @@ class PVInput {
 		 * @param {Subarray} subarray - The subarray to connect to the PV input.
 		 * @throws An error if any of the subarray parameters, Voc, Vmp, Isc, or Imp, are outside the acceptable bounds of this PV input.
 		 */
-		void connectSubarray(Subarray* newSubarray) {
-			subarray = newSubarray;
+		void connectSubarray(std::unique_ptr<Subarray> newSubarray) {
+			subarray = std::move(newSubarray);
 
 			if (subarray->getVoc() < Vmp_min || subarray->getVoc() > Vmp_max) {
 				throw std::runtime_error("Subarray Voc " + std::to_string(subarray->getVoc()) + " is outside the bounds [" + std::to_string(Voc_min) + "," + std::to_string(Voc_max) + "]");
@@ -47,19 +47,17 @@ class PVInput {
 			if (subarray->getImp() > Imp_max) {
 				throw std::runtime_error("Subarray Imp " + std::to_string(subarray->getImp()) + " is greater than the PV input Imp_max " + std::to_string(Imp_max));
 			}
-
-			price = subarray->getPrice();
 		}
 
-		PVInput copy() const {
-			Subarray copiedSubarray = *subarray->copy();	// Equavalent to *(subarray->copy())
+		std::unique_ptr<PVInput> copy() const {
+			std::unique_ptr<Subarray> copiedSubarray(subarray->copy());
 			PVInput copiedPVInput = PVInput(Voc_min, Voc_max, Vmp_min, Vmp_max, Isc_max, Imp_max);
-			copiedPVInput.connectSubarray(&copiedSubarray);
-			return copiedPVInput;
+			copiedPVInput.connectSubarray(std::move(copiedSubarray));
+			return std::make_unique<PVInput>(copiedPVInput);
 		}
 
 		// Getters
-		double getPrice() const { return price; }
+		double getPrice() const { return subarray->getPrice(); }
 		double getPmp() const { return subarray->getPmp();}
 
 		/**
