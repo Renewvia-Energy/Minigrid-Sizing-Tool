@@ -3,8 +3,10 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <cmath>
 #include "GenerationSite.cpp"
 #include "Customer.cpp"
+#include "../include/Constants.h"
 
 struct MiniGridOperationStep : GenerationSiteOperationStep {
 	double load;
@@ -20,8 +22,8 @@ class MiniGrid {
 		const std::vector<std::unique_ptr<Customer>> customers;
 		const std::function<double(std::string, double)> tariff;
 		const double dxLosses;
-		const std::function<double(double)> dcArrayOutputWhPerWpFn;
-		const std::unique_ptr<GenerationSite> generationSite;
+		std::function<double(double)> dcArrayOutputWhPerWpFn;
+		std::unique_ptr<GenerationSite> generationSite;
 
 		static std::function<double(double)> getDCArrayOutputWhPerWpFn(const std::string& filename) {
 			std::ifstream file(filename);
@@ -62,40 +64,17 @@ class MiniGrid {
 				throw std::runtime_error("No data was read from the file");
 			}
 
-			dcArrayOutputWhPerWpFn = [this, dcArrayOutputWhPerWpArr](double t) {
-				return dcArrayOutputWhPerWpArr[std::round(t) % (HR_PER_DAY * DAYS_PER_YR)];
+			return [dcArrayOutputWhPerWpArr](double t) {
+				return dcArrayOutputWhPerWpArr[static_cast<int>(std::round(t)) % (Global::HR_PER_DAY * Global::DAY_PER_YR)];
 			};
 		}
 
 	public:
-		MiniGrid(std::vector<std::unique_ptr<Customer>> customers, std::function<double(std::string, double)> tariff, double dxLosses, double latitude, double longitude, bool roofMounted = false, std::string PVWATTS_API_KEY) : customers(customers), tariff(tariff), dxLosses(dxLosses) {
-			const std::string url = "https://developer.nrel.gov/api/pvwatts/v8.json?api_key=" + PVWATTS_API_KEY + "&lat=" + std::to_string(latitude) + "&lon=" + std::to_string(longitude) + "&system_capacity=1&module_type=0&losses=0&array_type=" + (roofMounted ? "1" : "0") + "&tilt=10&azimuth=180&timeframe=hourly&dataset=intl";
+		MiniGrid(std::vector<std::unique_ptr<Customer>> customers, std::function<double(std::string, double)> tariff, double dxLosses, std::string filename) : customers(customers), tariff(tariff), dxLosses(dxLosses) {}
 
-
+		void placeFromFile(std::string filename) {
+			dcArrayOutputWhPerWpFn = getDCArrayOutputWhPerWpFn(filename);
 		}
-
-	place(latitude: number, longitude: number, roofMounted: boolean = false, PVWATTS_API_KEY: string) {
-		const url: string = `https://developer.nrel.gov/api/pvwatts/v8.json?api_key=${PVWATTS_API_KEY}&lat=${latitude}&lon=${longitude}&system_capacity=1&module_type=0&losses=0&array_type=${roofMounted ? 1 : 0}&tilt=10&azimuth=180&timeframe=hourly&dataset=intl`
-
-		return new Promise((resolve, reject) => {
-			const request: XMLHttpRequest = new XMLHttpRequest()
-			request.open('GET', url)
-			request.onload = () => {
-				if (request.status === 200) {
-					var dcArrayOutputWhPerkWpArr: number[] = [...JSON.parse(request.response).outputs.dc]
-					var dcArrayOutputWhPerWpArr: number[] = dcArrayOutputWhPerkWpArr.map(dcArrayOutputWhPerkWp => dcArrayOutputWhPerkWp/1000)
-					this.#dcArrayOutputWhPerWpFn = t => dcArrayOutputWhPerWpArr[Math.round(t) % (HR_PER_DAY*DAYS_PER_YR)]
-					resolve(JSON.parse(request.response))
-				} else {
-					reject(Error(request.statusText))
-				}
-			}
-			request.onerror = () => {
-				reject(Error('Network Error'))
-			}
-			request.send()
-		})
-	}
 
 	buildGenerationSite(generationSite) {
 		this.#generationSite = generationSite
