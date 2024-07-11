@@ -8,11 +8,11 @@
 #include "Customer.cpp"
 #include "../include/Constants.h"
 
-struct MiniGridOperationStep : GenerationSiteOperationStep {
+struct MiniGridOperationStep : public GenerationSiteOperationStep {
 	double load;
 	double remainingLoadWithDxLosses;
 	double remainingLoad;
-}
+};
 
 class MiniGrid {
 	private:
@@ -76,41 +76,41 @@ class MiniGrid {
 			dcArrayOutputWhPerWpFn = getDCArrayOutputWhPerWpFn(filename);
 		}
 
-	buildGenerationSite(generationSite) {
-		this.#generationSite = generationSite
-	}
-
-	getDCArrayOutputWhPerkWp(t: number) {
-		return this.#dcArrayOutputWhPerWpFn(t)
-	}
-
-	operate(t: number, dt: number): MiniGridOperationStep {
-		var dcArrayOutputWhPerWp: number = this.getDCArrayOutputWhPerkWp(t)
-
-		var load: number = 0
-		this.#customers.forEach(customer => {
-			load+= customer.getTotalLoad(this.#tariff(customer.name, t), t)
-		})
-
-		var result: GenerationSiteOperationStep = this.#generationSite.operate(t, dt, dcArrayOutputWhPerWp, load/(1-this.#dxLosses))
-		return {
-			availableACFromPVInverters: result.availableACFromPVInverters,
-			availableDCFromCCs: result.availableDCFromCCs,
-			loadWithDxLosses: result.loadWithDxLosses,
-			batterySOCWhStart: result.batterySOCWhStart,
-			batterySOCStart: result.batterySOCStart,
-			batterySOCWhEnd: result.batterySOCWhEnd,
-			batterySOCEnd: result.batterySOCEnd,
-			totalSolarToLoad: result.totalSolarToLoad,
-			totalSolarToBattery: result.totalSolarToBattery,
-			totalBatteryToLoad: result.totalBatteryToLoad,
-			totalEnergyToLoad: result.totalEnergyToLoad,
-			generatorLoad: result.generatorLoad,
-			generatorFuelConsumption: result.generatorFuelConsumption,
-			wastedSolar: result.wastedSolar,
-			load: load,
-			remainingLoadWithDxLosses: result.remainingLoad,
-			remainingLoad: load-result.totalEnergyToLoad*(1-this.#dxLosses)
+		void buildGenerationSite(std::unique_ptr<GenerationSite> generationSite) {
+			this->generationSite = std::move(generationSite);
 		}
-	}
-}
+
+		double getDCArrayOutputWhPerWp(double t) const { return dcArrayOutputWhPerWpFn(t); }
+
+		MiniGridOperationStep operate(double t, double dt) {
+			const double dcOutputWhPerWp = getDCArrayOutputWhPerWp(t);
+
+			const double loadNow = std::accumulate(customers.begin(), customers.end(), 0.0, [&](double sum, const auto& customer) {
+				return sum + customer.getTotalLoad(tariff(customer->name, t), t);
+			});
+
+			const GenerationSiteOperationStep result = generationSite->operate(t, dt, dcOutputWhPerWp, loadNow/(1-dxLosses));
+
+			MiniGridOperationStep step = {
+				load: loadNow,
+				remainingLoadWithDxLosses: result.remainingLoad,
+				remainingLoad: loadNow-result.totalEnergyToLoad*(1-dxLosses)
+			};
+			step.availableACFromPVInverters = result.availableACFromPVInverters;
+			step.availableDCFromCCs = result.availableDCFromCCs;
+			step.loadWithDxLosses = result.loadWithDxLosses;
+			step.batterySOCWhStart = result.batterySOCWhStart;
+			step.batterySOCStart = result.batterySOCStart;
+			step.batterySOCWhEnd = result.batterySOCWhEnd;
+			step.batterySOCEnd = result.batterySOCEnd;
+			step.totalSolarToLoad = result.totalSolarToLoad;
+			step.totalSolarToBattery = result.totalSolarToBattery;
+			step.totalBatteryToLoad = result.totalBatteryToLoad;
+			step.totalEnergyToLoad = result.totalEnergyToLoad;
+			step.generatorLoad = result.generatorLoad;
+			step.generatorFuelConsumption = result.generatorFuelConsumption;
+			step.wastedSolar = result.wastedSolar;
+			
+			return step;
+		}
+};
