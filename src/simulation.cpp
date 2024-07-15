@@ -1,18 +1,27 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <sstream>
 #include "Customer.cpp"
 #include "../include/UserInput.h"
 
 int main() {
-	// Get customers
+	// Initialize vectors to hold customers and tariffs
 	std::vector<Customer> customers = std::vector<Customer>();
 	std::vector<double> defaultTariffs = std::vector<double>();
+	std::vector<std::string> tariffNames = std::vector<std::string>();
 
+	// Open file
 	std::ifstream file(UserInput::CUSTOMERS_FN);
 	if (!file.is_open()) {
 		throw std::runtime_error("Could not open file: " + UserInput::CUSTOMERS_FN);
 	}
+
+	std::string line;
+	std::getline(file, line);	// Get first header line containing the names of the tariffs
+	std::istringstream iss(line);	// 
+	std::string token;
+	std::getline(iss, token, ',');
 
 	var customers: Customer[] = []
 	var defaultTariffs: number[]

@@ -34,7 +34,7 @@ class MiniGrid {
 			std::vector<double> dcArrayOutputWhPerWpArr;
 			std::string line;
 			
-			// Skip the header if there is one
+			// Skip the header
 			for (int l=0; l<FIRST_DATA_ROW; l++) {
 				std::getline(file, line);
 			}
