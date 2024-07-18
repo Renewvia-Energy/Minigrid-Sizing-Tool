@@ -5,8 +5,8 @@ class Customer {
 	private:
 		const std::string name;
 		const double maxLoad;
-		const std::function<double(double, double)> loadProfile;	// (tariff: number, t: number) => number
-		const double qty;
+		const std::function<double(double, double)> loadProfile;	// (tariff: number, t: number) => number; Energy needs of a single customer [Wh/hr] given the tariff and time since commissioning [hr].
+		const int qty;
 
 	public:
 		/**
@@ -33,5 +33,13 @@ class Customer {
 		}
 		double getTotalLoad(double tariff, double t) const {
 			return this->getTotalLoadProfile()(tariff, t);
+		}
+
+		std::string to_string() const {
+			return std::to_string(qty) + " " + name + " customer(s) " + " with max load " + std::to_string(maxLoad) + ", first three hours: " + std::to_string(getLoad(0,0)) + ", " + std::to_string(getLoad(0, 1)) + ", " + std::to_string(getLoad(0, 2));
+		}
+
+		static const std::function<double(double, double)> getTariffFn(std::vector<double> loadProfile) {
+			return [loadProfile](double tariff, double t) { return loadProfile[(int)t % loadProfile.size()]; };
 		}
 };

@@ -59,6 +59,7 @@ class MiniGrid {
 					column++;
 				}
 			}
+			file.close();
 
 			if (dcArrayOutputWhPerWpArr.empty()) {
 				throw std::runtime_error("No data was read from the file");

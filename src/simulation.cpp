@@ -2,68 +2,89 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <ctime>
 #include "Customer.cpp"
 #include "../include/UserInput.h"
 
 int main() {
-	// Initialize vectors to hold customers and tariffs
-	std::vector<Customer> customers = std::vector<Customer>();
-	std::vector<double> defaultTariffs = std::vector<double>();
-	std::vector<std::string> tariffNames = std::vector<std::string>();
-
 	// Open file
 	std::ifstream file(UserInput::CUSTOMERS_FN);
 	if (!file.is_open()) {
 		throw std::runtime_error("Could not open file: " + UserInput::CUSTOMERS_FN);
 	}
+	
+	// Declare iss and token
+	std::istringstream iss;
+	std::string token;
 
+	// Get tariff names
+	std::vector<std::string> tariffNames = std::vector<std::string>();
 	std::string line;
 	std::getline(file, line);	// Get first header line containing the names of the tariffs
-	std::istringstream iss(line);	// 
-	std::string token;
-	std::getline(iss, token, ',');
+	iss.str(line);	// Initialize input string stream with first header line
+	std::getline(iss, token, ',');	// Skip "Name"
+	while (std::getline(iss, token, ',')) {	// Collect tariff names in array
+		tariffNames.push_back(token);
+	}
+	iss.clear();
 
-	var customers: Customer[] = []
-	var defaultTariffs: number[]
-	const loadCustomerFile = new Promise((resolve, reject) => {
-		const custFileInput = <HTMLInputElement> document.getElementById('cust-file')
-		const custFR = new FileReader()
-		custFR.onload = (e:Event) => {
-			const contents: string = custFR.result as string
-			const rows: string[] = contents.split('\r\n')
-			const custTypes: string[] = rows[0].split(',').slice(1)
-			defaultTariffs = new Array(custTypes.length)
-			
-			// For each customer
-			for (let c:number =0; c<custTypes.length; c++) {
-				var loadProfileArr: { (tariff: number): number }[] = new Array(HR_PER_DAY*DAYS_PER_YR)
+	// Get max loads
+	std::vector<double> maxLoads = std::vector<double>(tariffNames.size());
+	std::getline(file, line);	// Get second line of file, containing max loads
+	iss.str(line);
+	std::getline(iss, token, ',');	// Skip "Max Load (W)"
+	for (int ct=0; ct<tariffNames.size(); ct++) {	// ct = "customer type index"
+		std::getline(iss, token, ',');
+		maxLoads[ct] = std::stod(token);
+	}
+	iss.clear();
+	
+	// Get quantities
+	std::vector<int> quantities = std::vector<int>(tariffNames.size());
+	std::getline(file, line);	// Get third line of file, containing quantities
+	iss.str(line);
+	std::getline(iss, token, ',');	// Skip "Quantity"
+	for (int ct=0; ct<tariffNames.size(); ct++) {
+		std::getline(iss, token, ',');
+		quantities[ct] = std::stoi(token);
+	}
+	iss.clear();
 
-				// Iterate through each hour of the year
-				for (let t=0; t<HR_PER_DAY*DAYS_PER_YR; t++) {
-					const load: string = rows[t+CUSTOMER_CSV_HEADER_ROWS].split(',')[c+1]
-					if (isNaN(Number(load))) {
-						// TODO tariff optimization
-						reject('Tariff optimization not yet supported')
-					} else {
-						loadProfileArr[t] = (tariff: number) => Number(load)*1000
-					}
-				}
+	// Get default tariffs
+	std::vector<double> defaultTariffs = std::vector<double>(tariffNames.size());
+	std::getline(file, line);	// Get fourth line of file, containing default tariffs
+	iss.str(line);
+	std::getline(iss, token, ',');	// Skip "Default Tariff (¤/kWh)"
+	for (int ct=0; ct<tariffNames.size(); ct++) {
+		std::getline(iss, token, ',');
+		defaultTariffs[ct] = std::stod(token);
+	}
+	iss.clear();
 
-				// Construct new customer profile and add to the array
-				customers.push(new Customer(
-					custTypes[c],
-					Number(rows[1].split(',')[c+1]),
-					(tariff: number, t: number) => loadProfileArr[Math.round(t)](tariff),
-					Number(rows[2].split(',')[c+1])))
-				defaultTariffs[c] = Number(rows[3].split(',')[c+1])
-			}
-
-			resolve(null)
+	// Read array of customer load profiles
+	std::vector<std::vector<double>> loadProfiles = std::vector<std::vector<double>>(tariffNames.size(), std::vector<double>());
+	while (std::getline(file, line)) {
+		iss.str(line);
+		std::getline(iss, token, ',');	// Skip first column, datetime
+		for (int ct=0; ct<tariffNames.size(); ct++) {
+			std::getline(iss, token, ',');
+			loadProfiles[ct].push_back(std::stod(token));
 		}
-		custFR.readAsText(custFileInput.files[0])
-	})
-	await loadCustomerFile
+		iss.clear();
+	}
+	file.close();
 
+	// Create customers vector
+	std::vector<Customer> customers = std::vector<Customer>();
+	for (int ct=0; ct<tariffNames.size(); ct++) {
+		customers.push_back(Customer(tariffNames[ct], maxLoads[ct], Customer::getTariffFn(loadProfiles[ct]), quantities[ct]));
+	}
+
+	std::cout << customers[0].to_string() << std::endl;
+	std::cout << customers[1].to_string() << std::endl;
+}
+
+	/*
 	// Initialize Mini-Grid
 	const latitude = Number((<HTMLInputElement>document.getElementById('location_lat')).value)	// [°N]
 	const longitude = Number((<HTMLInputElement>document.getElementById('location_lon')).value)	// [°E]
@@ -284,3 +305,4 @@ int main() {
 }
 	return 0;
 }
+*/
