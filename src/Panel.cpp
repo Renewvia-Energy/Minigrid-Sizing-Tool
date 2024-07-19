@@ -1,5 +1,9 @@
+#ifndef PANEL_CPP
+#define PANEL_CPP
+
 #include <cassert>
 #include <iostream>
+#include <memory>
 
 class Panel {
 	private:
@@ -23,9 +27,9 @@ class Panel {
 		* @constructor
 		*/
 		Panel(double Pmp, double Voc, double Vmp, double Isc, double Imp, double price) : Pmp(Pmp), Voc(Voc), Vmp(Vmp), Isc(Isc), Imp(Imp), price(price) {}
-
-		Panel copy() const {
-			return *this;
+		
+		std::unique_ptr<Panel> clone() const {
+			return std::make_unique<Panel>(*this);
 		}
 
 		// Getters
@@ -48,3 +52,5 @@ class Panel {
 			return energy;
 		}
 };
+
+#endif // PANEL_CPP

@@ -1,3 +1,6 @@
+#ifndef PVINPUT_CPP
+#define PVINPUT_CPP
+
 #include <vector>
 #include <memory>
 #include "Subarray.cpp"
@@ -49,11 +52,22 @@ class PVInput {
 			}
 		}
 
-		std::unique_ptr<PVInput> copy() const {
-			std::unique_ptr<Subarray> copiedSubarray(subarray->copy());
-			PVInput copiedPVInput = PVInput(Voc_min, Voc_max, Vmp_min, Vmp_max, Isc_max, Imp_max);
-			copiedPVInput.connectSubarray(std::move(copiedSubarray));
-			return std::make_unique<PVInput>(copiedPVInput);
+		// Destructor
+		~PVInput() = default;
+
+		// Copy constructor
+		PVInput(const PVInput& pvInput) : PVInput(pvInput.Voc_min, pvInput.Voc_max, pvInput.Vmp_min, pvInput.Vmp_max, pvInput.Isc_max, pvInput.Imp_max) {
+			connectSubarray(pvInput.subarray->clone());
+		}
+
+		// Copy assignment operator
+		PVInput& operator=(const PVInput& pvInput) = delete;
+
+		// Move constructor
+		PVInput(PVInput&& pvInput) = default;
+
+		std::unique_ptr<PVInput> clone() const {
+			return std::make_unique<PVInput>(*this);
 		}
 
 		// Getters
@@ -70,3 +84,5 @@ class PVInput {
 			return subarray->getEnergy(dcArrayOutputWhPerWp);
 		}
 };
+
+#endif // PVINPUT_H

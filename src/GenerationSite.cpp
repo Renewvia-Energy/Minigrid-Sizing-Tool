@@ -1,3 +1,6 @@
+#ifndef GENERATIONSITE_CPP
+#define GENERATIONSITE_CPP
+
 #include <vector>
 #include <memory>
 #include <functional>
@@ -51,7 +54,8 @@ class GenerationSite {
 		 * @param {number} vac - Output AC voltage
 		 * @constructor
 		 */
-		GenerationSite(std::unique_ptr<BatteryInverter> batteryInverter, std::shared_ptr<BatteryBank> batteryBank, std::vector<std::unique_ptr<PVInverter>> pvInverters, std::vector<std::unique_ptr<ChargeController>> chargeControllers, std::unique_ptr<DieselGenerator> generator, std::function<bool(double, double)> shouldTurnOnGenerator, std::function<bool(double, double)> shouldTurnOffGenerator, double vac) : batteryInverter(std::move(batteryInverter)), batteryBank(batteryBank), pvInverters(pvInverters), chargeControllers(chargeControllers), generator(std::move(generator)), shouldTurnGeneratorOn(shouldTurnOnGenerator), shouldTurnGeneratorOff(shouldTurnOffGenerator), vac(vac), acBus(0) {
+		GenerationSite(std::unique_ptr<BatteryInverter> batteryInverter, std::shared_ptr<BatteryBank> batteryBank, std::vector<std::unique_ptr<PVInverter>> pvInverters, std::vector<std::unique_ptr<ChargeController>> chargeControllers, std::unique_ptr<DieselGenerator> generator, std::function<bool(double, double)> shouldTurnOnGenerator, std::function<bool(double, double)> shouldTurnOffGenerator, double vac)
+			: batteryInverter(std::move(batteryInverter)), batteryBank(batteryBank), pvInverters(std::move(pvInverters)), chargeControllers(std::move(chargeControllers)), generator(std::move(generator)), shouldTurnGeneratorOn(shouldTurnOnGenerator), shouldTurnGeneratorOff(shouldTurnOffGenerator), vac(vac), acBus(0) {
 			batteryInverter->connectBatteryBank(batteryBank);
 		}
 
@@ -88,7 +92,7 @@ class GenerationSite {
 			const double batterySOCStart = batteryBank->soc();
 
 			// Charge the batteries from the charge controllers
-			double availableDCFromCCs = std::accumulate(chargeControllers.begin(), chargeControllers.end(), 0.0, [this, dcArrayOutputWhPerWp, dt](double sum, const std::shared_ptr<ChargeController>& chargeController) {
+			double availableDCFromCCs = std::accumulate(chargeControllers.begin(), chargeControllers.end(), 0.0, [this, dcArrayOutputWhPerWp, dt](double sum, const std::unique_ptr<ChargeController>& chargeController) {
 				return sum + chargeController->getEnergy(dcArrayOutputWhPerWp, batteryBank->getOutputVoltage(), dt);
 			});
 			double ccSolarToBattery = batteryBank->requestCharge(availableDCFromCCs, dt);
@@ -113,7 +117,7 @@ class GenerationSite {
 				}
 			}
 
-			double availableACFromPVInverters = std::accumulate(pvInverters.begin(), pvInverters.end(), 0.0, [this, dcArrayOutputWhPerWp, dt](double sum, const std::shared_ptr<PVInverter>& pvInverter) {
+			double availableACFromPVInverters = std::accumulate(pvInverters.begin(), pvInverters.end(), 0.0, [this, dcArrayOutputWhPerWp, dt](double sum, const std::unique_ptr<PVInverter>& pvInverter) {
 				return sum + pvInverter->getEnergy(dcArrayOutputWhPerWp, vac, dt);
 			});
 
@@ -160,3 +164,5 @@ class GenerationSite {
 		};
 	}
 };
+
+#endif // GENERATIONSITE_CPP

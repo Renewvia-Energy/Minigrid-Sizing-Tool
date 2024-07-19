@@ -1,3 +1,6 @@
+#ifndef BATTERYINVERTER_CPP
+#define BATTERYINVERTER_CPP
+
 #include <memory>
 #include <string>
 #include "BatteryBank.cpp"
@@ -78,3 +81,5 @@ class BatteryInverter {
 			return std::to_string(ratedPower) + "-VA battery inverter costing " + std::to_string(price);
 		}
 };
+
+#endif // BATTERYINVERTER_CPP

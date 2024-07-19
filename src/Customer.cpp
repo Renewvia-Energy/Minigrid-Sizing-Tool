@@ -1,3 +1,6 @@
+#ifndef CUSTOMER_CPP
+#define CUSTOMER_CPP
+
 #include <string>
 #include <functional>
 
@@ -43,3 +46,5 @@ class Customer {
 			return [loadProfile](double tariff, double t) { return loadProfile[(int)t % loadProfile.size()]; };
 		}
 };
+
+#endif // CUSTOMER_CPP

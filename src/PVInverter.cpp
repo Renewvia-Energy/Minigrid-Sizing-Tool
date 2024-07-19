@@ -1,5 +1,9 @@
+#ifndef PVINVERTER_CPP
+#define PVINVERTER_CPP
+
 #include <vector>
 #include <cassert>
+#include "../include/Napps.h"
 #include "PVInverterCC.h"
 
 class PVInverter : public PVInverterCC {
@@ -15,15 +19,29 @@ class PVInverter : public PVInverterCC {
 		 * @param {PVInput[]} pvInputs - Array of PV inputs of the device. Each PV input should be connected to a single subarray. 
 		 * @param {number} price - The unit price of the device. 
 		 */
-		PVInverter(double ratedPower, double maxPVPower, std::vector<std::unique_ptr<PVInput>> pvInputs, double price) : PVInverterCC(pvInputs, maxPVPower, price), ratedPower(ratedPower) {}
+		PVInverter(double ratedPower, double maxPVPower, std::vector<std::unique_ptr<PVInput>> pvInputs, double price) : PVInverterCC(std::move(pvInputs), maxPVPower, price), ratedPower(ratedPower) {}
 
-		std::unique_ptr<PVInverterCC> copy() const override {
-			std::vector<std::unique_ptr<PVInput>> copiedPVInputs;
-			copiedPVInputs.reserve(getPVInputs().size());
-			for (const auto& pvInput : getPVInputs()) {
-				copiedPVInputs.push_back(std::make_unique<PVInput>(pvInput->copy()));
-			}
-			return std::make_unique<PVInverter>(PVInverter(ratedPower, getMaxPVPower(), copiedPVInputs, getPrice()));
+		// Destructor
+		~PVInverter() override = default;
+
+		// Copy constructor
+		PVInverter(const PVInverter& other)
+			: PVInverterCC(
+			  	napps::copy_unique_ptr_vector(other.getPVInputs()),
+				other.getMaxPVPower(), other.getPrice()),
+			  ratedPower(other.getRatedPower()) {}
+
+		// Copy assignment operator
+		PVInverter& operator=(const PVInverter& other) = delete;
+
+		// Move constructor
+		PVInverter(PVInverter&& other) = default;
+
+		// Move assignment operator
+		PVInverter& operator=(PVInverter&& other) = delete;
+
+		std::unique_ptr<PVInverterCC> clone() const override {
+			return std::make_unique<PVInverter>(*this);
 		}
 
 		// Getters
@@ -43,3 +61,5 @@ class PVInverter : public PVInverterCC {
 			return energy;
 		}
 };
+
+#endif // PVINVERTER_CPP

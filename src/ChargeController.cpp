@@ -1,4 +1,8 @@
+#ifndef CHARGECONTROLLER_CPP
+#define CHARGECONTROLLER_CPP
+
 #include <vector>
+#include "../include/Napps.h"
 #include "PVInverterCC.h"
 
 class ChargeController : public PVInverterCC {
@@ -14,15 +18,31 @@ class ChargeController : public PVInverterCC {
 		 * @param {PVInput[]} pvInputs - Array of PV inputs of the device. Each PV input should be connected to a single subarray. 
 		 * @param {number} price - The unit price of the device. 
 		 */
-		ChargeController(double batteryChargeCurrent, double maxPVPower, std::vector<std::unique_ptr<PVInput>> pvInputs, double price) : PVInverterCC(pvInputs, maxPVPower, price), batteryChargeCurrent(batteryChargeCurrent) {}
+		ChargeController(double batteryChargeCurrent, double maxPVPower, std::vector<std::unique_ptr<PVInput>> pvInputs, double price)
+			: PVInverterCC(std::move(pvInputs), maxPVPower, price),
+			  batteryChargeCurrent(batteryChargeCurrent) {}
 
-		std::unique_ptr<PVInverterCC> copy() const override {
-			std::vector<std::unique_ptr<PVInput>> copiedPVInputs;
-			copiedPVInputs.reserve(getPVInputs().size());
-			for (const auto& pvInput : getPVInputs()) {
-				copiedPVInputs.push_back(std::make_unique<PVInput>(pvInput->copy()));
-			}
-			return std::make_unique<ChargeController>(ChargeController(batteryChargeCurrent, getMaxPVPower(), copiedPVInputs, getPrice()));
+		// Destructor
+		~ChargeController() override = default;
+
+		// Copy constructor
+		ChargeController(const ChargeController& other)
+			: PVInverterCC(
+			  	napps::copy_unique_ptr_vector(other.getPVInputs()),
+				other.getMaxPVPower(), other.getPrice()),
+			  batteryChargeCurrent(other.getBatteryChargeCurrent()) {}
+
+		// Copy assignment operator
+		ChargeController& operator=(const ChargeController& other) = delete;
+
+		// Move constructor
+		ChargeController(ChargeController&& other) = default;
+
+		// Move assignment operator
+		ChargeController& operator=(ChargeController&& other) = delete;
+
+		std::unique_ptr<PVInverterCC> clone() const override {
+			return std::make_unique<ChargeController>(*this);
 		}
 
 		// Getters
@@ -42,3 +62,5 @@ class ChargeController : public PVInverterCC {
 			return energy;
 		}
 };
+
+#endif // CHARGECONTROLLER_CPP

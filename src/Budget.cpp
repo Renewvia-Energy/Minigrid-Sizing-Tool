@@ -1,3 +1,6 @@
+#ifndef BUDGET_CPP
+#define BUDGET_CPP
+
 #include<string>
 #include<vector>
 #include<numeric>
@@ -45,3 +48,5 @@ class Budget {
 			return std::accumulate(lineItems.begin(), lineItems.end(), 0.0, [](double sum, const BudgetLineItem& lineItem) { return sum+lineItem.budgetTotal; });
 		}
 };
+
+#endif // BUDGET_CPP

@@ -1,9 +1,13 @@
+#ifndef DIESELGENERATOR_CPP
+#define DIESELGENERATOR_CPP
+
 #include <algorithm>
 #include <string>
 #include <memory>
 #include <iostream>
 #include <array>
 #include <cassert>
+#include "../include/Constants.h"
 
 struct GeneratorResponse {
 	double energy;
@@ -70,8 +74,6 @@ class DieselGenerator {
 		const std::array<double, NUM_LOADING_FRACS> generatorRow;
 
 	public:
-		static const double L_PER_GAL = 4.54609;
-
 		DieselGenerator(double ratedPower, double price) : ratedPower(ratedPower), price(price), runHours(0), dieselConsumed(0), turnedOn(false), currentOutput(0), generatorRow(getGeneratorRow(ratedPower)) {
 			assert((ratedPower < *std::min_element(std::begin(GEN_SIZE_HEADERS), std::end(GEN_SIZE_HEADERS)) || ratedPower > *std::max_element(std::begin(GEN_SIZE_HEADERS), std::end(GEN_SIZE_HEADERS))) && ("Diesel genset power " + std::to_string(ratedPower) + " is outside the range [" + std::to_string(*std::min_element(std::begin(GEN_SIZE_HEADERS), std::end(GEN_SIZE_HEADERS))) + "," + std::to_string(*std::max_element(std::begin(GEN_SIZE_HEADERS), std::end(GEN_SIZE_HEADERS))) + "].").c_str());
 		}
@@ -124,7 +126,7 @@ class DieselGenerator {
 			}
 			if (galPerHr == -1) { throw std::runtime_error("I wasn't able to compute the amount of diesel consumed per hour."); }
 
-			double lPerHr = galPerHr*L_PER_GAL;
+			double lPerHr = galPerHr*Global::L_PER_GAL;
 
 			dieselConsumed+= lPerHr*dt;
 			runHours+= dt;
@@ -135,3 +137,5 @@ class DieselGenerator {
 			};
 		}
 };
+
+#endif // DIESELGENERATOR_CPP

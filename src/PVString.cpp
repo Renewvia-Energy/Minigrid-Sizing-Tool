@@ -1,6 +1,10 @@
+#ifndef PVSTRING_CPP
+#define PVSTRING_CPP
+
 #include <vector>
 #include <numeric>
 #include <memory>
+#include "../include/Napps.h"
 #include "Panel.cpp"
 
 class PVString {
@@ -11,7 +15,7 @@ class PVString {
 		const double Isc;
 		const double Imp;
 		const double price;
-        const std::vector<std::unique_ptr<Panel>> panels;
+		const std::vector<std::unique_ptr<Panel>> panels;
 
 	public:
 		/**
@@ -23,7 +27,7 @@ class PVString {
 		 * @constructor
 		 */
 		PVString(std::vector<std::unique_ptr<Panel>> panels) : 
-			panels(panels),
+			panels(std::move(panels)),
 			Pmp(std::accumulate(panels.begin(),panels.end(), 0.0, [](double sum, const auto& panel) { return sum + panel->getPmp(); })),
 			Voc(std::accumulate(panels.begin(),panels.end(), 0.0, [](double sum, const auto& panel) { return sum + panel->getVoc(); })),
 			Vmp(std::accumulate(panels.begin(),panels.end(), 0.0, [](double sum, const auto& panel) { return sum + panel->getVmp(); })),
@@ -31,17 +35,29 @@ class PVString {
 			Imp(panels[0]->getImp()),
 			price(std::accumulate(panels.begin(),panels.end(), 0.0, [](double sum, const auto& panel) { return sum + panel->getPrice(); })) {}
 
-		std::unique_ptr<PVString> copy() const {
-			std::vector<std::unique_ptr<Panel>> copiedPanels;
-			copiedPanels.reserve(panels.size());
-			for (const auto& panel : panels) {
-				copiedPanels.push_back(std::make_unique<Panel>(panel->copy()));
-			}
-			return std::make_unique<PVString>(PVString(copiedPanels));
+		// Destructor
+		~PVString() = default;
+
+		// Copy constructor
+		PVString(const PVString& other)
+			: panels(napps::copy_unique_ptr_vector(other.panels)),
+			  Pmp(other.Pmp), Voc(other.Voc), Vmp(other.Vmp), Isc(other.Isc), Imp(other.Imp), price(other.price) {}
+
+		// Copy assignment operator
+		PVString& operator=(const PVString& other) = delete;
+
+		// Move operator
+		PVString(PVString&& other) = default;
+
+		// Move assignment operator
+		PVString& operator=(PVString&& other) = delete;
+
+		std::unique_ptr<PVString> clone() const {
+			return std::make_unique<PVString>(*this);
 		}
 
 		// Getters
-		std::vector<std::unique_ptr<Panel>> getPanels() const { return panels; }
+		const std::vector<std::unique_ptr<Panel>>& getPanels() const { return panels; }
 		double getPmp() const { return Pmp; }
 		double getVoc() const { return Voc; }
 		double getVmp() const { return Vmp; }
@@ -56,9 +72,11 @@ class PVString {
 		 * @returns {number} Amount of energy [Wh] produced by the string over the time interval.
 		 */
 		double getEnergy(double dcArrayOutputWhPerWp) const {
-			double energy = std::accumulate(panels.begin(), panels.end(), 0.0, [dcArrayOutputWhPerWp](double sum, const Panel& panel) {
-				return sum + panel.getEnergy(dcArrayOutputWhPerWp);
+			double energy = std::accumulate(panels.begin(), panels.end(), 0.0, [dcArrayOutputWhPerWp](double sum, const auto& panel) {
+				return sum + panel->getEnergy(dcArrayOutputWhPerWp);
 			});
 			return energy;
 		}
 };
+
+#endif // PVSTRING_CPP

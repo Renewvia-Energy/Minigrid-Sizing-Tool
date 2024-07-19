@@ -2,11 +2,16 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
-#include <ctime>
+#include <memory>
 #include "Customer.cpp"
+#include "MiniGrid.cpp"
 #include "../include/UserInput.h"
 
 int main() {
+	/**
+	 * Step 1: Get Customer Data
+	 */
+
 	// Open file
 	std::ifstream file(UserInput::CUSTOMERS_FN);
 	if (!file.is_open()) {
@@ -75,13 +80,21 @@ int main() {
 	file.close();
 
 	// Create customers vector
-	std::vector<Customer> customers = std::vector<Customer>();
+	std::vector<std::unique_ptr<Customer>> customers = std::vector<std::unique_ptr<Customer>>();
 	for (int ct=0; ct<tariffNames.size(); ct++) {
-		customers.push_back(Customer(tariffNames[ct], maxLoads[ct], Customer::getTariffFn(loadProfiles[ct]), quantities[ct]));
+		customers.push_back(std::make_unique<Customer>(Customer(tariffNames[ct], maxLoads[ct], Customer::getTariffFn(loadProfiles[ct]), quantities[ct])));
 	}
 
-	std::cout << customers[0].to_string() << std::endl;
-	std::cout << customers[1].to_string() << std::endl;
+	/**
+	 * Step 2: Initialize Mini-Grid
+	 */
+	std::function<double(std::string, double)> tariffFn = [](std::string name, double t) { return 1.0; };
+	MiniGrid minigrid = MiniGrid(std::move(customers), tariffFn, 0.1);
+	minigrid.placeFromFile(UserInput::PVWATTS_FN);
+	
+	std::cout << std::to_string(minigrid.getDCArrayOutputWhPerWp(0)) << std::endl;
+	std::cout << std::to_string(minigrid.getDCArrayOutputWhPerWp(10)) << std::endl;
+	std::cout << std::to_string(minigrid.getDCArrayOutputWhPerWp(12)) << std::endl;
 }
 
 	/*

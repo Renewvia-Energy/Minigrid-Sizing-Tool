@@ -1,3 +1,6 @@
+#ifndef SUBARRAY_CPP
+#define SUBARRAY_CPP
+
 #include <vector>
 #include <cassert>
 #include <numeric>
@@ -24,7 +27,7 @@ class Subarray {
 		 * @constructor
 		 */
 		Subarray(std::vector<std::unique_ptr<PVString>> pvStrings, double arrayLosses) : 
-			pvStrings(pvStrings),
+			pvStrings(std::move(pvStrings)),
 			arrayLosses(arrayLosses),
 			Voc(pvStrings[0]->getVoc()),
 			Vmp(pvStrings[0]->getVmp()),
@@ -37,17 +40,29 @@ class Subarray {
 			assert(arrayLosses >= 0 && arrayLosses <= 1 && "Array losses must be in [0,1]");
 		}
 
-		std::unique_ptr<Subarray> copy() const {
-			std::vector<std::unique_ptr<PVString>> copiedPVStrings;
-			copiedPVStrings.reserve(pvStrings.size());
-			for (const auto& pvString : pvStrings) {
-				copiedPVStrings.push_back(std::make_unique<PVString>(pvString->copy()));
-			}
-			return std::make_unique<Subarray>(Subarray(copiedPVStrings, arrayLosses));
+		// Destructor
+		~Subarray() = default;
+
+		// Copy constructor
+		Subarray(const Subarray& other)
+			: pvStrings(napps::copy_unique_ptr_vector(other.pvStrings)),
+			  arrayLosses(other.arrayLosses), Voc(other.Voc), Vmp(other.Vmp), Pmp(other.Pmp), Isc(other.Isc), Imp(other.Imp), price(other.price) {}
+
+		// Copy assignment operator
+		Subarray& operator=(const Subarray& other) = delete;
+
+		// Move operator
+		Subarray(Subarray&& other) = default;
+
+		// Move assignment operator
+		Subarray& operator=(Subarray&& other) = delete;
+
+		std::unique_ptr<Subarray> clone() const {
+			return std::make_unique<Subarray>(*this);
 		}
 
 		// Getters
-		std::vector<std::unique_ptr<PVString>> getPVStrings() const { return pvStrings; }
+		const std::vector<std::unique_ptr<PVString>>& getPVStrings() const { return pvStrings; }
 		double getVoc() const { return Voc; }
 		double getVmp() const { return Vmp; }
 		double getPmp() const { return Pmp; }
@@ -62,9 +77,11 @@ class Subarray {
 		 * @returns {number} Amount of energy [Wh] produced by the subarray over the time interval.
 		 */
 		double getEnergy(double dcArrayOutputWhPerWp) const {
-			double energy = std::accumulate(pvStrings.begin(), pvStrings.end(), 0.0, [dcArrayOutputWhPerWp](double sum, const PVString& pvString) {
-				return sum + pvString.getEnergy(dcArrayOutputWhPerWp);
+			double energy = std::accumulate(pvStrings.begin(), pvStrings.end(), 0.0, [dcArrayOutputWhPerWp](double sum, const auto& pvString) {
+				return sum + pvString->getEnergy(dcArrayOutputWhPerWp);
 			});
 			return energy*(1-arrayLosses);
 		}
 };
+
+#endif // SUBARRAY_CPP

@@ -1,3 +1,6 @@
+#ifndef BATTERY_CPP
+#define BATTERY_CPP
+
 #include <cassert>
 #include <string>
 
@@ -23,7 +26,7 @@ class Battery {
 			assert(minSOC>=0 && minSOC<=1 && ("MinSOC " + std::to_string(minSOC) + " must be between 0 and 1.").c_str());
 		}
 
-		Battery copy() const {
+		Battery clone() const {
 			return *this;
 		}
 
@@ -34,3 +37,5 @@ class Battery {
 		double getDRate() const { return dRate; }
 		double getPrice() const { return price; }
 };
+
+#endif // BATTERY_CPP

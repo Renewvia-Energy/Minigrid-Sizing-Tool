@@ -1,3 +1,6 @@
+#ifndef BATTERYBANK_CPP
+#define BATTERYBANK_CPP
+
 #include <vector>
 #include <memory>
 #include <numeric>
@@ -17,7 +20,7 @@ class BatteryBank {
 
 	public:
 		BatteryBank(std::vector<std::unique_ptr<Battery>> batteries, double outputVoltage) : 
-			batteries(batteries),
+			batteries(std::move(batteries)),
 			outputVoltage(outputVoltage),
 			minSOC(batteries[0]->getMinSOC()),
 			cRate(batteries[0]->getCRate()),
@@ -31,7 +34,7 @@ class BatteryBank {
 		}
 
 		// Getters
-		std::vector<std::unique_ptr<Battery>> getBatteries() const { return batteries; }
+		const std::vector<std::unique_ptr<Battery>>& getBatteries() const { return batteries; }
 		double getOutputVoltage() const { return outputVoltage; }
 		double getMinSOC() const { return minSOC; }
 		double getPrice() const { return price; }
@@ -83,3 +86,5 @@ class BatteryBank {
 			return energySupplied;
 		}
 };
+
+#endif // BATTERYBANK_CPP

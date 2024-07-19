@@ -1,3 +1,6 @@
+#ifndef MINIGRID_CPP
+#define MINIGRID_CPP
+
 #include <vector>
 #include <functional>
 #include <string>
@@ -7,6 +10,7 @@
 #include "GenerationSite.cpp"
 #include "Customer.cpp"
 #include "../include/Constants.h"
+#include "../include/UserInput.h"
 
 struct MiniGridOperationStep : public GenerationSiteOperationStep {
 	double load;
@@ -26,6 +30,7 @@ class MiniGrid {
 		std::unique_ptr<GenerationSite> generationSite;
 
 		static std::function<double(double)> getDCArrayOutputWhPerWpFn(const std::string& filename) {
+			// Open file
 			std::ifstream file(filename);
 			if (!file.is_open()) {
 				throw std::runtime_error("Could not open file: " + filename);
@@ -44,12 +49,11 @@ class MiniGrid {
 				std::string token;
 				
 				// Assuming the DC output is in the second column
-				// Adjust the column index if it's different in your CSV
 				int column = 0;
 				while (std::getline(iss, token, ',')) {
-					if (column == 1) {  // 0-indexed, so 1 is the second column
+					if (column == UserInput::DC_ARRAY_OUTPUT_COL) {  // 0-indexed, so 1 is the second column
 						try {
-							double value = std::stod(token) / 1000.0;  // Convert kW to W
+							double value = std::stod(token.substr(1, token.length()-2)) / 1000.0;  // Remove quotes and convert kW to W
 							dcArrayOutputWhPerWpArr.push_back(value);
 						} catch (const std::exception& e) {
 							throw std::runtime_error("Error parsing value: " + token);
@@ -71,7 +75,8 @@ class MiniGrid {
 		}
 
 	public:
-		MiniGrid(std::vector<std::unique_ptr<Customer>> customers, std::function<double(std::string, double)> tariff, double dxLosses, std::string filename) : customers(customers), tariff(tariff), dxLosses(dxLosses) {}
+		MiniGrid(std::vector<std::unique_ptr<Customer>> customers, std::function<double(std::string, double)> tariff, double dxLosses)
+			: customers(std::move(customers)), tariff(tariff), dxLosses(dxLosses) {}
 
 		void placeFromFile(std::string filename) {
 			dcArrayOutputWhPerWpFn = getDCArrayOutputWhPerWpFn(filename);
@@ -87,7 +92,7 @@ class MiniGrid {
 			const double dcOutputWhPerWp = getDCArrayOutputWhPerWp(t);
 
 			const double loadNow = std::accumulate(customers.begin(), customers.end(), 0.0, [&](double sum, const auto& customer) {
-				return sum + customer.getTotalLoad(tariff(customer->name, t), t);
+				return sum + customer->getTotalLoad(tariff(customer->getName(), t), t);
 			});
 
 			const GenerationSiteOperationStep result = generationSite->operate(t, dt, dcOutputWhPerWp, loadNow/(1-dxLosses));
@@ -115,3 +120,5 @@ class MiniGrid {
 			return step;
 		}
 };
+
+#endif // MINIGRID_CPP
