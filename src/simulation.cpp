@@ -3,8 +3,10 @@
 #include <fstream>
 #include <sstream>
 #include <memory>
+#include <iterator>
 #include "Customer.cpp"
 #include "MiniGrid.cpp"
+#include "Panel.cpp"
 #include "../include/UserInput.h"
 
 int main() {
@@ -91,45 +93,35 @@ int main() {
 	std::function<double(std::string, double)> tariffFn = [](std::string name, double t) { return 1.0; };
 	MiniGrid minigrid = MiniGrid(std::move(customers), tariffFn, 0.1);
 	minigrid.placeFromFile(UserInput::PVWATTS_FN);
+
+	// Construct panel
+	Panel panel = Panel(UserInput::PANEL_PMP, UserInput::PANEL_VOC, UserInput::PANEL_VMP, UserInput::PANEL_ISC, UserInput::PANEL_IMP, UserInput::PANEL_PRICE);
+
+	// Charge controllers: Assemble panels into PVString
+	std::vector<std::unique_ptr<Panel>> ccPanels = std::vector<std::unique_ptr<Panel>>();
+	const int panelsPerStringCC = 3;	// TODO: Auto-stringing
+	for (int p=0; p<panelsPerStringCC; p++) {
+		ccPanels.push_back(std::make_unique<Panel>(panel.clone()));
+	}
+	PVString pvString = PVString(std::move(ccPanels));
 	
-	std::cout << std::to_string(minigrid.getDCArrayOutputWhPerWp(0)) << std::endl;
-	std::cout << std::to_string(minigrid.getDCArrayOutputWhPerWp(10)) << std::endl;
-	std::cout << std::to_string(minigrid.getDCArrayOutputWhPerWp(12)) << std::endl;
+	// Charge controller: assemble strings into subarray
+	std::vector<std::unique_ptr<PVString>> pvStrings = std::vector<std::unique_ptr<PVString>>();
+	const int stringsPerSubarrayCC = 3;
+	for (int s=0; s<stringsPerSubarrayCC; s++) {
+		pvStrings.push_back(std::make_unique<PVString>(pvString.clone()));
+	}
+	const double arrayLosses = UserInput::ARRAY_LOSSES;
+	Subarray subarray = Subarray(std::move(pvStrings), arrayLosses);
+
+	// Charge controller: connect subarray to PV input
+	std::vector<std::unique_ptr<PVInput>> pvInputs = std::vector<std::unique_ptr<PVInput>>();
+	for (int r=0; r<std::size(UserInput::CC_IN_TABLE); r++) {
+
+	}
 }
 
 	/*
-	// Initialize Mini-Grid
-	const latitude = Number((<HTMLInputElement>document.getElementById('location_lat')).value)	// [°N]
-	const longitude = Number((<HTMLInputElement>document.getElementById('location_lon')).value)	// [°E]
-	var minigrid: MiniGrid = new MiniGrid(customers, (name, t) => 1, 0.1)
-	await minigrid.place(latitude, longitude, false, creds.PVWATTS_API_KEY)
-
-	// Construct panel
-	const pvPmp = Number((<HTMLInputElement>document.getElementById('pv_Pmp')).value)	// [Wp]
-	var panel: Panel = new Panel(
-		pvPmp,
-		Number((<HTMLInputElement>document.getElementById('pv_Voc')).value),
-		Number((<HTMLInputElement>document.getElementById('pv_Vmp')).value),
-		Number((<HTMLInputElement>document.getElementById('pv_Isc')).value),
-		Number((<HTMLInputElement>document.getElementById('pv_Imp')).value),
-		pvPmp*Number((<HTMLInputElement>document.getElementById('pv_price')).value))
-
-	// Charge controller: assemble panels into string
-	var ccPanels: Panel[] = []
-	const panelsPerStringCC = 3 // TODO: autostringing
-	for (let p: number =0; p<panelsPerStringCC; p++) {
-		ccPanels.push(panel.copy())
-	}
-
-	// Charge controller: assemble strings into subarray
-	var pvString: PVString = new PVString(ccPanels)
-	var ccStrings: PVString[] = []
-	const stringsPerSubarrayCC = 3 // TODO: autostringing
-	for (let s: number =0; s<stringsPerSubarrayCC; s++) {
-		ccStrings.push(pvString.copy())
-	}
-	const arrayLosses = Number((<HTMLInputElement>document.getElementById('overview_array-losses')).value)/100	//[0-1]
-	var ccSubarray: Subarray = new Subarray(ccStrings, arrayLosses)
 
 	// Charge controller: connect subarray to PV input
 	var ccPVInputs: PVInput[] = []

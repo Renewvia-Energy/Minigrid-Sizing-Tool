@@ -23,7 +23,7 @@ class MiniGrid {
 		static const int FIRST_DATA_ROW = 32;	// Index of the first data row in the PVWatts CSV, should be the first row after "Month	Day	Hour,Beam Irradiance (W/m2),Diffuse Irradiance (W/m2),Ambient Temperature (C),Wind Speed (m/s),Albedo,Plane of Array Irradiance (W/m2),Cell Temperature (C),DC Array Output (W),AC System Output (W)"
 		static const int DC_OUTPUT_DATA_COLUMN = 10;	// Index of the "DC Array Output (W)" column in the PVWatts CSV
 
-		const std::vector<std::unique_ptr<Customer>> customers;
+		std::vector<std::unique_ptr<Customer>> customers;
 		const std::function<double(std::string, double)> tariff;
 		const double dxLosses;
 		std::function<double(double)> dcArrayOutputWhPerWpFn;
@@ -44,24 +44,23 @@ class MiniGrid {
 				std::getline(file, line);
 			}
 
+			std::istringstream iss;
+			std::string token;
 			while (std::getline(file, line)) {
-				std::istringstream iss(line);
-				std::string token;
+				iss.str(line);
 				
-				// Assuming the DC output is in the second column
-				int column = 0;
-				while (std::getline(iss, token, ',')) {
-					if (column == UserInput::DC_ARRAY_OUTPUT_COL) {  // 0-indexed, so 1 is the second column
-						try {
-							double value = std::stod(token.substr(1, token.length()-2)) / 1000.0;  // Remove quotes and convert kW to W
-							dcArrayOutputWhPerWpArr.push_back(value);
-						} catch (const std::exception& e) {
-							throw std::runtime_error("Error parsing value: " + token);
-						}
-						break;
-					}
-					column++;
+				// Skip to DC output column
+				for (int c=0; c<=DC_OUTPUT_DATA_COLUMN; c++) {
+					std::getline(iss, token, ',');
 				}
+				try {
+					double value = std::stod(token.substr(1, token.length()-2)) / 1000.0;  // Remove quotes and convert kW to W
+					dcArrayOutputWhPerWpArr.push_back(value);
+				} catch (const std::exception& e) {
+					throw std::runtime_error("Error parsing value: " + token);
+				}
+
+				iss.clear();
 			}
 			file.close();
 
@@ -97,11 +96,10 @@ class MiniGrid {
 
 			const GenerationSiteOperationStep result = generationSite->operate(t, dt, dcOutputWhPerWp, loadNow/(1-dxLosses));
 
-			MiniGridOperationStep step = {
-				load: loadNow,
-				remainingLoadWithDxLosses: result.remainingLoad,
-				remainingLoad: loadNow-result.totalEnergyToLoad*(1-dxLosses)
-			};
+			MiniGridOperationStep step;
+			step.load = loadNow;
+			step.remainingLoadWithDxLosses = result.remainingLoad;
+			step.remainingLoad = loadNow - result.totalEnergyToLoad * (1 - dxLosses);
 			step.availableACFromPVInverters = result.availableACFromPVInverters;
 			step.availableDCFromCCs = result.availableDCFromCCs;
 			step.loadWithDxLosses = result.loadWithDxLosses;
