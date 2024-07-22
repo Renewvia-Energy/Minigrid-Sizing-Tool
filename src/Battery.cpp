@@ -16,11 +16,13 @@ class Battery {
 		/**
 		 * One battery, to be connected into a battery bank.
 		 * 
-		 * @param {number} capacity - Total battery energy storage capacity [Wh]
-		 * @param {number} minSOC - Minimum acceptable state of charge [0-1]
-		 * @param {number} cRate - Minimum complete charge time in hours
-		 * @param {number} dRate - Minimum complete discharge time in hours
-		 * @param {number} price - Unit cost of battery, exclusive of shipping, clearing, labor, etc. [$]
+		 * @param capacity Total battery energy storage capacity [Wh]
+		 * @param minSOC Minimum acceptable state of charge [0-1]
+		 * @param cRate Minimum complete charge time in hours
+		 * @param dRate Minimum complete discharge time in hours
+		 * @param price Unit cost of battery, exclusive of shipping, clearing, labor, etc. [$]
+		 *
+		 * @throws Assertion error if minSOC is not between 0 and 1
 		 */
 		Battery(double capacity, double minSOC, double cRate, double dRate, double price) : capacity(capacity), minSOC(minSOC), cRate(cRate), dRate(dRate), price(price) {
 			assert(minSOC>=0 && minSOC<=1 && ("MinSOC " + std::to_string(minSOC) + " must be between 0 and 1.").c_str());

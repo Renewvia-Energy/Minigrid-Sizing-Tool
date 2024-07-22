@@ -25,9 +25,9 @@ class BatteryInverter {
 		/**
 		 * Requests energy from the batteries inverted into AC. Updates SOC and cycles.
 		 *
-		 * @param {number} ac - The amount of energy requested to the AC bus [Wh].
-		 * @param {number} dt - The amount of time to provide the energy [hr]
-		 * @returns {number} - The amount of AC actually produced, limited by the power rating and the batteries [Wh]
+		 * @param ac The amount of energy requested to the AC bus [Wh].
+		 * @param dt The amount of time to provide the energy [hr]
+		 * @returns The amount of AC actually produced, limited by the power rating and the batteries [Wh]
 		 */
 		double requestAC(double ac, double dt) {
 			if (!batteryBank) {
@@ -50,9 +50,9 @@ class BatteryInverter {
 		/**
 		 * Requests excess energy to be used to charge the batteries. Updates SOC and cycles.
 		 *
-		 * @param {number} ac - The amount of AC energy to send to the batteries [Wh].
-		 * @param {number} dt - The amount of time to send the energy [hr]
-		 * @returns {number} - The amount of DC energy actually stored in the batteries, limited by the power rating and the batteries [Wh]
+		 * @param ac The amount of AC energy to send to the batteries [Wh].
+		 * @param dt The amount of time to send the energy [hr]
+		 * @returns The amount of DC energy actually stored in the batteries, limited by the power rating and the batteries [Wh]
 		 */
 		double requestChargeBatteries(double ac, double dt) {
 			if (!batteryBank) {
@@ -69,10 +69,27 @@ class BatteryInverter {
 			return batteryBank->requestCharge(dcProduced, dt);
 		}
 
+		/**
+		 * Sets the battery bank for the inverter.
+		 *
+		 * @param batteryBank The shared pointer to the BatteryBank object to connect.
+		 *
+		 * @return None
+		 *
+		 * @throws None
+		 */
 		void connectBatteryBank(std::shared_ptr<BatteryBank> batteryBank) {
 			this->batteryBank = batteryBank;
 		}
 
+		/**
+		 * Checks if the BatteryInverter can supply a given amount of energy within a given time.
+		 *
+		 * @param energy The amount of energy to supply [Wh].
+		 * @param time The time within which the energy should be supplied [hr].
+		 *
+		 * @return true if the BatteryInverter can supply the given amount of energy within the given time, false otherwise.
+		 */
 		bool canSupply(double energy, double time) {
 			return energy/time<=ratedPower;
 		}

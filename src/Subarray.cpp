@@ -22,9 +22,8 @@ class Subarray {
 		/**
 		 * A subarray of strings of solar panles connected in parallel through a combiner box to be plugged into a PV inverter or charge controller as a PV input.
 		 * 
-		 * @param {PVString[]} pvStrings - Array of PVStrings to be connected in parallel through a combiner box. 
-		 * @param {number} arrayLosses - Fraction of energy produced by the panels that is lost before reaching the PV inverter or charge controller
-		 * @constructor
+		 * @param pvStrings Array of PVStrings to be connected in parallel through a combiner box. 
+		 * @param arrayLosses Fraction of energy produced by the panels that is lost before reaching the PV inverter or charge controller
 		 */
 		Subarray(std::vector<std::unique_ptr<PVString>> pvStrings, double arrayLosses) : 
 			pvStrings(std::move(pvStrings)),
@@ -73,8 +72,8 @@ class Subarray {
 		/**
 		 * Compute the amount of energy produced in one unit of time by the entire subarray.
 		 *
-		 * @param {number} dcArrayOutputWhPerWp - Amount of energy [Wh] a 1-Wp panel could output during the time interval.
-		 * @returns {number} Amount of energy [Wh] produced by the subarray over the time interval.
+		 * @param dcArrayOutputWhPerWp Amount of energy [Wh] a 1-Wp panel could output during the time interval.
+		 * @returns Amount of energy [Wh] produced by the subarray over the time interval.
 		 */
 		double getEnergy(double dcArrayOutputWhPerWp) const {
 			double energy = std::accumulate(pvStrings.begin(), pvStrings.end(), 0.0, [dcArrayOutputWhPerWp](double sum, const auto& pvString) {

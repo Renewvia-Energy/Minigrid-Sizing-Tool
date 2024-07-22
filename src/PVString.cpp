@@ -23,8 +23,7 @@ class PVString {
 		 * 
 		 * NOTE: if you allow different panels in one string, this breaks.
 		 * 
-		 * @param {Panel[]} panels - Array of solar panels connected in series into one string
-		 * @constructor
+		 * @param panels Array of solar panels connected in series into one string
 		 */
 		PVString(std::vector<std::unique_ptr<Panel>> panels) : 
 			panels(std::move(panels)),
@@ -68,8 +67,8 @@ class PVString {
 		/**	
 		 * Compute the amount of energy produced in one unit of time by every panel in the string.
 		 *
-		 * @param {number} dcArrayOutputWhPerWp - Amount of energy [Wh] a 1-Wp panel could output during the time interval.
-		 * @returns {number} Amount of energy [Wh] produced by the string over the time interval.
+		 * @param dcArrayOutputWhPerWp Amount of energy [Wh] a 1-Wp panel could output during the time interval.
+		 * @returns Amount of energy [Wh] produced by the string over the time interval.
 		 */
 		double getEnergy(double dcArrayOutputWhPerWp) const {
 			double energy = std::accumulate(panels.begin(), panels.end(), 0.0, [dcArrayOutputWhPerWp](double sum, const auto& panel) {

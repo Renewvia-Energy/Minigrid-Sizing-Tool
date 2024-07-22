@@ -19,6 +19,14 @@ class BatteryBank {
 		double cumE;
 
 	public:
+		/**
+		 * Constructor for creating a BatteryBank object.
+		 *
+		 * @param batteries A vector of unique pointers to Battery objects.
+		 * @param outputVoltage The output voltage of the battery bank.		 *
+		 * 
+		 * @throws None
+		 */
 		BatteryBank(std::vector<std::unique_ptr<Battery>> batteries, double outputVoltage) : 
 			batteries(std::move(batteries)),
 			outputVoltage(outputVoltage),
@@ -48,10 +56,26 @@ class BatteryBank {
 			return effectiveEnergy();
 		}
 
+		/**
+		 * Determines if the battery bank can discharge the specified amount of energy.
+		 *
+		 * @param energy The amount of energy to discharge [Wh].
+		 *
+		 * @return true if the battery bank can discharge the energy, false otherwise.
+		 *
+		 * @throws None
+		 */
 		bool canDischarge(double energy) {
 			return (this->energy-energy)/this->capacity > this->minSOC;
 		}
 
+		/**
+		 * Determines if the battery bank can charge with the given amount of energy.
+		 *
+		 * @param energy The amount of energy to charge the battery bank [Wh].
+		 *
+		 * @return true if the battery bank can charge with the given amount of energy, false otherwise.
+		 */
 		bool canCharge(double energy) {
 			return capacity+energy <= capacity;
 		}
@@ -59,8 +83,8 @@ class BatteryBank {
 		/**
 		 * Requests energy from the batteries. Updates SOC and cycles.
 		 *
-		 * @param {number} energy - The amount of energy requested from the batteries [Wh].
-		 * @returns {number} - The amount of energy actually supplied by the batteries, limited by the min SOC
+		 * @param energy The amount of energy requested from the batteries [Wh].
+		 * @returns The amount of energy actually supplied by the batteries, limited by the min SOC
 		 */
 		double requestDischarge(double energy, double dt) {
 			double energySupplied = std::min(getEnergyAvailable(dt), energy);
@@ -74,8 +98,8 @@ class BatteryBank {
 		/**
 		 * Requests the batteries charge using incoming energy. Updates SOC and cycles.
 		 *
-		 * @param {number} energy - The amount of energy requested to the batteries [Wh].
-		 * @returns {number} - The amount of energy actually used to charge the batteries, limited by the capacity
+		 * @param energy The amount of energy requested to the batteries [Wh].
+		 * @returns The amount of energy actually used to charge the batteries, limited by the capacity
 		 */
 		double requestCharge(double energy, double dt) {
 			double energySupplied = std::min(capacity-this->energy, energy);

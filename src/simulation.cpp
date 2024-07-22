@@ -10,9 +10,7 @@
 #include "../include/UserInput.h"
 
 int main() {
-	/**
-	 * Step 1: Get Customer Data
-	 */
+	/** Step 1: Get Customer Data ***/
 
 	// Open file
 	std::ifstream file(UserInput::CUSTOMERS_FN);
@@ -40,7 +38,7 @@ int main() {
 	std::getline(file, line);	// Get second line of file, containing max loads
 	iss.str(line);
 	std::getline(iss, token, ',');	// Skip "Max Load (W)"
-	for (int ct=0; ct<tariffNames.size(); ct++) {	// ct = "customer type index"
+	for (size_t ct=0; ct<tariffNames.size(); ct++) {	// ct = "customer type index"
 		std::getline(iss, token, ',');
 		maxLoads[ct] = std::stod(token);
 	}
@@ -51,7 +49,7 @@ int main() {
 	std::getline(file, line);	// Get third line of file, containing quantities
 	iss.str(line);
 	std::getline(iss, token, ',');	// Skip "Quantity"
-	for (int ct=0; ct<tariffNames.size(); ct++) {
+	for (size_t ct=0; ct<tariffNames.size(); ct++) {
 		std::getline(iss, token, ',');
 		quantities[ct] = std::stoi(token);
 	}
@@ -62,7 +60,7 @@ int main() {
 	std::getline(file, line);	// Get fourth line of file, containing default tariffs
 	iss.str(line);
 	std::getline(iss, token, ',');	// Skip "Default Tariff (¤/kWh)"
-	for (int ct=0; ct<tariffNames.size(); ct++) {
+	for (size_t ct=0; ct<tariffNames.size(); ct++) {
 		std::getline(iss, token, ',');
 		defaultTariffs[ct] = std::stod(token);
 	}
@@ -73,7 +71,7 @@ int main() {
 	while (std::getline(file, line)) {
 		iss.str(line);
 		std::getline(iss, token, ',');	// Skip first column, datetime
-		for (int ct=0; ct<tariffNames.size(); ct++) {
+		for (size_t ct=0; ct<tariffNames.size(); ct++) {
 			std::getline(iss, token, ',');
 			loadProfiles[ct].push_back(std::stod(token));
 		}
@@ -83,13 +81,13 @@ int main() {
 
 	// Create customers vector
 	std::vector<std::unique_ptr<Customer>> customers = std::vector<std::unique_ptr<Customer>>();
-	for (int ct=0; ct<tariffNames.size(); ct++) {
+	for (size_t ct=0; ct<tariffNames.size(); ct++) {
 		customers.push_back(std::make_unique<Customer>(Customer(tariffNames[ct], maxLoads[ct], Customer::getTariffFn(loadProfiles[ct]), quantities[ct])));
 	}
 
-	/**
-	 * Step 2: Initialize Mini-Grid
-	 */
+	/** Step 2: Pre-Optimization Initialize Mini-Grid ***/
+
+	// Initialize minigrid
 	std::function<double(std::string, double)> tariffFn = [](std::string name, double t) { return 1.0; };
 	MiniGrid minigrid = MiniGrid(std::move(customers), tariffFn, 0.1);
 	minigrid.placeFromFile(UserInput::PVWATTS_FN);
@@ -100,152 +98,99 @@ int main() {
 	// Charge controllers: Assemble panels into PVString
 	std::vector<std::unique_ptr<Panel>> ccPanels = std::vector<std::unique_ptr<Panel>>();
 	const int panelsPerStringCC = 3;	// TODO: Auto-stringing
-	for (int p=0; p<panelsPerStringCC; p++) {
-		ccPanels.push_back(std::make_unique<Panel>(panel.clone()));
+	for (size_t p=0; p<panelsPerStringCC; p++) {
+		ccPanels.push_back(panel.clone());
 	}
 	PVString pvString = PVString(std::move(ccPanels));
 	
 	// Charge controller: assemble strings into subarray
 	std::vector<std::unique_ptr<PVString>> pvStrings = std::vector<std::unique_ptr<PVString>>();
 	const int stringsPerSubarrayCC = 3;
-	for (int s=0; s<stringsPerSubarrayCC; s++) {
-		pvStrings.push_back(std::make_unique<PVString>(pvString.clone()));
+	for (size_t s=0; s<stringsPerSubarrayCC; s++) {
+		pvStrings.push_back(pvString.clone());
 	}
 	const double arrayLosses = UserInput::ARRAY_LOSSES;
 	Subarray subarray = Subarray(std::move(pvStrings), arrayLosses);
 
 	// Charge controller: connect subarray to PV input
 	std::vector<std::unique_ptr<PVInput>> pvInputs = std::vector<std::unique_ptr<PVInput>>();
-	for (int r=0; r<std::size(UserInput::CC_IN_TABLE); r++) {
-
+	for (size_t r=0; r<std::size(UserInput::CC_IN_TABLE); r++) {
+		PVInput pvInput = PVInput(UserInput::CC_IN_TABLE[r][0], UserInput::CC_IN_TABLE[r][1], UserInput::CC_IN_TABLE[r][2], UserInput::CC_IN_TABLE[r][3], UserInput::CC_IN_TABLE[r][4], UserInput::CC_IN_TABLE[r][5]);
+		pvInput.connectSubarray(subarray.clone());
+		pvInputs.push_back(std::make_unique<PVInput>(pvInput));
 	}
-}
-
-	/*
-
-	// Charge controller: connect subarray to PV input
-	var ccPVInputs: PVInput[] = []
-	const ccInTable = <HTMLTableElement>document.getElementById('ccs_charge-controller-inputs')
-	for (let r=1; r<ccInTable.rows.length-1; r++) {
-		const cells = ccInTable.rows.item(r).cells
-		ccPVInputs.push(new PVInput(
-			Number(cells[1].innerHTML),	// [V]
-			Number(cells[2].innerHTML),	// [V]
-			Number(cells[3].innerHTML),	// [V]
-			Number(cells[4].innerHTML),	// [V]
-			Number(cells[5].innerHTML),	// [A]
-			Number(cells[6].innerHTML)	// [A]
-		))
-	}
-	ccPVInputs[0].connectSubarray(ccSubarray)// TODO: add support for multiple PV inputs. Needs auto stringing
 
 	// PV inverters: assemble panels into string
-	var pvinvPanels: Panel[] = []
-	const panelsPerStringPVInv = 19 // TODO: autostringing
-	for (let p: number =0; p<panelsPerStringPVInv; p++) {
-		pvinvPanels.push(panel.copy())
+	std::vector<std::unique_ptr<Panel>> pvinvPanels = std::vector<std::unique_ptr<Panel>>();
+	const int panelsPerStringPVInv = 19;	// TODO: Auto-stringing
+	for (size_t p=0; p<panelsPerStringPVInv; p++) {
+		pvinvPanels.push_back(panel.clone());
 	}
+	PVString pvinvString = PVString(std::move(pvinvPanels));
 
 	// PV inverters: assemble strings into subarray
-	pvString = new PVString(pvinvPanels)
-	var pvinvStrings: PVString[] = []
-	const stringsPerSubarrayPVInv = 4 // TODO: autostringing
-	for (let s: number =0; s<stringsPerSubarrayPVInv; s++) {
-		pvinvStrings.push(pvString.copy())
+	std::vector<std::unique_ptr<PVString>> pvinvStrings = std::vector<std::unique_ptr<PVString>>();
+	const int stringsPerSubarrayPVInv = 4;	// TODO: Auto-stringing
+	for (size_t s=0; s<stringsPerSubarrayPVInv; s++) {
+		pvinvStrings.push_back(pvinvString.clone());
 	}
-	var pvinvSubarray: Subarray = new Subarray(pvinvStrings, arrayLosses)
+	Subarray pvinvSubarray = Subarray(std::move(pvinvStrings), arrayLosses);
 
 	// PV inverters: connect subarray to PV input
-	var pvinvPVInputs: PVInput[] = []
-	const pvinvInTable = <HTMLTableElement> document.getElementById('pvinv_pv-inverter-inputs')
-	for (let r=1; r<pvinvInTable.rows.length-1; r++) {
-		const cells = pvinvInTable.rows.item(r).cells
-		pvinvPVInputs.push(new PVInput(
-			Number(cells[1].innerHTML),	// [V]
-			Number(cells[2].innerHTML),	// [V]
-			Number(cells[3].innerHTML),	// [V]
-			Number(cells[4].innerHTML),	// [V]
-			Number(cells[5].innerHTML),	// [A]
-			Number(cells[6].innerHTML)	// [A]
-		))
-	}
-	pvinvPVInputs[0].connectSubarray(pvinvSubarray)// TODO: add support for multiple PV inputs. Needs auto stringing
+	std::vector<std::unique_ptr<PVInput>> pvinvPVInputs = std::vector<std::unique_ptr<PVInput>>();
+	for (size_t r=0; r<std::size(UserInput::PVINV_IN_TABLE); r++) {
+		PVInput pvInput = PVInput(UserInput::PVINV_IN_TABLE[r][0], UserInput::PVINV_IN_TABLE[r][1], UserInput::PVINV_IN_TABLE[r][2], UserInput::PVINV_IN_TABLE[r][3], UserInput::PVINV_IN_TABLE[r][4], UserInput::PVINV_IN_TABLE[r][5]);
+		pvInput.connectSubarray(pvinvSubarray.clone());
+		pvinvPVInputs.push_back(std::make_unique<PVInput>(pvInput));
+	} // TODO: add support for multiple PV inputs with auto-stringing
 
 	// Battery inverters
-	var indivBattInvs: BatteryInverter[] = []
-	var battInvMaxQtys: number[] = []
-	const battInvTable = <HTMLTableElement> document.getElementById('batt-inv_options')
-	for (let r=1; r<battInvTable.rows.length-1; r++) {
-		const cells = battInvTable.rows.item(r).cells
-		indivBattInvs.push(new BatteryInverter(
-			Number(cells[3].innerHTML),	// [W]
-			Number(cells[5].innerHTML)/100,	// [0-1]
-			Number(cells[4].innerHTML)/100,	// [0-1]
-			Number(cells[2].innerHTML)	// [$]
-		))
-		battInvMaxQtys.push(Number(cells[6].innerHTML))
+	std::vector<std::unique_ptr<BatteryInverter>> indivBattInvs = std::vector<std::unique_ptr<BatteryInverter>>();
+	std::vector<int> battInvMaxQtys = std::vector<int>();
+	for (size_t b=0; b<std::size(UserInput::BATT_INV_TABLE); b++) {
+		BatteryInverter battInv = BatteryInverter(UserInput::BATT_INV_TABLE[b][0], UserInput::BATT_INV_TABLE[b][1], UserInput::BATT_INV_TABLE[b][2], UserInput::BATT_INV_TABLE[b][3]);
+		indivBattInvs.push_back(std::make_unique<BatteryInverter>(battInv));
+		battInvMaxQtys.push_back(UserInput::BATT_INV_TABLE[b][4]);
 	}
-	var battInvs: BatteryInverter[] = []
-	var battInvSizes: number[] = []
-	var battInvPrices: number[] = []
-	for (let b=0; b<indivBattInvs.length; b++) {
-		for (let qty=1; qty<=battInvMaxQtys[b]; qty++) {
-			let battInv = new BatteryInverter(
-				indivBattInvs[b].ratedPower*qty,	// [W]
-				indivBattInvs[b].inverterEfficiency,	// [0-1]
-				indivBattInvs[b].chargerEfficiency,	// [0-1]
-				indivBattInvs[b].price*qty	// [$]
-			)
-			let i = battInvSizes.indexOf(battInv.ratedPower)
+	std::vector<std::unique_ptr<BatteryInverter>> battInvs = std::vector<std::unique_ptr<BatteryInverter>>();
+	std::vector<double> battInvSizes = std::vector<double>();
+	std::vector<double> battInvPrices = std::vector<double>();
+	for (size_t b=0; b<indivBattInvs.size(); b++) {
+		for (unsigned int qty=1; qty<=battInvMaxQtys[b]; qty++) {
+			BatteryInverter battInv = BatteryInverter(indivBattInvs[b]->getRatedPower()*qty, indivBattInvs[b]->getInverterEfficiency(), indivBattInvs[b]->getChargerEfficiency(), indivBattInvs[b]->getPrice()*qty);
+			int i = napps::indexOf(battInvSizes, battInv.getRatedPower());
 			if (i == -1) {	// if there is no battery inverter combination of that size yet, add it
-				let low = 0
-				let high = battInvSizes.length
-
+				size_t low = 0;
+				size_t high = battInvSizes.size();
+				
 				while (low < high) {
-					let mid = (low + high) >>> 1;
-					if (battInvSizes[mid] < battInv.ratedPower) low = mid + 1;
-					else high = mid;
+					size_t mid = (low+high)/2;
+					if (battInvSizes[mid]<battInv.getRatedPower()) {
+						low = mid+1;
+					} else {
+						high = mid;
+					}
 				}
-				battInvs.splice(low, 0, battInv)
-				battInvPrices.splice(low, 0, battInv.price)
-				battInvSizes.splice(low, 0, battInv.ratedPower)
-			} else {	// if there is already a battery inverter combination of that size, replace it iff cheaper
-				if (battInvPrices[i]>battInv.price) {
-					battInvs[i] = battInv
-					battInvPrices[i] = battInv.price
+				battInvPrices.insert(battInvPrices.begin() + low, battInv.getPrice());
+				battInvSizes.insert(battInvSizes.begin() + low, battInv.getRatedPower());
+				battInvs.insert(battInvs.begin() + low, std::make_unique<BatteryInverter>(battInv));
+			} else {	// if there is already a battery inverter combination of that size, replace if iff cheaper
+				if (battInvPrices[i]>battInv.getPrice()) {
+					battInvPrices[i] = battInv.getPrice();
+					battInvs[i] = std::make_unique<BatteryInverter>(battInv);
 				}
 			}
 		}
 	}
 
-	// Other constants from form
-	const ccBatteryChargeCurrent = Number((<HTMLInputElement>document.getElementById('ccs_max-output-current')).value)	// [A]
-	const ccMaxPVPower = Number((<HTMLInputElement>document.getElementById('ccs_max-pv-power')).value)	// [Wp]
-	const ccPrice = Number((<HTMLInputElement>document.getElementById('ccs_price')).value)	// [$]
-	const vac = Number((<HTMLInputElement>document.getElementById('overview_vac')).value)	// [V]
-	const pvinvRatedPower = Number((<HTMLInputElement>document.getElementById('pvinv_max-output-power')).value)		// [VA]
-	const pvinvMaxPVPower = Number((<HTMLInputElement>document.getElementById('pvinv_max-pv-power')).value)	// [Wp]
-	const pvinvPrice = Number((<HTMLInputElement>document.getElementById('pvinv_price')).value)	// [$]
-	const battCapacity = Number((<HTMLInputElement>document.getElementById('batt_capacity')).value)*1000	// [Wh]
-	const minSOC = Number((<HTMLInputElement>document.getElementById('batt_minSOC')).value)/100	// [0-1]
-	const cRate = Number((<HTMLInputElement>document.getElementById('batt_c-rate')).value)	// [C]
-	const battPrice = Number((<HTMLInputElement>document.getElementById('batt_price')).value)	// [$]
-	const battDCV = Number((<HTMLInputElement>document.getElementById('batt_dcv')).value)	// [V]
-	const dxLosses = Number((<HTMLInputElement>document.getElementById('dx_losses')).value)/100	// [0-1]
-	const exchangeRate = Number((<HTMLInputElement>document.getElementById('misc_toUSD')).value)	// [¤/$]
-	const vat = Number((<HTMLInputElement>document.getElementById('misc_vat')).value)/100	// [0-1]
+	/** Step 3: Optimization Initialize Mini-Grid ***/
 
-	// Assemble decision variables
-	var decisionVariables = {
-		numChargeControllers: { value: 1, step: 1 },
-		numPVInverters: { value: 1, step: 1 },
-		numBatteries: { value: 1, step: 1 }
-	}
-	for (let c=0; c<customers.length; c++) {
-		decisionVariables[`tariff${c}`] = defaultTariffs[c]
-	}
-	console.timeEnd('setup')
-	console.time('opt')
+	// Charge controllers
+	ChargeController cc = ChargeController();
+
+	return 0;
+}
+/*
 	while (true) {
 		// Construct charge controllers
 		var cc: ChargeController = new ChargeController(ccBatteryChargeCurrent, ccMaxPVPower, ccPVInputs, ccPrice)

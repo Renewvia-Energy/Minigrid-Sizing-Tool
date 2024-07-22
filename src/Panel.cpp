@@ -18,13 +18,12 @@ class Panel {
 		/**
 		* A PV panel. All specifications given for standard operating conditions (SOC).
 		*
-		* @param {number} Pmp - Maximum power [W].
-		* @param {number} Voc - Open-circuit voltage [V].
-		* @param {number} Vmp - Maximum-power voltage [V].
-		* @param {number} Isc - Short-circuit current [A].
-		* @param {number} Imp - Maximum-power current [A].
-		* @param {number} price - Unit price of one panel [$].
-		* @constructor
+		* @param Pmp Maximum power [W].
+		* @param Voc Open-circuit voltage [V].
+		* @param Vmp Maximum-power voltage [V].
+		* @param Isc Short-circuit current [A].
+		* @param Imp Maximum-power current [A].
+		* @param price Unit price of one panel [¤].
 		*/
 		Panel(double Pmp, double Voc, double Vmp, double Isc, double Imp, double price) : Pmp(Pmp), Voc(Voc), Vmp(Vmp), Isc(Isc), Imp(Imp), price(price) {}
 		
@@ -43,8 +42,8 @@ class Panel {
 		/**
 		 * Compute the amount of energy produced in one unit of time.
 		 *
-		 * @param {double} dcArrayOutputWhPerWp - Amount of energy [Wh] a 1-Wp panel could output during the time interval.
-		 * @returns {double} Amount of energy [Wh] produced by the panel over the time interval.
+		 * @param dcArrayOutputWhPerWp Amount of energy [Wh] a 1-Wp panel could output during the time interval.
+		 * @returns Amount of energy [Wh] produced by the panel over the time interval.
 		 */
 		double getEnergy(double dcArrayOutputWhPerWp) const {
 			double energy = dcArrayOutputWhPerWp*Pmp;

@@ -20,8 +20,8 @@ struct MiniGridOperationStep : public GenerationSiteOperationStep {
 
 class MiniGrid {
 	private:
-		static const int FIRST_DATA_ROW = 32;	// Index of the first data row in the PVWatts CSV, should be the first row after "Month	Day	Hour,Beam Irradiance (W/m2),Diffuse Irradiance (W/m2),Ambient Temperature (C),Wind Speed (m/s),Albedo,Plane of Array Irradiance (W/m2),Cell Temperature (C),DC Array Output (W),AC System Output (W)"
-		static const int DC_OUTPUT_DATA_COLUMN = 10;	// Index of the "DC Array Output (W)" column in the PVWatts CSV
+		static const size_t FIRST_DATA_ROW = 32;	// Index of the first data row in the PVWatts CSV, should be the first row after "Month	Day	Hour,Beam Irradiance (W/m2),Diffuse Irradiance (W/m2),Ambient Temperature (C),Wind Speed (m/s),Albedo,Plane of Array Irradiance (W/m2),Cell Temperature (C),DC Array Output (W),AC System Output (W)"
+		static const size_t DC_OUTPUT_DATA_COLUMN = 10;	// Index of the "DC Array Output (W)" column in the PVWatts CSV
 
 		std::vector<std::unique_ptr<Customer>> customers;
 		const std::function<double(std::string, double)> tariff;
@@ -29,6 +29,15 @@ class MiniGrid {
 		std::function<double(double)> dcArrayOutputWhPerWpFn;
 		std::unique_ptr<GenerationSite> generationSite;
 
+		/**
+		 * Returns a function that takes a time [hr] and returns the DC array output [W] per Wp of PV capacity.
+		 *
+		 * @param filename The path to the CSV file containing the DC array output data.
+		 * @throws std::runtime_error if the file cannot be opened.
+		 * @throws std::runtime_error if no data is read from the file.
+		 * @throws std::runtime_error if there is an error parsing a value from the file.
+		 * @return A function that takes a time [hr] and returns the DC array output [W] per Wp of PV capacity.
+		 */
 		static std::function<double(double)> getDCArrayOutputWhPerWpFn(const std::string& filename) {
 			// Open file
 			std::ifstream file(filename);
@@ -40,7 +49,7 @@ class MiniGrid {
 			std::string line;
 			
 			// Skip the header
-			for (int l=0; l<FIRST_DATA_ROW; l++) {
+			for (size_t l=0; l<FIRST_DATA_ROW; l++) {
 				std::getline(file, line);
 			}
 
@@ -50,7 +59,7 @@ class MiniGrid {
 				iss.str(line);
 				
 				// Skip to DC output column
-				for (int c=0; c<=DC_OUTPUT_DATA_COLUMN; c++) {
+				for (size_t c=0; c<=DC_OUTPUT_DATA_COLUMN; c++) {
 					std::getline(iss, token, ',');
 				}
 				try {
@@ -74,19 +83,54 @@ class MiniGrid {
 		}
 
 	public:
+		/**
+		 * Constructs a MiniGrid object with the given customers, tariff, and dxLosses.
+		 *
+		 * @param customers A vector of unique pointers to Customer objects.
+		 * @param tariff A function that takes a string tariff name and the time [hr] as input and returns the tariff [¤].
+		 * @param dxLosses The fraction [0-1] of distribution network losses.
+		 *
+		 * @throws None.
+		 */
 		MiniGrid(std::vector<std::unique_ptr<Customer>> customers, std::function<double(std::string, double)> tariff, double dxLosses)
 			: customers(std::move(customers)), tariff(tariff), dxLosses(dxLosses) {}
 
+		/**
+		 * Sets the `dcArrayOutputWhPerWpFn` member variable by calling the `getDCArrayOutputWhPerWpFn` function with the given `filename`.
+		 *
+		 * @param filename The path to the CSV file containing the DC array output data.
+		 *
+		 * @throws std::runtime_error if the file cannot be opened.
+		 * @throws std::runtime_error if no data is read from the file.
+		 * @throws std::runtime_error if there is an error parsing a value from the file.
+		 */
 		void placeFromFile(std::string filename) {
 			dcArrayOutputWhPerWpFn = getDCArrayOutputWhPerWpFn(filename);
 		}
 
+		/**
+		 * Builds the generation site by moving the given unique pointer to a GenerationSite object into the `generationSite` member variable.
+		 *
+		 * @param generationSite A unique pointer to a GenerationSite object.
+		 *
+		 * @throws None.
+		 */
 		void buildGenerationSite(std::unique_ptr<GenerationSite> generationSite) {
 			this->generationSite = std::move(generationSite);
 		}
 
 		double getDCArrayOutputWhPerWp(double t) const { return dcArrayOutputWhPerWpFn(t); }
 
+		/**
+		 * Operates the MiniGrid at a given time for a given duration.
+		 *
+		 * @param t The time [hr]
+		 * @param dt The time step size [hr]
+		 *
+		 * @return The MiniGridOperationStep containing the results of the operation.
+		 *
+		 * @throws None.
+		 */
 		MiniGridOperationStep operate(double t, double dt) {
 			const double dcOutputWhPerWp = getDCArrayOutputWhPerWp(t);
 
