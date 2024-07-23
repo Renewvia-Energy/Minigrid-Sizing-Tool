@@ -186,7 +186,20 @@ int main() {
 	/** Step 3: Optimization Initialize Mini-Grid ***/
 
 	// Charge controllers
-	ChargeController cc = ChargeController();
+	ChargeController cc = ChargeController(UserInput::CC_IN_TABLE[0][6], UserInput::CC_IN_TABLE[0][8], pvInputs, UserInput::CC_IN_TABLE[0][7]);
+	std::vector<std::unique_ptr<ChargeController>> ccs = std::vector<std::unique_ptr<ChargeController>>();
+	ccs.reserve(UserInput::NUM_CHARGE_CONTROLLERS);
+	for (size_t c=0; c<UserInput::NUM_CHARGE_CONTROLLERS; c++) {
+		ccs.push_back(std::make_unique<ChargeController>(cc.clone()));
+	}
+
+	// Construct PV inverters
+	PVInverter pvInv = PVInverter(UserInput::PVINV_IN_TABLE[0][6], UserInput::PVINV_IN_TABLE[0][8], pvinvPVInputs, UserInput::PVINV_IN_TABLE[0][7]);
+	std::vector<std::unique_ptr<PVInverter>> pvInvs = std::vector<std::unique_ptr<PVInverter>>();
+	pvInvs.reserve(UserInput::NUM_PV_INVERTERS);
+	for (size_t p=0; p<UserInput::NUM_PV_INVERTERS; p++) {
+		pvInvs.push_back(std::make_unique<PVInverter>(pvInv.clone()));
+	}
 
 	return 0;
 }
