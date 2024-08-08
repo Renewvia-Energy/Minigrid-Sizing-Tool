@@ -55,13 +55,27 @@ namespace napps {
 	 */
 	template<typename T>
 	int indexOf(std::vector<T> v, T key) {
-		std::vector<T>::iterator itr = std::find(v.begin(), v.end(), key);
+		typename std::vector<T>::iterator itr = std::find(v.begin(), v.end(), key);
 
-		if (itr != v.cend()) {
+		if (itr != v.end()) {
 			return std::distance(v.begin(), itr);
 		}
 		return -1;
 	}
+
+	template<typename Derived>
+	class Cloneable
+	{
+		public:
+			virtual ~Cloneable() = default;
+
+			std::unique_ptr<Derived> clone() const {
+				return std::unique_ptr<Derived>(cloneImpl());
+			}
+		
+		protected:
+			virtual Derived* cloneImpl() const = 0;
+	};
 }
 
 #endif // NAPPS_H

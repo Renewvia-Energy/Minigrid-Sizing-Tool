@@ -4,14 +4,18 @@
 #include <vector>
 #include <memory>
 #include <numeric>
+#include "../include/Napps.h"
 #include "PVInput.cpp"
 
-class PVInverterCC {
+class PVInverterCC : public napps::Cloneable<PVInverterCC> {
 	private:
 		const std::vector<std::unique_ptr<PVInput>> pvInputs;
 		const double maxPVPower;
 		const double price;
 		const double subarrayPrice;
+
+	protected:
+    	virtual PVInverterCC* cloneImpl() const = 0;
 
 	public:
 		/**
@@ -39,11 +43,13 @@ class PVInverterCC {
 		// Destructor
 		virtual ~PVInverterCC() = default;
 
-		// Copy constructor is just virtual copy method
-		virtual std::unique_ptr<PVInverterCC> clone() const = 0;
-
 		// Copy assignment operator
 		PVInverterCC& operator=(const PVInverterCC& other) = delete;
+
+		// Copy constructor is just virtual copy method
+		std::unique_ptr<PVInverterCC> clone() {
+			return std::unique_ptr<PVInverterCC>(cloneImpl());
+		}
 		
 		// Getters
 		const std::vector<std::unique_ptr<PVInput>>& getPVInputs() const { return pvInputs; }

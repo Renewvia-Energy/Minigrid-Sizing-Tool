@@ -9,6 +9,11 @@ class ChargeController : public PVInverterCC {
 	private:
 		const double batteryChargeCurrent;
 
+	protected:
+		virtual ChargeController* cloneImpl() const override {
+			return new ChargeController(*this);
+		}
+
 	public:
 		/**
 		 * A DC-coupled power generation device.
@@ -40,10 +45,6 @@ class ChargeController : public PVInverterCC {
 
 		// Move assignment operator
 		ChargeController& operator=(ChargeController&& other) = delete;
-
-		std::unique_ptr<PVInverterCC> clone() const override {
-			return std::make_unique<ChargeController>(*this);
-		}
 
 		// Getters
 		double getBatteryChargeCurrent() const { return batteryChargeCurrent; }

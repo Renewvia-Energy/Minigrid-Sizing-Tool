@@ -10,6 +10,11 @@ class PVInverter : public PVInverterCC {
 	private:
 		const double ratedPower;
 
+	protected:
+		PVInverter* cloneImpl() const override {
+			return new PVInverter(*this);
+		}
+
 	public:
 		/**
 		 * An AC-coupled power generation device.
@@ -39,10 +44,6 @@ class PVInverter : public PVInverterCC {
 
 		// Move assignment operator
 		PVInverter& operator=(PVInverter&& other) = delete;
-
-		std::unique_ptr<PVInverterCC> clone() const override {
-			return std::make_unique<PVInverter>(*this);
-		}
 
 		// Getters
 		double getRatedPower() const { return ratedPower; }
