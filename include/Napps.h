@@ -20,8 +20,8 @@ namespace napps {
 	 * @throws None
 	 */
 	template<typename T, typename Func>
-	std::vector<T> map_vector(const std::vector<T>& input, Func f) {
-		std::vector<T> result;
+	auto map_vector(const std::vector<T>& input, Func f) {
+		std::vector<std::decay_t<decltype(f(*input.begin()))>> result;
 		result.reserve(input.size());
 		std::transform(input.begin(), input.end(), std::back_inserter(result), f);
 		return result;
@@ -62,20 +62,6 @@ namespace napps {
 		}
 		return -1;
 	}
-
-	template<typename Derived>
-	class Cloneable
-	{
-		public:
-			virtual ~Cloneable() = default;
-
-			std::unique_ptr<Derived> clone() const {
-				return std::unique_ptr<Derived>(cloneImpl());
-			}
-		
-		protected:
-			virtual Derived* cloneImpl() const = 0;
-	};
 }
 
 #endif // NAPPS_H

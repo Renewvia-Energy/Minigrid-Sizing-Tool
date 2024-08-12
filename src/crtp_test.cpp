@@ -1,51 +1,45 @@
 #include <memory>
+#include <iostream>
 
-template<typename Derived>
-struct Clonable
-{
+// Base class template using CRTP
+template <typename Derived>
+class Clonable {
+public:
     virtual ~Clonable() = default;
 
-    std::unique_ptr<Derived> clone() const
-    {
-        return std::unique_ptr<Derived>(cloneImpl());
+    // The clone method returns a unique_ptr to the derived class
+    std::unique_ptr<Derived> clone() const {
+        return std::unique_ptr<Derived>(static_cast<Derived*>(this->clone_impl()));
     }
-    
+
 protected:
-    virtual Derived* cloneImpl() const = 0;
+    // Protected virtual function for actual cloning
+    virtual Clonable* clone_impl() const = 0;
 };
 
-struct Interface : Clonable<Interface>
-{
-    // Other interface methods...
-};
-
-class Implementation : public Interface
-{
+// Example derived class
+class MyClass : public Clonable<MyClass> {
 public:
-    // Other implementation methods...
+    MyClass(int value) : value_(value) {}
+
+    int getValue() const { return value_; }
 
 protected:
-    virtual Implementation* cloneImpl() const override
-    {
-        return new Implementation(*this);
+    // Implement the clone_impl method
+    Clonable<MyClass>* clone_impl() const override {
+        return new MyClass(*this);
     }
+
+private:
+    int value_;
 };
 
-int main()
-{
-    Implementation impl;
+int main() {
+    auto original = std::make_unique<MyClass>(42);
+    auto cloned = original->clone();
 
-    // Cloning through Interface (this works)
-    std::unique_ptr<Interface> interfaceClone = impl.clone();
-
-    // If you need an Implementation pointer, you'll need to use dynamic_cast
-    std::unique_ptr<Implementation> implClone(
-        dynamic_cast<Implementation*>(impl.clone().release())
-    );
-
-    // Alternatively, you could add a clone method to Implementation
-    // that returns an Implementation pointer
-    // std::unique_ptr<Implementation> implClone = impl.cloneAsImplementation();
+    std::cout << "Original value: " << original->getValue() << std::endl;
+    std::cout << "Cloned value: " << cloned->getValue() << std::endl;
 
     return 0;
 }

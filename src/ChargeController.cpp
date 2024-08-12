@@ -2,15 +2,16 @@
 #define CHARGECONTROLLER_CPP
 
 #include <vector>
+#include <utility>
 #include "../include/Napps.h"
 #include "PVInverterCC.h"
 
-class ChargeController : public PVInverterCC {
+class ChargeController : public PVInverterCC<ChargeController> {
 	private:
 		const double batteryChargeCurrent;
 
 	protected:
-		virtual ChargeController* cloneImpl() const override {
+		PVInverterCC<ChargeController>* clone_impl() const override {
 			return new ChargeController(*this);
 		}
 

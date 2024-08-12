@@ -7,7 +7,8 @@
 #include "../include/Napps.h"
 #include "PVInput.cpp"
 
-class PVInverterCC : public napps::Cloneable<PVInverterCC> {
+template <typename Derived>
+class PVInverterCC {
 	private:
 		const std::vector<std::unique_ptr<PVInput>> pvInputs;
 		const double maxPVPower;
@@ -15,7 +16,7 @@ class PVInverterCC : public napps::Cloneable<PVInverterCC> {
 		const double subarrayPrice;
 
 	protected:
-    	virtual PVInverterCC* cloneImpl() const = 0;
+		virtual PVInverterCC* clone_impl() const = 0;
 
 	public:
 		/**
@@ -30,9 +31,9 @@ class PVInverterCC : public napps::Cloneable<PVInverterCC> {
 			pvInputs(std::move(pvInputs)),
 			maxPVPower(maxPVPower),
 			price(price),
-			subarrayPrice(std::accumulate(pvInputs.begin(),pvInputs.end(), 0.0, [](double sum, const auto& pvInput) { return sum + pvInput->getPrice(); })) {
+			subarrayPrice(std::accumulate(this->pvInputs.begin(),this->pvInputs.end(), 0.0, [](double sum, const auto& pvInput) { return sum + pvInput->getPrice(); })) {
 			double Pmp = 0;
-			for (const auto& pvInput : pvInputs) {
+			for (const auto& pvInput : this->pvInputs) {
 				Pmp+= pvInput->getPmp();
 			}
 			if (Pmp>maxPVPower) {
@@ -46,9 +47,9 @@ class PVInverterCC : public napps::Cloneable<PVInverterCC> {
 		// Copy assignment operator
 		PVInverterCC& operator=(const PVInverterCC& other) = delete;
 
-		// Copy constructor is just virtual copy method
-		std::unique_ptr<PVInverterCC> clone() {
-			return std::unique_ptr<PVInverterCC>(cloneImpl());
+		// The clone method returns a unique_ptr to the derived class
+		std::unique_ptr<Derived> clone() const {
+			return std::unique_ptr<Derived>(static_cast<Derived*>(this->clone_impl()));
 		}
 		
 		// Getters

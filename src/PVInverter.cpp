@@ -6,12 +6,12 @@
 #include "../include/Napps.h"
 #include "PVInverterCC.h"
 
-class PVInverter : public PVInverterCC {
+class PVInverter : public PVInverterCC<PVInverter> {
 	private:
 		const double ratedPower;
 
 	protected:
-		PVInverter* cloneImpl() const override {
+		PVInverterCC<PVInverter>* clone_impl() const override {
 			return new PVInverter(*this);
 		}
 

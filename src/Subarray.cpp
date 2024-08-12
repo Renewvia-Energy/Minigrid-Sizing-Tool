@@ -44,7 +44,7 @@ class Subarray {
 
 		// Copy constructor
 		Subarray(const Subarray& other)
-			: pvStrings(napps::copy_unique_ptr_vector(other.pvStrings)),
+			: pvStrings(napps::copy_unique_ptr_vector(std::move(other.pvStrings))),
 			  arrayLosses(other.arrayLosses), Voc(other.Voc), Vmp(other.Vmp), Pmp(other.Pmp), Isc(other.Isc), Imp(other.Imp), price(other.price) {}
 
 		// Copy assignment operator
