@@ -16,6 +16,10 @@ class BatteryInverter {
 	public:
 		BatteryInverter(double ratedPower, double inverterEfficiency, double chargerEfficiency, double price) : ratedPower(ratedPower), inverterEfficiency(inverterEfficiency), chargerEfficiency(chargerEfficiency), price(price) {}
 
+		std::unique_ptr<BatteryInverter> cloneWithoutBatteries() {
+			return std::make_unique<BatteryInverter>(this->ratedPower, this->inverterEfficiency, this->chargerEfficiency, this->price);
+		}
+
 		// Getters
 		double getRatedPower() const { return ratedPower; }
 		double getInverterEfficiency() const { return inverterEfficiency; }

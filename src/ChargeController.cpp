@@ -34,7 +34,7 @@ class ChargeController : public PVInverterCC<ChargeController> {
 		// Copy constructor
 		ChargeController(const ChargeController& other)
 			: PVInverterCC(
-			  	napps::copy_unique_ptr_vector(other.getPVInputs()),
+			  	napps::copyUniquePointerVector(other.getPVInputs()),
 				other.getMaxPVPower(), other.getPrice()),
 			  batteryChargeCurrent(other.getBatteryChargeCurrent()) {}
 

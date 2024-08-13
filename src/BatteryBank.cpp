@@ -30,11 +30,11 @@ class BatteryBank {
 		BatteryBank(std::vector<std::unique_ptr<Battery>> batteries, double outputVoltage) : 
 			batteries(std::move(batteries)),
 			outputVoltage(outputVoltage),
-			minSOC(batteries[0]->getMinSOC()),
-			cRate(batteries[0]->getCRate()),
-			dRate(batteries[0]->getDRate()),
-			price(std::accumulate(batteries.begin(),batteries.end(), 0.0, [](double sum, const auto& battery) { return sum + battery->getPrice(); })),
-			capacity(std::accumulate(batteries.begin(),batteries.end(), 0.0, [](double sum, const auto& battery) { return sum + battery->getCapacity(); })),
+			minSOC(this->batteries[0]->getMinSOC()),
+			cRate(this->batteries[0]->getCRate()),
+			dRate(this->batteries[0]->getDRate()),
+			price(std::accumulate(this->batteries.begin(),this->batteries.end(), 0.0, [](double sum, const auto& battery) { return sum + battery->getPrice(); })),
+			capacity(std::accumulate(this->batteries.begin(),this->batteries.end(), 0.0, [](double sum, const auto& battery) { return sum + battery->getCapacity(); })),
 			cumE(0) {
 			// TODO: confirm batteries are equivalent
 

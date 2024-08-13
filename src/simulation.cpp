@@ -81,6 +81,7 @@ int main() {
 
 	// Create customers vector
 	std::vector<std::unique_ptr<Customer>> customers = std::vector<std::unique_ptr<Customer>>();
+	customers.reserve(tariffNames.size());
 	for (size_t ct=0; ct<tariffNames.size(); ct++) {
 		customers.push_back(std::make_unique<Customer>(Customer(tariffNames[ct], maxLoads[ct], Customer::getTariffFn(loadProfiles[ct]), quantities[ct])));
 	}
@@ -186,51 +187,50 @@ int main() {
 	/** Step 3: Optimization Initialize Mini-Grid ***/
 
 	// Charge controllers
-	// ChargeController cc = ChargeController(UserInput::CC_IN_TABLE[0][6], UserInput::CC_IN_TABLE[0][8], std::move(pvInputs), UserInput::CC_IN_TABLE[0][7]);
-	// std::vector<std::unique_ptr<ChargeController>> ccs = std::vector<std::unique_ptr<ChargeController>>();
-	// ccs.reserve(UserInput::NUM_CHARGE_CONTROLLERS);
-	// for (size_t c=0; c<UserInput::NUM_CHARGE_CONTROLLERS; c++) {
-	// 	std::unique_ptr<ChargeController> newCC = cc.clone();
-	// 	ccs.push_back(cc.clone());
-	// }
+	ChargeController cc = ChargeController(UserInput::CC_IN_TABLE[0][6], UserInput::CC_IN_TABLE[0][8], std::move(pvInputs), UserInput::CC_IN_TABLE[0][7]);
+	std::vector<std::unique_ptr<ChargeController>> ccs = std::vector<std::unique_ptr<ChargeController>>();
+	ccs.reserve(UserInput::NUM_CHARGE_CONTROLLERS);
+	for (size_t c=0; c<UserInput::NUM_CHARGE_CONTROLLERS; c++) {
+		ccs.push_back(cc.clone());
+	}
 
-	// // Construct PV inverters
-	// PVInverter pvInv = PVInverter(UserInput::PVINV_IN_TABLE[0][6], UserInput::PVINV_IN_TABLE[0][8], pvinvPVInputs, UserInput::PVINV_IN_TABLE[0][7]);
-	// std::vector<std::unique_ptr<PVInverter>> pvInvs = std::vector<std::unique_ptr<PVInverter>>();
-	// pvInvs.reserve(UserInput::NUM_PV_INVERTERS);
-	// for (size_t p=0; p<UserInput::NUM_PV_INVERTERS; p++) {
-	// 	pvInvs.push_back(std::make_unique<PVInverter>(pvInv.clone()));
-	// }
+	// Construct PV inverters
+	PVInverter pvInv = PVInverter(UserInput::PVINV_IN_TABLE[0][6], UserInput::PVINV_IN_TABLE[0][8], std::move(pvinvPVInputs), UserInput::PVINV_IN_TABLE[0][7]);
+	std::vector<std::unique_ptr<PVInverter>> pvInvs = std::vector<std::unique_ptr<PVInverter>>();
+	pvInvs.reserve(UserInput::NUM_PV_INVERTERS);
+	for (size_t p=0; p<UserInput::NUM_PV_INVERTERS; p++) {
+		pvInvs.push_back(pvInv.clone());
+	}
+
+	// Construct battery bank
+	Battery batt = Battery(UserInput::BATT_CAPACITY, UserInput::BATT_MIN_SOC, UserInput::BATT_C_RATE, UserInput::BATT_D_RATE, UserInput::BATT_PRICE);
+	std::vector<std::unique_ptr<Battery>> batteries = std::vector<std::unique_ptr<Battery>>();
+	batteries.reserve(UserInput::NUM_BATTERIES);
+	for (size_t b=0; b<UserInput::NUM_BATTERIES; b++) {
+		batteries.push_back(batt.clone());
+	}
+	BatteryBank batteryBank = BatteryBank(std::move(batteries), UserInput::DCV);
+
+	// Pick battery inverter to handle max load
+	double maxLoad = std::accumulate(customers.begin(), customers.end(), 0.0, [](double sum, const std::unique_ptr<Customer>& customer) { return sum + customer->getMaxLoad(); }) /(1-UserInput::DX_LOSSES) * UserInput::FOS_MAX_LOAD;
+	std::unique_ptr<BatteryInverter> battInv;
+	for (const auto& newBattInv : battInvs) {
+		if (newBattInv->getRatedPower() >= maxLoad) {
+			battInv = newBattInv->cloneWithoutBatteries();
+			break;
+		}
+	}
+	if (!battInv) {
+		throw std::runtime_error("No battery inverter is big enough");
+	}
+
+	std::cout << customers.size() << std::endl;
+	std::cout << maxLoad << std::endl;
+	std::cout << battInv->getRatedPower() << std::endl;
 
 	return 0;
 }
 /*
-	while (true) {
-		// Construct charge controllers
-		var cc: ChargeController = new ChargeController(ccBatteryChargeCurrent, ccMaxPVPower, ccPVInputs, ccPrice)
-		var ccs: ChargeController[] = []
-		for (let c=0; c<decisionVariables.numChargeControllers.value; c++) {
-			ccs.push(cc.copy())
-		}
-		var ccGroup: DCCoupledPVGenerationEquipment = new DCCoupledPVGenerationEquipment(ccs)
-
-		// Construct PV inverters
-		var pvinv: PVInverter = new PVInverter(pvinvRatedPower, pvinvMaxPVPower, pvinvPVInputs, pvinvPrice)
-		var pvInvs: PVInverter[] = []
-		for (let p=0; p<decisionVariables.numPVInverters.value; p++) {
-			pvInvs.push(pvinv.copy())
-		}
-		var pvInvGroup: ACCoupledPVGenerationEquipment = new ACCoupledPVGenerationEquipment(pvInvs)
-
-		// Construct battery bank
-		var batt = new Battery(battCapacity, minSOC, cRate, cRate, battPrice)
-		var batteries: Battery[] = []
-		for (let b=0; b<decisionVariables.numBatteries.value; b++) {
-			batteries.push(batt.copy())
-		}
-		var batteryBank: BatteryBank = new BatteryBank(batteries, battDCV)
-
-		// Pick battery inverter to handle max load
 		var maxLoad = customers.reduce((sum, customer) => customer.totalMaxLoad + sum, 0)/(1-dxLosses)*FOS_MAX_LOAD
 		var battInv: BatteryInverter
 		for (let newBattInv of battInvs) {

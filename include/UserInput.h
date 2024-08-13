@@ -20,6 +20,14 @@ namespace UserInput
 	constexpr size_t NUM_CHARGE_CONTROLLERS = 1;
 	constexpr size_t NUM_PV_INVERTERS = 1;
 	constexpr size_t NUM_BATTERIES = 1;
+	const double BATT_CAPACITY = 14300;
+	const double BATT_MIN_SOC = 0.1;
+	const double BATT_C_RATE = 1;
+	const double BATT_D_RATE = 1;
+	const double BATT_PRICE = 6000;
+	const double DCV = 48;
+	const double FOS_MAX_LOAD = 2;
+	const double DX_LOSSES = 0.15;
 }
 
 #endif // USERINPUT_H

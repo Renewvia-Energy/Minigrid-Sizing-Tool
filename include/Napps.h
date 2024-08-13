@@ -37,8 +37,19 @@ namespace napps {
 	 * @throws None
 	 */
 	template<typename T>
-	std::vector<std::unique_ptr<T>> copy_unique_ptr_vector(const std::vector<std::unique_ptr<T>>& input) {
-		return napps::map_vector(input, [](const auto& ptr) { return std::make_unique<T>(*ptr); });
+	std::vector<std::unique_ptr<T>> copyUniquePointerVector(const std::vector<std::unique_ptr<T>>& source) {
+		std::vector<std::unique_ptr<T>> destination;
+		destination.reserve(source.size());
+		
+		for (const auto& ptr : source) {
+			if (ptr) {
+				destination.push_back(std::make_unique<T>(*ptr));
+			} else {
+				destination.push_back(nullptr);
+			}
+		}
+		
+		return destination;
 	}
 
 	/**

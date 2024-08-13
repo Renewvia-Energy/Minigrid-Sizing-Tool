@@ -39,7 +39,7 @@ class PVString {
 
 		// Copy constructor
 		PVString(const PVString& other)
-			: panels(napps::copy_unique_ptr_vector(other.panels)),
+			: panels(napps::copyUniquePointerVector(other.panels)),
 			  Pmp(other.Pmp), Voc(other.Voc), Vmp(other.Vmp), Isc(other.Isc), Imp(other.Imp), price(other.price) {}
 
 		// Copy assignment operator

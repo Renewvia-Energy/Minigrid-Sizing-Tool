@@ -28,12 +28,12 @@ class Subarray {
 		Subarray(std::vector<std::unique_ptr<PVString>> pvStrings, double arrayLosses) : 
 			pvStrings(std::move(pvStrings)),
 			arrayLosses(arrayLosses),
-			Voc(pvStrings[0]->getVoc()),
-			Vmp(pvStrings[0]->getVmp()),
-			Pmp(std::accumulate(pvStrings.begin(),pvStrings.end(), 0.0, [](double sum, const auto& pvString) { return sum + pvString->getPmp(); })),
-			Isc(std::accumulate(pvStrings.begin(),pvStrings.end(), 0.0, [](double sum, const auto& pvString) { return sum + pvString->getIsc(); })),
-			Imp(std::accumulate(pvStrings.begin(),pvStrings.end(), 0.0, [](double sum, const auto& pvString) { return sum + pvString->getImp(); })),
-			price(std::accumulate(pvStrings.begin(),pvStrings.end(), 0.0, [](double sum, const auto& pvString) { return sum + pvString->getPrice(); })) {
+			Voc(this->pvStrings[0]->getVoc()),
+			Vmp(this->pvStrings[0]->getVmp()),
+			Pmp(std::accumulate(this->pvStrings.begin(),this->pvStrings.end(), 0.0, [](double sum, const auto& pvString) { return sum + pvString->getPmp(); })),
+			Isc(std::accumulate(this->pvStrings.begin(),this->pvStrings.end(), 0.0, [](double sum, const auto& pvString) { return sum + pvString->getIsc(); })),
+			Imp(std::accumulate(this->pvStrings.begin(),this->pvStrings.end(), 0.0, [](double sum, const auto& pvString) { return sum + pvString->getImp(); })),
+			price(std::accumulate(this->pvStrings.begin(),this->pvStrings.end(), 0.0, [](double sum, const auto& pvString) { return sum + pvString->getPrice(); })) {
 			// TODO: confirm all strings same
 
 			assert(arrayLosses >= 0 && arrayLosses <= 1 && "Array losses must be in [0,1]");
@@ -44,7 +44,7 @@ class Subarray {
 
 		// Copy constructor
 		Subarray(const Subarray& other)
-			: pvStrings(napps::copy_unique_ptr_vector(std::move(other.pvStrings))),
+			: pvStrings(napps::copyUniquePointerVector(std::move(other.pvStrings))),
 			  arrayLosses(other.arrayLosses), Voc(other.Voc), Vmp(other.Vmp), Pmp(other.Pmp), Isc(other.Isc), Imp(other.Imp), price(other.price) {}
 
 		// Copy assignment operator

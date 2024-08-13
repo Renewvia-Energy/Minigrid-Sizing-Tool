@@ -32,7 +32,7 @@ class PVInverter : public PVInverterCC<PVInverter> {
 		// Copy constructor
 		PVInverter(const PVInverter& other)
 			: PVInverterCC(
-			  	napps::copy_unique_ptr_vector(other.getPVInputs()),
+			  	napps::copyUniquePointerVector(other.getPVInputs()),
 				other.getMaxPVPower(), other.getPrice()),
 			  ratedPower(other.getRatedPower()) {}
 

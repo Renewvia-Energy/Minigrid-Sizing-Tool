@@ -38,7 +38,7 @@ class PVInput {
 		void connectSubarray(std::unique_ptr<Subarray> newSubarray) {
 			subarray = std::move(newSubarray);
 
-			if (subarray->getVoc() < Vmp_min || subarray->getVoc() > Vmp_max) {
+			if (subarray->getVoc() < Voc_min || subarray->getVoc() > Voc_max) {
 				throw std::runtime_error("Subarray Voc " + std::to_string(subarray->getVoc()) + " is outside the bounds [" + std::to_string(Voc_min) + "," + std::to_string(Voc_max) + "]");
 			}
 			if (subarray->getVmp() < Vmp_min || subarray->getVmp() > Vmp_max) {

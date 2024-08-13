@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <string>
+#include <memory>
 
 class Battery {
 	private:
@@ -28,8 +29,8 @@ class Battery {
 			assert(minSOC>=0 && minSOC<=1 && ("MinSOC " + std::to_string(minSOC) + " must be between 0 and 1.").c_str());
 		}
 
-		Battery clone() const {
-			return *this;
+		std::unique_ptr<Battery> clone() const {
+			return std::make_unique<Battery>(*this);
 		}
 
 		// Getters
