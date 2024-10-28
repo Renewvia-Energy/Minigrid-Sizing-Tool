@@ -80,17 +80,17 @@ int main() {
 	file.close();
 
 	// Create customers vector
-	std::vector<std::unique_ptr<Customer>> customers = std::vector<std::unique_ptr<Customer>>();
+	std::vector<std::shared_ptr<Customer>> customers = std::vector<std::shared_ptr<Customer>>();
 	customers.reserve(tariffNames.size());
 	for (size_t ct=0; ct<tariffNames.size(); ct++) {
-		customers.push_back(std::make_unique<Customer>(Customer(tariffNames[ct], maxLoads[ct], Customer::getTariffFn(loadProfiles[ct]), quantities[ct])));
+		customers.push_back(std::make_shared<Customer>(Customer(tariffNames[ct], maxLoads[ct], Customer::getTariffFn(loadProfiles[ct]), quantities[ct])));
 	}
 
 	/** Step 2: Pre-Optimization Initialize Mini-Grid ***/
 
 	// Initialize minigrid
 	std::function<double(std::string, double)> tariffFn = [](std::string name, double t) { return 1.0; };
-	MiniGrid minigrid = MiniGrid(std::move(customers), tariffFn, 0.1);
+	MiniGrid minigrid = MiniGrid(customers, tariffFn, 0.1);
 	minigrid.placeFromFile(UserInput::PVWATTS_FN);
 
 	// Construct panel
@@ -212,7 +212,7 @@ int main() {
 	BatteryBank batteryBank = BatteryBank(std::move(batteries), UserInput::DCV);
 
 	// Pick battery inverter to handle max load
-	double maxLoad = std::accumulate(customers.begin(), customers.end(), 0.0, [](double sum, const std::unique_ptr<Customer>& customer) { return sum + customer->getMaxLoad(); }) /(1-UserInput::DX_LOSSES) * UserInput::FOS_MAX_LOAD;
+	double maxLoad = std::accumulate(customers.begin(), customers.end(), 0.0, [](double sum, const std::shared_ptr<Customer>& customer) { return sum + customer->getTotalMaxLoad(); }) /(1-UserInput::DX_LOSSES) * UserInput::FOS_MAX_LOAD;
 	std::unique_ptr<BatteryInverter> battInv;
 	for (const auto& newBattInv : battInvs) {
 		if (newBattInv->getRatedPower() >= maxLoad) {

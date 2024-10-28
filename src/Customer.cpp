@@ -25,6 +25,7 @@ class Customer {
 		// Getters
 		std::string getName() const { return name; }
 		double getMaxLoad() const { return maxLoad; }
+		double getTotalMaxLoad() const { return this->qty*this->maxLoad; }
 		std::function<double(double, double)> getLoadProfile() const { return loadProfile; }
 		std::function<double(double, double)> getTotalLoadProfile() const {
 			return [this](double tariff, double t) { return this->loadProfile(tariff, t) * this->qty; };

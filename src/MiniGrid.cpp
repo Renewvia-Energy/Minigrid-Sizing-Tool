@@ -23,7 +23,7 @@ class MiniGrid {
 		static const size_t FIRST_DATA_ROW = 32;	// Index of the first data row in the PVWatts CSV, should be the first row after "Month	Day	Hour,Beam Irradiance (W/m2),Diffuse Irradiance (W/m2),Ambient Temperature (C),Wind Speed (m/s),Albedo,Plane of Array Irradiance (W/m2),Cell Temperature (C),DC Array Output (W),AC System Output (W)"
 		static const size_t DC_OUTPUT_DATA_COLUMN = 10;	// Index of the "DC Array Output (W)" column in the PVWatts CSV
 
-		std::vector<std::unique_ptr<Customer>> customers;
+		std::vector<std::shared_ptr<Customer>> customers;
 		const std::function<double(std::string, double)> tariff;
 		const double dxLosses;
 		std::function<double(double)> dcArrayOutputWhPerWpFn;
@@ -92,7 +92,7 @@ class MiniGrid {
 		 *
 		 * @throws None.
 		 */
-		MiniGrid(std::vector<std::unique_ptr<Customer>> customers, std::function<double(std::string, double)> tariff, double dxLosses)
+		MiniGrid(std::vector<std::shared_ptr<Customer>> customers, std::function<double(std::string, double)> tariff, double dxLosses)
 			: customers(std::move(customers)), tariff(tariff), dxLosses(dxLosses) {}
 
 		/**

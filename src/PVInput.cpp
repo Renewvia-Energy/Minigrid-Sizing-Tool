@@ -29,6 +29,20 @@ class PVInput {
 		PVInput(double Voc_min, double Voc_max, double Vmp_min, double Vmp_max, double Isc_max, double Imp_max) : Voc_min(Voc_min), Voc_max(Voc_max), Vmp_min(Vmp_min), Vmp_max(Vmp_max), Isc_max(Isc_max), Imp_max(Imp_max), subarray(nullptr) {}
 
 		/**
+		 * Get the limits of a subarray that could be connected to this PV inverter given the specs of a single panel.
+		 * 
+		 * @param panel The panel to base the subarray limits on.
+		 * @return The limits of a subarray that could be connected to this PV inverter.
+		 */
+		SubarrayLimits getSubarrayLimits(std::unique_ptr<Panel> panel) const {
+			return {
+				minPanelsPerString: std::ceil(std::max(panel->getVoc()/Voc_min, panel->getVmp()/Vmp_min)),
+				maxPanelsPerString: std::floor(std::min(panel->getVoc()/Voc_max, panel->getVmp()/Vmp_max)),
+				maxStringsPerSubarray: std::ceil(std::min(panel->getIsc()/Isc_max, panel->getImp()/Imp_max))
+			};
+		}
+
+		/**
 		 * Connect a single subarray of panels to this PV input. Check to make sure the subarray specs, Voc, Vmp, Isc, and Imp, are within the parameters of the PV input.
 		 *
 		 * @param newSubarray The subarray to connect to the PV input.
@@ -83,6 +97,12 @@ class PVInput {
 		double getEnergy(double dcArrayOutputWhPerWp) const {
 			return subarray->getEnergy(dcArrayOutputWhPerWp);
 		}
+};
+
+struct SubarrayLimits {
+	size_t minPanelsPerString;
+	size_t maxPanelsPerString;
+	size_t maxStringsPerSubarray;
 };
 
 #endif // PVINPUT_H

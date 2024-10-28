@@ -1,6 +1,6 @@
 ﻿Name,Residential,Commercial
 Max Load (W),0.314,0.314
-Quantity,1,1
+Quantity,5000,5000
 Default Tariff (¤/kWh),30,30
 1-Jan 00:00,0.314,0.159
 1-Jan 01:00,0.265,0.358
